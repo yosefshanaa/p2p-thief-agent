@@ -14,7 +14,7 @@ completion capped by the 15-word hint ≈ 25 output tokens.
 |---|---|---|---|---|
 | `template` (default) | in-process | **0** | **$0** | none — offline |
 | `ollama` | localhost:11434 | 0 API tokens | $0 (local compute) | none |
-| `openai` (small chat model) | OpenAI API (or compatible gateway via `base_url`) | ≈ 25k in + 10.5k out | cents/series on a small model — verify the rate for the exact model id you set | account RPM; guarded by `step_deadline_seconds` + template fallback |
+| **`openai` (`gpt-5.4`) — configured default** | OpenAI API (or compatible gateway via `base_url`) | **≈ 29k total, measured** (70 tok/call × ≤420) | check the current rate for `gpt-5.4`; `gpt-5.4-nano` is the cheap swap | account RPM; bounded by a 10 s per-call timeout + template fallback |
 | `claude_api` (Haiku 4.5) | Anthropic API | ≈ 25k in + 10.5k out | ≈ **$0.08** (at $1/M in, $5/M out) | account RPM; guarded by `step_deadline_seconds` + template fallback |
 | `claude_cli` | Claude Code subscription | ≈ 35k equivalent | subscription quota | CLI startup latency ⇒ highest stall risk; fallback covers |
 
@@ -37,3 +37,28 @@ season on `claude_api` costs under $1.
 Consumption is counted per call (`TurnEngine.tokens_used`), sealed into `result_<game_id>.json`,
 and declared against the agreed cap in the step-0 declaration — an over-budget series is visible
 to the opponent and the grader by construction.
+
+## Measured latency — `openai` / `gpt-5.4` (2026-07-29, WSL)
+
+Latency, not price, is the binding constraint: a turn that misses its deadline is a
+**technical loss**, so banter cost is capped in time as well as tokens.
+
+| Phase | Measured | Where it is paid |
+|---|---|---|
+| `import openai` + client construction + connection warm-up | ≈ 54 s | **once at peer startup**, outside any turn |
+| Banter call, steady state | **1.1 – 2.3 s** | inside the turn (deadline 30 s) |
+| Worst case by construction | **10 s** | `call_timeout = deadline // 3`, `max_retries=0` |
+
+Three findings from live testing, each of which would otherwise have failed *silently* —
+`produce()` swallows every exception into the template fallback, so a broken provider looks
+healthy while reporting 0 tokens forever:
+
+1. **`max_tokens` is rejected by the whole gpt-5.x family** ("Unsupported parameter … use
+   `max_completion_tokens`"). Verified against `gpt-5.4` and `gpt-5.6-luna`; older models
+   (`gpt-4o-mini`, `gpt-4.1-mini`) accept the new keyword too, so it is used universally.
+2. **Reasoning models return an empty message on a small budget** — `gpt-5.6-luna` produced
+   *no text* at 60 completion tokens (spent on hidden reasoning) and needed ≈400. The 15-word
+   hint cap is therefore enforced by `clip_words`, never by starving the token budget.
+3. **The one-off costs must not be paid in the turn loop.** `import openai` alone measured
+   ≈31 s and the first request ≈22 s — each larger than the 30 s turn deadline. Both are now
+   paid at construction, and SDK retries are disabled so a slow call cannot chain into a stall.

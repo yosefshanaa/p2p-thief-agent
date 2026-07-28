@@ -16,11 +16,11 @@ turn_timeout_seconds = 180
 # thief_class = "p2p_pursuit.strategy.thief_brain:ThiefBrain"
 
 [trash_talk]
-provider = "template"     # template (0 tokens, default) | openai | ollama | claude_api | claude_cli
+provider = "openai"       # template (0 tokens, default) | openai | ollama | claude_api | claude_cli
 every_n_steps = 1
 
 [llm]
-model = ""                # provider model id (e.g. openai: a small chat model)
+model = "gpt-5.4"         # verified live 2026-07-29 (gpt-5.6-luna also works)
 # Endpoint override. ollama: default http://localhost:11434 (under WSL a
 # Windows-side Ollama is NOT on localhost - use the host IP from
 # `grep nameserver /etc/resolv.conf`). openai: blank = api.openai.com,
