@@ -35,8 +35,11 @@ class ReplayView:
         self.canvas.pack(padx=4, pady=4)
         bar = tk.Frame(self.root)
         bar.pack(fill="x")
+        tk.Button(bar, text="|<", width=3, command=lambda: self._jump(0)).pack(side="left")
         tk.Button(bar, text="<< prev", command=lambda: self._go(-1)).pack(side="left")
         tk.Button(bar, text="next >>", command=lambda: self._go(+1)).pack(side="left")
+        tk.Button(bar, text=">|", width=3,
+                  command=lambda: self._jump(len(self.frames) - 1)).pack(side="left")
         self.playing = False
         self.play_btn = tk.Button(bar, text="play", width=6, command=self._toggle_play)
         self.play_btn.pack(side="left", padx=4)
@@ -44,6 +47,11 @@ class ReplayView:
         tk.OptionMenu(bar, self.speed, "0.5x", "1x", "2x", "4x").pack(side="left")
         self.label = tk.Label(bar, text="")
         self.label.pack(side="left", padx=8)
+        self.root.bind("<Left>", lambda _e: self._go(-1))
+        self.root.bind("<Right>", lambda _e: self._go(+1))
+        self.root.bind("<Home>", lambda _e: self._jump(0))
+        self.root.bind("<End>", lambda _e: self._jump(len(self.frames) - 1))
+        self.root.bind("<space>", lambda _e: self._toggle_play())
         self._draw()
 
     def _toggle_play(self) -> None:
@@ -67,7 +75,10 @@ class ReplayView:
         return max([7] + [max(c) + 1 for c in cells]) if cells else 7
 
     def _go(self, delta: int) -> None:
-        self.index = max(0, min(len(self.frames) - 1, self.index + delta))
+        self._jump(self.index + delta)
+
+    def _jump(self, index: int) -> None:
+        self.index = max(0, min(len(self.frames) - 1, index))
         self._draw()
 
     def _draw(self) -> None:
