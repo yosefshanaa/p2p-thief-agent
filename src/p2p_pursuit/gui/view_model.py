@@ -72,6 +72,15 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
     return cells
 
 
+def legend_items() -> list[tuple[str, str]]:
+    """Swatch/label pairs for the legend strip under the live board."""
+    return [(heat_hex(0.7, 1.0), "belief heat"),
+            ("#aa1111", "belief peak"),
+            (scent_hex(0.6), "scent trace"),
+            ("#222222", "barrier"),
+            ("#2266dd", "you")]
+
+
 def belief_stats(belief: list[list[float]]) -> tuple[tuple[int, int], float]:
     """(argmax cell, Shannon entropy in bits) of the belief heatmap - the two
     numbers the strategy actually steers by (PRD-4), surfaced to the pilot."""

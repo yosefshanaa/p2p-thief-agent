@@ -8,9 +8,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from .view_model import banner, board_cells, info_lines
+from .view_model import banner, board_cells, info_lines, legend_items
 
 CELL = 56
+MARGIN = 20  # top/left strip for the (row, col) coordinate labels
 POLL_MS = 400
 
 
@@ -25,10 +26,21 @@ class LiveView:
         self.banner = tk.Label(self.root, text="...", font=("TkDefaultFont", 14, "bold"),
                                fg="white", bg="#888888", width=40)
         self.banner.pack(fill="x")
-        self.canvas = tk.Canvas(self.root, width=CELL * 7, height=CELL * 7, bg="white")
+        self._legend()
+        self.canvas = tk.Canvas(self.root, width=MARGIN + CELL * 7,
+                                height=MARGIN + CELL * 7, bg="white")
         self.canvas.pack(side="left", padx=4, pady=4)
         self.info = tk.Text(self.root, width=44, height=24, state="disabled")
         self.info.pack(side="right", fill="y")
+
+    def _legend(self) -> None:
+        strip = self._tk.Canvas(self.root, height=26, bg="white", highlightthickness=0)
+        strip.pack(side="bottom", fill="x")
+        x = 8
+        for color, label in legend_items():
+            strip.create_rectangle(x, 6, x + 16, 22, fill=color, outline="#999999")
+            text = strip.create_text(x + 22, 14, text=label, anchor="w")
+            x = strip.bbox(text)[2] + 14
 
     def _tick(self) -> None:
         try:
@@ -40,12 +52,16 @@ class LiveView:
         self.banner.configure(text=text, bg=color)
         cells = board_cells(status)
         n = status["board_size"]
-        self.canvas.configure(width=CELL * n, height=CELL * n)
+        self.canvas.configure(width=MARGIN + CELL * n, height=MARGIN + CELL * n)
         self.canvas.delete("all")
+        for i in range(n):
+            mid = MARGIN + i * CELL + CELL / 2
+            self.canvas.create_text(mid, MARGIN / 2, text=str(i), fill="#666666")
+            self.canvas.create_text(MARGIN / 2, mid, text=str(i), fill="#666666")
         for r in range(n):
             for c in range(n):
                 cell = cells[r][c]
-                x, y = c * CELL, r * CELL
+                x, y = MARGIN + c * CELL, MARGIN + r * CELL
                 self.canvas.create_rectangle(x, y, x + CELL, y + CELL,
                                              fill=cell["fill"],
                                              outline=cell["outline"],
