@@ -159,11 +159,15 @@ the first counted match.)*
 
 ![Live belief heatmap: police peer mid-match](docs/img/live_belief_heatmap.png)
 
-Police peer during sub-game 3 of a live two-peer match (`uv run p2p-pursuit peer --role
+Police peer during sub-game 5 of a live two-peer match (`uv run p2p-pursuit peer --role
 police`, thief running as a separate process). Red mass = posterior over the thief's cell
 after fusing scent + hints; **the opponent's true position is never rendered** (rule #8–9).
-Right panel: gray `LOCKED` turn banner, step counters, and the sent/received hint feed — the
-thief's contradictory hints have collapsed hint trust to 0.05, so the belief leans on scent.
+Violet cell outlines are the opponent's served **scent trace** (the 5×5 emission block is
+clearly visible), the dark-red ring marks the **belief argmax** — here the police is
+standing on it — and the side panel reports `belief peak @ (5, 5)  entropy 3.56 bits`
+alongside the sent/received hint feed (the thief's contradictory hints have collapsed hint
+trust to 0.05, so the belief leans on scent). Green `YOUR TURN` banner, (row, col)
+coordinate labels matching the logs, and the color legend strip round out the frame.
 
 ### Replay viewer — sealed log verifies clean
 
@@ -171,8 +175,10 @@ thief's contradictory hints have collapsed hint trust to 0.05, so the belief lea
 
 `uv run p2p-pursuit replay --log <match>/log_*_g01.json` — frame 35/58 of a finished
 sub-game. Every step re-hashes against its sealed commit; the green banner is the whole-log
-verdict, the per-frame `[Verified OK]` stamp is that step's re-check. Post-game replay is the
-only place both trajectories are legitimately visible.
+verdict, the per-frame `[Verified OK]` stamp is that step's re-check. The header pins the
+match identity (game id, sub-game, perspective, agreed `config_sha256` prefix); the timeline
+is scrubbed with the slider, the `|< << >> >|` buttons, arrow keys, or auto-play at
+0.5×–4×. Post-game replay is the only place both trajectories are legitimately visible.
 
 ### Replay viewer — tamper drill catches a forged record
 
