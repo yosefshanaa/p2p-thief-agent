@@ -1,0 +1,86 @@
+"""Sealed-record shapes for the commit-reveal protocol.
+
+Interpretation (documented in the README interpretation log): the per-step
+Reveal discloses only the *public projection* - hint, served scent field and
+barrier declarations. Move, positions, intent and nonce stay sealed until the
+sub-game audit; a per-step move reveal would collapse the partial-observability
+premise the whole book is built on.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from .board import Cell
+
+KIND_STEP = "step"
+KIND_CAPTURE_ANSWER = "capture_answer"
+KIND_CAPTURED_EVENT = "captured_event"
+KIND_SURVIVAL_CLAIM = "survival_claim"
+
+PRIVATE_FIELDS = ("pos_before", "pos_after", "move", "intent", "nonce")
+
+
+def step_record(
+    *,
+    role: str,
+    sub_game: int,
+    step: int,
+    pos_before: Cell,
+    pos_after: Cell,
+    move: str,
+    barrier: Cell | None,
+    intent: str,
+    hint: str,
+    scent: list[list[float]],
+) -> dict[str, Any]:
+    """The full record that gets sealed for one step (nonce added by crypto.seal)."""
+    return {
+        "kind": KIND_STEP,
+        "role": role,
+        "sub_game": sub_game,
+        "step": step,
+        "pos_before": list(pos_before),
+        "pos_after": list(pos_after),
+        "move": move,
+        "barrier": list(barrier) if barrier else None,
+        "intent": intent,
+        "hint": hint,
+        "scent": scent,
+    }
+
+
+def capture_answer_record(
+    *, role: str, sub_game: int, at_step: int, claim_cell: Cell, answer: bool
+) -> dict[str, Any]:
+    """The thief's cryptographically bound truthful answer to a Capture Claim (#21)."""
+    return {
+        "kind": KIND_CAPTURE_ANSWER,
+        "role": role,
+        "sub_game": sub_game,
+        "at_step": at_step,
+        "claim_cell": list(claim_cell),
+        "answer": answer,
+    }
+
+
+def captured_event_record(*, role: str, sub_game: int, at_step: int, cause: str) -> dict[str, Any]:
+    """Forced honest confession: barrier landed on us (#46) or we are enclosed (#47)."""
+    return {
+        "kind": KIND_CAPTURED_EVENT,
+        "role": role,
+        "sub_game": sub_game,
+        "at_step": at_step,
+        "cause": cause,
+    }
+
+
+def survival_claim_record(*, role: str, sub_game: int, steps: int) -> dict[str, Any]:
+    return {"kind": KIND_SURVIVAL_CLAIM, "role": role, "sub_game": sub_game, "steps": steps}
+
+
+def public_view(sealed: dict[str, Any], commit_hash: str) -> dict[str, Any]:
+    """The reveal payload: everything except the sealed-private fields, plus the hash."""
+    pub = {k: v for k, v in sealed.items() if k not in PRIVATE_FIELDS}
+    pub["hash"] = commit_hash
+    return pub

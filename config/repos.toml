@@ -1,0 +1,9 @@
+# Two-repo submission split (book §9.4, PLAN ADR-2) - consumed by
+# scripts/sync_repos.py. repos_root is relative to the workspace root.
+[sync]
+owner = "yosefshanaa"
+repos_root = ".."
+
+[sync.roles]
+police = "p2p-police-agent"
+thief = "p2p-thief-agent"

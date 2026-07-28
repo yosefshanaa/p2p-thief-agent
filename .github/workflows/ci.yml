@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+      - name: Sync dependencies
+        run: uv sync
+      - name: Lint (zero violations)
+        run: uv run ruff check
+      - name: Tests with coverage gate (>= 85%)
+        run: uv run pytest --cov -q

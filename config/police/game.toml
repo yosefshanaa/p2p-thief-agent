@@ -1,0 +1,28 @@
+version = "1.00"
+
+[game]
+group_name = "ahk-yosi"
+group_id = "ahk-yosi"
+sub_game_number = 1
+members = ["213314859", "325811255"]
+repos = { cop = "https://github.com/yosefshanaa/p2p-police-agent", thief = "https://github.com/yosefshanaa/p2p-thief-agent" }
+
+[network]
+my_port = 8802                                # MY FastMCP server port (police convention)
+opponent_url = "http://127.0.0.1:8801/mcp"    # the only thing I know about the opponent
+turn_timeout_seconds = 180
+
+# [strategy]  -- optional: point at YOUR brain subclass (else the shipped brain runs)
+# police_class = "p2p_pursuit.strategy.police_brain:PoliceBrain"
+
+[trash_talk]
+provider = "template"     # template (0 tokens, default) | ollama | claude_api | claude_cli
+every_n_steps = 1
+
+[llm]
+model = ""                # only used by the ollama / claude_* providers
+step_deadline_seconds = 30
+
+[email]
+recipient = "rmisegal+uoh26finalgame@gmail.com"
+mode = "draft"            # draft (dev) | send (league)

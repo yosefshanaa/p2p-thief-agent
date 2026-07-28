@@ -1,0 +1,12 @@
+credentials.json
+token.json
+.env
+*.pem
+*.key
+logs/
+results/
+__pycache__/
+.venv/
+.coverage
+.pytest_cache/
+.ruff_cache/
