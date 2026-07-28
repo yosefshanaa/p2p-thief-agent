@@ -96,6 +96,18 @@ def test_board_cells_marks_belief_argmax_ring():
     assert rings == [(0, 1)]
 
 
+def test_legend_covers_every_board_glyph():
+    import re
+
+    from p2p_pursuit.gui.view_model import legend_items
+
+    items = legend_items()
+    labels = " ".join(label for _, label in items)
+    for needed in ("belief", "peak", "scent", "barrier", "you"):
+        assert needed in labels
+    assert all(re.fullmatch(r"#[0-9a-f]{6}", color) for color, _ in items)
+
+
 def test_board_cells_local_truth_only():
     """The live board renders belief, barriers and OUR pos - opponent pos nowhere."""
     status = {"board_size": 3, "belief": [[0.1] * 3 for _ in range(3)],
