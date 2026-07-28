@@ -6,12 +6,12 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 
 ## 0. Project bootstrap
 - [x] Create workspace repo + `uv init` (Python 3.13), Ruff, pytest, coverage gate ≥85%, file-length lint
-- [x] Create the two GitHub repos `p2p-police-agent` / `p2p-thief-agent` — created 2026-07-28 as **private** under `yosefshanaa`, first sync pushed, CI green in both; *final visibility (flip public vs invite `rmisegal@gmail.com`) is still the partner decision below*
+- [x] Create the two GitHub repos `p2p-police-agent` / `p2p-thief-agent` — created 2026-07-28 under `yosefshanaa`, CI green in both; flipped **PUBLIC** 2026-07-29 per team decision
 - [x] `.gitignore` **first commit**: `credentials.json`, `token.json`, `.env`, `*.pem`, `*.key`, `logs/`, `results/`
 - [x] Two-repo sync script `scripts/sync_repos.py` (tracked-files-only mirror → both repos, ROLE marker = per-repo `peer` default, README role banner + sister link, baked-in secrets-history check; config in `config/repos.toml`)
 - [x] CI (lint + tests) on both repos
 - [x] Copy this docs set (PRD, PRD/, PLAN, TODO, GAP_ANALYSIS) into both repos (mandatory content, rule #50)
-- [ ] Choose 8-char group code (no spaces) with partner; record here: `________`
+- [x] Group code (8 chars, no spaces), confirmed by the team 2026-07-29: **`ahk-yosi`** — goes into the `v1.0-submission` tag message on both repos and both members' Moodle forms
 - [x] Skim reference repo `docs/STRATEGY.md` + sample artifacts; extract interop contract notes
 - [x] Audited against `software_submission_guidelines-V3` (the grading rubric): SDK facade added, Gatekeeper FIFO overflow queue, versions to 1.00, extended Ruff profile (N/C4/SIM), `.env-example`, `docs/PROMPT_BOOK.md`, `docs/COST_ANALYSIS.md`, `notebooks/strategy_sweep.py`, README as full user manual, PLAN C4/state/sequence diagrams, versioned rate_limits.json + logging_config.json
 - [x] Start the README **interpretation log** (academic-freedom decisions: first mover = thief; capture-claim query semantics; + anything found later)
@@ -112,8 +112,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 | Item | Owner | Status |
 |---|---|---|
 | Partner availability + 2+ opposing teams | both | ☐ |
-| 8-char group code | both | ☐ |
+| 8-char group code: **`ahk-yosi`** (decided 2026-07-29) | both | ☑ |
 | ngrok/Localtonet account(s) | ops | ☐ |
 | Google OAuth: consent completed 2026-07-29, `[email] mode="send"` in both configs, verified by a real send to the user's own address (Gmail id `19faa992daa0516b`). *Testing-mode caveat: refresh token dies after ~7 idle days - re-run `authorize` if matches slip past ~2026-08-04* | user | ☑ |
-| Decision: repo visibility (repos exist as private; flip public **or** invite `rmisegal@gmail.com`) | both | ◐ |
+| Decision: repo visibility — **PUBLIC** (both repos flipped 2026-07-29; grader needs no invite) | both | ☑ |
 | Optional: Ollama install / Anthropic key for banter | ops | ☐ |
