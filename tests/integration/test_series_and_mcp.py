@@ -85,7 +85,10 @@ def test_mcp_http_roundtrip_full_sub_game():
                for r in ("thief", "police")]
     for t in threads:
         t.start()
-    deadline = time.time() + 90
+    # Hang guard, not a performance assertion: a loaded WSL host (live match +
+    # capture jobs sharing the box) was observed to need >90s for the 5-move
+    # roundtrip that native CI finishes in seconds.
+    deadline = time.time() + 180
     while time.time() < deadline and any(
             services[r].engine.end is None for r in services):
         time.sleep(0.2)
