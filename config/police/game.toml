@@ -25,4 +25,4 @@ step_deadline_seconds = 30
 
 [email]
 recipient = "rmisegal+uoh26finalgame@gmail.com"
-mode = "draft"            # draft (dev) | send (league)
+mode = "send"            # draft (dev) | send (league)

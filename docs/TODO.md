@@ -114,6 +114,6 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 | Partner availability + 2+ opposing teams | both | ☐ |
 | 8-char group code | both | ☐ |
 | ngrok/Localtonet account(s) | ops | ☐ |
-| Google OAuth: `credentials.json` wired from HW6 ✓; **run `uv run p2p-pursuit authorize` once** (HW6 refresh token expired - Testing-mode 7-day policy) | user | ◐ |
+| Google OAuth: consent completed 2026-07-29, `[email] mode="send"` in both configs, verified by a real send to the user's own address (Gmail id `19faa992daa0516b`). *Testing-mode caveat: refresh token dies after ~7 idle days - re-run `authorize` if matches slip past ~2026-08-04* | user | ☑ |
 | Decision: repo visibility (repos exist as private; flip public **or** invite `rmisegal@gmail.com`) | both | ◐ |
 | Optional: Ollama install / Anthropic key for banter | ops | ☐ |
