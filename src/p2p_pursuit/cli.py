@@ -136,9 +136,11 @@ def cmd_authorize(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from .shared.env import load_dotenv
     from .shared.logging_setup import configure
 
     configure()
+    load_dotenv()  # git-ignored local secrets; exported vars always win
     parser = argparse.ArgumentParser(prog="p2p-pursuit")
     sub = parser.add_subparsers(dest="command", required=True)
 

@@ -334,6 +334,14 @@ Decisions where the book under-specifies or contradicts itself — documented as
 5. **τ is clamped to [0, 0.9]** (the book's stated range) since additive re-emission would
    otherwise exceed the focal cap; decay ticks are applied per own-step (equivalent to
    full-turn decay under strict alternation, and exactly reproducible in the audit).
+6. **A fifth banter provider (`openai`) extends the book's table 21** (template / Ollama /
+   `claude_api` / `claude_cli`). The table enumerates providers the book anticipated, not a
+   closed set: rule #25 constrains *what* the LLM may do (never decide a move — banter only),
+   not which vendor generates the text. The provider is therefore additive and rule-compliant,
+   and every provider shares one contract — a hard word cap, a step deadline, metered tokens,
+   and an unconditional fall back to the zero-token template, so no backend can stall a turn
+   (unit-tested for all five). API keys live only in a git-ignored `.env`, never in `config/`,
+   because config files are exchanged with the opponent and hashed into `config_sha256`.
 
 ## 14. Secrets & Gmail
 

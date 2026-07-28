@@ -75,6 +75,46 @@ class ClaudeApiTalk:
             return self._fallback.produce(region, map_area, max_words, rng)
 
 
+class OpenAiTalk:
+    """OpenAI (or any OpenAI-compatible gateway via ``base_url``).
+
+    The key is read from OPENAI_API_KEY in the environment - never from
+    config/, never from an argument, so it cannot reach a repo or a sealed
+    record. Any failure degrades to the zero-token template.
+    """
+
+    name = "openai"
+
+    def __init__(self, model: str, deadline: int = 30, base_url: str = "") -> None:
+        self.model = model or "gpt-4o-mini"
+        self.deadline, self.base_url = deadline, base_url
+        self._fallback = TemplateTalk()
+
+    def _complete(self, prompt: str):
+        from openai import OpenAI
+
+        client = OpenAI(timeout=self.deadline, **({"base_url": self.base_url}
+                                                  if self.base_url else {}))
+        return client.chat.completions.create(
+            model=self.model, max_tokens=60,
+            messages=[{"role": "user", "content": prompt}])
+
+    def produce(self, region: str, map_area: str, max_words: int,
+                rng: random.Random) -> tuple[str, int]:
+        try:
+            response = self._complete(PROMPT.format(
+                role="game", area=map_area or "an old city",
+                max_words=max_words, region=region))
+            usage = response.usage
+            tokens = usage.prompt_tokens + usage.completion_tokens
+            text = (response.choices[0].message.content or "").strip()
+            if not text:
+                raise ValueError("empty completion")
+            return clip_words(text, max_words), tokens
+        except Exception:
+            return self._fallback.produce(region, map_area, max_words, rng)
+
+
 class ClaudeCliTalk:
     name = "claude_cli"
 
@@ -101,6 +141,8 @@ def make_talk_provider(provider: str, model: str, deadline: int, base_url: str =
     """Factory keyed by the private ``[trash_talk] provider`` setting."""
     if provider == "ollama":
         return OllamaTalk(model, deadline, base_url)
+    if provider == "openai":
+        return OpenAiTalk(model, deadline, base_url)
     if provider == "claude_api":
         return ClaudeApiTalk(model, deadline)
     if provider == "claude_cli":
