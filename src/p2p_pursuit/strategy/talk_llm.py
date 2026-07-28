@@ -7,6 +7,7 @@ never stall or influence a turn. Token usage is metered for the budget seal.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import random
 import subprocess
@@ -84,19 +85,55 @@ class OpenAiTalk:
     """
 
     name = "openai"
+    # Reasoning models spend this budget on hidden reasoning before emitting
+    # any text: gpt-5.6-luna returns an EMPTY message at 60 and needs ~400.
+    # The 15-word cap is enforced by clip_words, not by starving the budget.
+    COMPLETION_BUDGET = 400
 
     def __init__(self, model: str, deadline: int = 30, base_url: str = "") -> None:
-        self.model = model or "gpt-4o-mini"
+        self.model = model or "gpt-5.4"
         self.deadline, self.base_url = deadline, base_url
+        # Banter may never consume the whole turn budget: cap one call at a
+        # third of the deadline so a slow API still leaves room to move.
+        self.call_timeout = max(5, deadline // 3)
         self._fallback = TemplateTalk()
+        self._client = self._build_client()
+
+    def _build_client(self):
+        """Import, construct and warm once at peer startup - never in a turn.
+
+        Three costs measured on a cold WSL filesystem, all of which would
+        blow the 30s turn deadline if paid inside the turn loop: `import
+        openai` ~31s, client construction, and ~22s on the first request
+        (TLS + connection setup). max_retries=0 because we have our own
+        template fallback - SDK retries would multiply the timeout by 3 and
+        turn a slow call into a forfeit. Failure is non-fatal: the client
+        stays None and every hint comes from the template.
+        """
+        try:
+            from openai import OpenAI
+
+            client = OpenAI(timeout=self.call_timeout, max_retries=0,
+                            **({"base_url": self.base_url} if self.base_url else {}))
+        except Exception:  # noqa: BLE001 - missing package/key must not crash startup
+            return None
+        # Best-effort connection warm-up; result deliberately discarded and
+        # any failure ignored - warming is an optimisation, never a gate.
+        with contextlib.suppress(Exception):
+            client.chat.completions.create(
+                model=self.model, max_completion_tokens=self.COMPLETION_BUDGET,
+                messages=[{"role": "user", "content": "Say OK."}])
+        return client
 
     def _complete(self, prompt: str):
-        from openai import OpenAI
-
-        client = OpenAI(timeout=self.deadline, **({"base_url": self.base_url}
-                                                  if self.base_url else {}))
-        return client.chat.completions.create(
-            model=self.model, max_tokens=60,
+        if self._client is None:
+            raise RuntimeError("openai client unavailable; using template")
+        # max_completion_tokens, NOT max_tokens: the gpt-5.x family rejects
+        # max_tokens outright, and that error would be swallowed by the
+        # fallback below - the provider would look fine while silently
+        # never calling the model. Older models accept it too (verified).
+        return self._client.chat.completions.create(
+            model=self.model, max_completion_tokens=self.COMPLETION_BUDGET,
             messages=[{"role": "user", "content": prompt}])
 
     def produce(self, region: str, map_area: str, max_words: int,

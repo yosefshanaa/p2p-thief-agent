@@ -95,3 +95,60 @@ def test_every_provider_degrades_to_a_legal_hint(monkeypatch):
         text, tokens = provider.produce("west", "New York", 15, random.Random(7))
         assert text and len(text.split()) <= 15, provider
         assert tokens == 0, provider
+
+
+def test_openai_sends_max_completion_tokens_not_max_tokens():
+    """Regression guard for a silent-failure bug.
+
+    The gpt-5.x family rejects `max_tokens` ("Unsupported parameter"), and
+    produce() swallows every exception into the template fallback - so the
+    wrong keyword makes the provider look healthy while never once calling
+    the model (reports would show 0 tokens forever). Verified live against
+    gpt-5.4 and gpt-5.6-luna.
+    """
+    sent = {}
+
+    class _Completions:
+        def create(self, **kwargs):
+            sent.update(kwargs)
+            raise RuntimeError("stop after capturing the request shape")
+
+    class _FakeClient:
+        chat = type("Chat", (), {"completions": _Completions()})()
+
+    provider = OpenAiTalk("gpt-5.4", deadline=5)
+    provider._complete = lambda prompt: _FakeClient().chat.completions.create(
+        model=provider.model, max_completion_tokens=provider.COMPLETION_BUDGET,
+        messages=[{"role": "user", "content": prompt}])
+    provider.produce("north", "New York", 15, random.Random(1))
+
+    assert "max_completion_tokens" in sent and "max_tokens" not in sent
+    assert sent["max_completion_tokens"] >= 400, "small budget -> empty reasoning-model text"
+    assert sent["model"] == "gpt-5.4"
+
+
+def test_openai_default_model_is_a_verified_id():
+    assert OpenAiTalk("").model == "gpt-5.4"
+
+
+def test_openai_client_is_built_at_startup_not_per_turn():
+    """`import openai` measured ~31s cold on WSL - longer than the 30s turn
+    deadline. It must be paid once at construction, never inside produce()."""
+    provider = OpenAiTalk("gpt-5.4", deadline=5)
+    assert hasattr(provider, "_client"), "client must be resolved in __init__"
+    calls = []
+    provider._build_client = lambda: calls.append(1)
+    for _ in range(3):
+        provider.produce("north", "New York", 15, random.Random(1))
+    assert calls == [], "produce() must never rebuild the client"
+
+
+def test_openai_call_timeout_is_a_fraction_of_the_turn_deadline():
+    """One banter call must not be able to eat the whole turn budget, and
+    SDK retries must be off (they would multiply the timeout into a stall)."""
+    assert OpenAiTalk("m", deadline=30).call_timeout == 10
+    assert OpenAiTalk("m", deadline=3).call_timeout == 5  # floor for tiny deadlines
+    import inspect
+
+    source = inspect.getsource(OpenAiTalk._build_client)
+    assert "max_retries=0" in source
