@@ -6,7 +6,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 
 ## 0. Project bootstrap
 - [x] Create workspace repo + `uv init` (Python 3.13), Ruff, pytest, coverage gate ≥85%, file-length lint
-- [ ] Create the two GitHub repos `p2p-police-agent` / `p2p-thief-agent` (private, shared with `rmisegal@gmail.com`) — or public; decide with partner
+- [x] Create the two GitHub repos `p2p-police-agent` / `p2p-thief-agent` — created 2026-07-28 as **private** under `yosefshanaa`, first sync pushed, CI green in both; *final visibility (flip public vs invite `rmisegal@gmail.com`) is still the partner decision below*
 - [x] `.gitignore` **first commit**: `credentials.json`, `token.json`, `.env`, `*.pem`, `*.key`, `logs/`, `results/`
 - [x] Two-repo sync script `scripts/sync_repos.py` (tracked-files-only mirror → both repos, ROLE marker = per-repo `peer` default, README role banner + sister link, baked-in secrets-history check; config in `config/repos.toml`)
 - [x] CI (lint + tests) on both repos
@@ -98,10 +98,10 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [ ] Evidence kit per match: heatmap screenshot, `Verified OK` screenshot, terminal output, Gmail id
 
 ## 9. Submission (book ch. 9/11 + Appendix C)
-- [~] Academic README — 5 mandatory components **written** (Dec-POMDP formalization §1 · FastMCP orchestration dilemmas §2 · strategies §3 → `docs/STRATEGY.md` · RL n/a note §4 · screenshots section §5 with tracked `docs/img/` paths); **still pending**: drop in the actual screenshots, fill the sister-repo cross-links, copy into both repos (#49)
-- [ ] Both repos contain: README, `/config` (incl. every match's config), PRD files, PLAN, TODO (#50)
+- [~] Academic README — 5 mandatory components **written** (Dec-POMDP formalization §1 · FastMCP orchestration dilemmas §2 · strategies §3 → `docs/STRATEGY.md` · RL n/a note §4 · screenshots §5 **embedded 2026-07-28**: live belief heatmap + replay `Verified OK` + tamper drill, captured from a real localhost two-peer match); sister cross-links filled; synced to both repos; **still pending**: `league_match_terminal.png` during the first counted match (#49)
+- [x] Both repos contain: README, `/config`, PRD files, PLAN, TODO (#50) — synced by `scripts/sync_repos.py`; per-match configs auto-archive under `matches/` as league play happens
 - [ ] Per-match commit hashes recorded in declarations + result files
-- [ ] Verify no secrets in either repo **history**; `.gitignore` present (#39–40)
+- [x] Verify no secrets in either repo **history**; `.gitignore` present (#39–40) — verified 2026-07-28 on both fresh repos; the check is also baked into every `sync_repos.py --push`
 - [ ] Annotated tag on both repos: `git tag -a v1.0-submission -m "Final submission: Police-Thief P2P, group <code>"` + push (#41)
 - [ ] Moodle: download form, fill (no field changes), save as PDF; **each member submits separately**; 8-char group code (#43–45)
 - [ ] Self-grade = code quality only, not match results (#55)
@@ -114,5 +114,5 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 | 8-char group code | both | ☐ |
 | ngrok/Localtonet account(s) | ops | ☐ |
 | Google OAuth: `credentials.json` wired from HW6 ✓; **run `uv run p2p-pursuit authorize` once** (HW6 refresh token expired - Testing-mode 7-day policy) | user | ◐ |
-| Decision: repo visibility (public vs private-shared) | both | ☐ |
+| Decision: repo visibility (repos exist as private; flip public **or** invite `rmisegal@gmail.com`) | both | ◐ |
 | Optional: Ollama install / Anthropic key for banter | ops | ☐ |

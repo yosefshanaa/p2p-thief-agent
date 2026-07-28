@@ -151,14 +151,42 @@ sub-game-level *trust coefficient* does adapt online, but it is a Bayesian updat
 
 ## 5. Screenshots
 
-*(Mandatory evidence — captured on a display-equipped machine during the live drill / league
-matches; the paths below are tracked and the images land here before the submission tag.)*
+*(Mandatory evidence. The first three were captured live on this codebase — a real two-peer
+match over localhost MCP and the replay/tamper drill; the league terminal shot lands during
+the first counted match.)*
+
+### Live GUI — Bayesian belief heatmap (local truth only)
+
+![Live belief heatmap: police peer mid-match](docs/img/live_belief_heatmap.png)
+
+Police peer during sub-game 3 of a live two-peer match (`uv run p2p-pursuit peer --role
+police`, thief running as a separate process). Red mass = posterior over the thief's cell
+after fusing scent + hints; **the opponent's true position is never rendered** (rule #8–9).
+Right panel: gray `LOCKED` turn banner, step counters, and the sent/received hint feed — the
+thief's contradictory hints have collapsed hint trust to 0.05, so the belief leans on scent.
+
+### Replay viewer — sealed log verifies clean
+
+![Replay viewer with green Verified OK stamp](docs/img/replay_verified_ok.png)
+
+`uv run p2p-pursuit replay --log <match>/log_*_g01.json` — frame 35/58 of a finished
+sub-game. Every step re-hashes against its sealed commit; the green banner is the whole-log
+verdict, the per-frame `[Verified OK]` stamp is that step's re-check. Post-game replay is the
+only place both trajectories are legitimately visible.
+
+### Replay viewer — tamper drill catches a forged record
+
+![Replay viewer with red TAMPERED banner](docs/img/replay_tampered.png)
+
+Same log, one field doctored: the thief's step-10 `pos_after` was forged to the far corner.
+The SHA-256 re-hash mismatches its commit at frame 19 — red `TAMPERED` banner, per-frame
+`[TAMPERED]` stamp, and the headless run exits with code 3 (`"verdict": "TAMPERED"`).
+A forged match is void: technical loss 0/0, no appeal (rule #20).
+
+### Pending until the first counted match
 
 | Evidence | File | How it is captured |
 |---|---|---|
-| Live GUI — belief heatmap, scent view, hint feed, `YOUR TURN` banner | `docs/img/live_belief_heatmap.png` | `uv run p2p-pursuit peer --role police` during a match |
-| Replay viewer — green **`Verified OK`** stamp | `docs/img/replay_verified_ok.png` | `uv run p2p-pursuit replay --log matches/<id>/log_*_g01.json` |
-| Replay viewer — red **`TAMPERED`** banner (tamper drill) | `docs/img/replay_tampered.png` | same, against a doctored log (exit code 3) |
 | League match terminal + Gmail send id | `docs/img/league_match_terminal.png` | counted-match run |
 
 ## 6. Status

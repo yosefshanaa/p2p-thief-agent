@@ -83,6 +83,19 @@ non-negotiable guardrails (secrets, lecturer-address, quality gates, game integr
 dependency-ordered task list with acceptance criteria, and the human-only steps. Pasting it
 into a fresh session resumes the project without re-derivation.
 
+## 7. Executing the continuation prompt (2026-07-28)
+
+Prompt: the full text of [`CONTINUATION_PROMPT.md`](CONTINUATION_PROMPT.md), pasted verbatim
+into a fresh session. One session then delivered, unattended: the two-repo sync script
+(`scripts/sync_repos.py`, TDD, tracked-files-only mirror so secrets are excluded *by
+construction*, ROLE-marker role default wired into the CLI), creation of both submission
+repos with green CI and verified-clean secrets history, and three of the four mandatory
+README screenshots — captured from a **real** localhost two-peer match plus a genuine tamper
+drill (forged `pos_after` → `TAMPERED` at the exact doctored frame, exit code 3). Notable
+technique: under WSLg the X root window is not grabbable (rootless XWayland), so the capture
+reads the Tk client window's own backing store via `python-xlib` `GetImage` — and the replay
+shots drive the real `ReplayView` widget to a chosen frame before capturing it.
+
 ## Lessons that transfer
 
 - **PRD-before-code works with AI agents**: every stage that had a written gate shipped green;
