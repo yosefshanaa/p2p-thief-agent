@@ -14,6 +14,7 @@ completion capped by the 15-word hint ≈ 25 output tokens.
 |---|---|---|---|---|
 | `template` (default) | in-process | **0** | **$0** | none — offline |
 | `ollama` | localhost:11434 | 0 API tokens | $0 (local compute) | none |
+| `openai` (small chat model) | OpenAI API (or compatible gateway via `base_url`) | ≈ 25k in + 10.5k out | cents/series on a small model — verify the rate for the exact model id you set | account RPM; guarded by `step_deadline_seconds` + template fallback |
 | `claude_api` (Haiku 4.5) | Anthropic API | ≈ 25k in + 10.5k out | ≈ **$0.08** (at $1/M in, $5/M out) | account RPM; guarded by `step_deadline_seconds` + template fallback |
 | `claude_cli` | Claude Code subscription | ≈ 35k equivalent | subscription quota | CLI startup latency ⇒ highest stall risk; fallback covers |
 

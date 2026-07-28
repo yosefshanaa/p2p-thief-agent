@@ -10,7 +10,7 @@ dependencies = [
 
 [project.optional-dependencies]
 gmail = ["google-api-python-client>=2", "google-auth-oauthlib>=1"]
-llm = ["anthropic>=0.40"]
+llm = ["anthropic>=0.40", "openai>=1.40"]
 analysis = ["matplotlib>=3.9"]
 
 [dependency-groups]
@@ -43,7 +43,6 @@ omit = [
     "*/gui/*",
     "*/infra/mcp_server.py",
     "*/infra/mcp_client.py",
-    "*/strategy/talk_llm.py",
     "*/cli.py",
     "*/__main__.py",
 ]

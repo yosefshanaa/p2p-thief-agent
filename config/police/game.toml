@@ -16,14 +16,16 @@ turn_timeout_seconds = 180
 # police_class = "p2p_pursuit.strategy.police_brain:PoliceBrain"
 
 [trash_talk]
-provider = "template"     # template (0 tokens, default) | ollama | claude_api | claude_cli
+provider = "template"     # template (0 tokens, default) | openai | ollama | claude_api | claude_cli
 every_n_steps = 1
 
 [llm]
-model = ""                # only used by the ollama / claude_* providers
-# Ollama endpoint. Under WSL a Windows-side Ollama is NOT on localhost -
-# point this at the host IP (see `grep nameserver /etc/resolv.conf`).
-base_url = "http://localhost:11434"
+model = ""                # provider model id (e.g. openai: a small chat model)
+# Endpoint override. ollama: default http://localhost:11434 (under WSL a
+# Windows-side Ollama is NOT on localhost - use the host IP from
+# `grep nameserver /etc/resolv.conf`). openai: blank = api.openai.com,
+# or set an OpenAI-compatible gateway. API KEYS NEVER GO HERE - .env only.
+base_url = ""
 step_deadline_seconds = 30
 
 [email]

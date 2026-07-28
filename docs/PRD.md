@@ -53,7 +53,7 @@ resilient architecture — plus **our strategy** (the move policy is "the grade'
 | Thief peer | Our process #2 (fully separate process, separate config dir, separate repo); wins by surviving |
 | Opponent team's peers | Unknown implementation; only contract: MCP tools + shared constitution + book protocol |
 | Lecturer | Receives Gmail JSON reports (`rmisegal+uoh26finalgame@gmail.com`); accesses repos (`rmisegal@gmail.com`); replays logs |
-| LLM provider (optional) | template (default, 0 tokens) / Ollama local / `claude_api` (small cloud model, e.g. Haiku) / `claude_cli` |
+| LLM provider (optional) | template (default, 0 tokens) / Ollama local / `openai` / `claude_api` (small cloud model, e.g. Haiku) / `claude_cli` — keys from `.env` only, never `config/` |
 | Tunnel provider | ngrok or Localtonet — public URL for league play (mandatory) |
 
 Runtime: Python 3.13+, `uv`-managed, Windows/WSL2 dev machines; two terminals (one per peer) in
