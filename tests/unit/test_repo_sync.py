@@ -94,3 +94,18 @@ def test_repo_default_role_reads_marker(tmp_path: Path) -> None:
     assert repo_default_role(tmp_path) == "police"
     (tmp_path / "ROLE").write_text("junk\n", encoding="utf-8")
     assert repo_default_role(tmp_path) is None
+
+
+def test_ollama_base_url_is_configurable_not_hardcoded(tmp_path: Path) -> None:
+    """The Ollama endpoint must come from config: under WSL a Windows-side
+    Ollama is not on localhost (guardrail: tunables in config/)."""
+    from p2p_pursuit.shared.config import load_peer
+    from p2p_pursuit.strategy.talk_llm import make_talk_provider
+
+    toml = tmp_path / "game.toml"
+    toml.write_text('[llm]\nbase_url = "http://10.255.255.254:11434"\n', encoding="utf-8")
+    assert load_peer(toml).llm_base_url == "http://10.255.255.254:11434"
+
+    provider = make_talk_provider("ollama", "llama3.2", 30, "http://host:11434")
+    assert provider.url == "http://host:11434/api/generate"
+    assert make_talk_provider("ollama", "", 30, "").url.startswith("http://localhost:11434")

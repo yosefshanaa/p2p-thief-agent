@@ -51,11 +51,16 @@ def test_runtime_pair_full_series(tmp_path):
         log = json.loads(next(rt.out_dir.glob("log_*_g01.json")).read_text())
         assert log["audit"]["mine_of_them"]["verdict"] == "Verified OK"
 
-    # gatekeeper-guarded dry-run report from both sides independently (#35)
+    # gatekeeper-guarded dry-run report from both sides independently (#35).
+    # The transport is injected, so nothing leaves the machine whatever the
+    # configured mode is; assert the configured mode reaches the transport
+    # rather than pinning draft/send, which toggles for league play.
     for rt, res in ((police, p), (thief, t)):
         transport = DryRunTransport()
         receipt = rt.report(res, transport)
-        assert receipt["delivered"] and transport.sent[0]["mode"] == "draft"
+        assert receipt["delivered"]
+        assert transport.sent[0]["mode"] == rt.peer.email_mode
+        assert rt.peer.email_mode in {"draft", "send"}
 
 
 def test_runtime_refuses_on_constitution_mismatch(tmp_path):

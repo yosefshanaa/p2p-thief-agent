@@ -22,11 +22,15 @@ PROMPT = (
 )
 
 
+DEFAULT_OLLAMA = "http://localhost:11434"
+
+
 class OllamaTalk:
     name = "ollama"
 
-    def __init__(self, model: str, deadline: int = 30) -> None:
+    def __init__(self, model: str, deadline: int = 30, base_url: str = "") -> None:
         self.model, self.deadline = model or "llama3.2", deadline
+        self.url = f"{(base_url or DEFAULT_OLLAMA).rstrip('/')}/api/generate"
         self._fallback = TemplateTalk()
 
     def produce(self, region: str, map_area: str, max_words: int,
@@ -38,8 +42,7 @@ class OllamaTalk:
                                         max_words=max_words, region=region),
             }).encode()
             req = urllib.request.Request(
-                "http://localhost:11434/api/generate", data=body,
-                headers={"Content-Type": "application/json"})
+                self.url, data=body, headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=self.deadline) as resp:
                 text = json.loads(resp.read())["response"].strip()
             return clip_words(text, max_words), 0  # local model: zero API tokens
@@ -94,10 +97,10 @@ class ClaudeCliTalk:
             return self._fallback.produce(region, map_area, max_words, rng)
 
 
-def make_talk_provider(provider: str, model: str, deadline: int):
+def make_talk_provider(provider: str, model: str, deadline: int, base_url: str = ""):
     """Factory keyed by the private ``[trash_talk] provider`` setting."""
     if provider == "ollama":
-        return OllamaTalk(model, deadline)
+        return OllamaTalk(model, deadline, base_url)
     if provider == "claude_api":
         return ClaudeApiTalk(model, deadline)
     if provider == "claude_cli":

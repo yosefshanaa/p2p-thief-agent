@@ -21,6 +21,9 @@ every_n_steps = 1
 
 [llm]
 model = ""                # only used by the ollama / claude_* providers
+# Ollama endpoint. Under WSL a Windows-side Ollama is NOT on localhost -
+# point this at the host IP (see `grep nameserver /etc/resolv.conf`).
+base_url = "http://localhost:11434"
 step_deadline_seconds = 30
 
 [email]

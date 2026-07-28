@@ -36,7 +36,8 @@ class PeerRuntime:
         self.role, self.counted = role, counted
         self.shared, self.peer = load_role(config_dir)
         talk = make_talk_provider(self.peer.trash_talk_provider, self.peer.llm_model,
-                                  self.peer.llm_step_deadline_seconds)
+                                  self.peer.llm_step_deadline_seconds,
+                                  self.peer.llm_base_url)
         self.engine = TurnEngine(role, self.shared, self.peer, talk=talk, seed=seed)
         self.num_games = num_games or self.shared.num_games
         self.game_uid = new_game_uid()
