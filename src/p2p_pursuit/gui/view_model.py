@@ -6,6 +6,7 @@ testable; the Tk shell only draws what this module computes.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 
@@ -62,6 +63,38 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
             scented = cell["text"] == "" and scent[r][c] > SCENT_VISIBLE
             cell["outline"] = scent_hex(scent[r][c]) if scented else GRID_LINE
             cell["width"] = 3 if scented else 1
+            cell["ring"] = False
             row.append(cell)
         cells.append(row)
+    peak_at, _ = belief_stats(belief)
+    if belief[peak_at[0]][peak_at[1]] > 0:
+        cells[peak_at[0]][peak_at[1]]["ring"] = True
     return cells
+
+
+def belief_stats(belief: list[list[float]]) -> tuple[tuple[int, int], float]:
+    """(argmax cell, Shannon entropy in bits) of the belief heatmap - the two
+    numbers the strategy actually steers by (PRD-4), surfaced to the pilot."""
+    flat = [(v, (r, c)) for r, row in enumerate(belief) for c, v in enumerate(row)]
+    peak_at = max(flat, key=lambda t: t[0])[1]
+    total = sum(v for v, _ in flat)
+    if total <= 0:
+        return peak_at, 0.0
+    entropy = -sum((v / total) * math.log2(v / total) for v, _ in flat if v > 0)
+    return peak_at, entropy
+
+
+def info_lines(status: dict[str, Any]) -> list[str]:
+    """The side panel's full text, composed away from tkinter so it is
+    unit-testable (and identical between live view and future frontends)."""
+    peak_at, entropy = belief_stats(status["belief"])
+    lines = [f"role: {status['role']}   sub-game: {status['sub_game']}",
+             f"phase: {status['phase']}",
+             f"my steps: {status['my_steps']}   opp steps: {status['opp_steps']}",
+             f"barriers used: {status['barriers_used']}",
+             f"hint trust: {status['trust']:.2f}   tokens: {status['tokens_used']}",
+             f"belief peak @ {peak_at}   entropy {entropy:.2f} bits", ""]
+    lines += [f"[{h['dir']}] {h['hint']}" for h in status.get("hints", [])]
+    if status.get("end"):
+        lines += ["", f"END: {status['end']['ending']}"]
+    return lines

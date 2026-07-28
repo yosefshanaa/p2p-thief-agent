@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .view_model import banner, board_cells
+from .view_model import banner, board_cells, info_lines
 
 CELL = 56
 POLL_MS = 400
@@ -53,14 +53,10 @@ class LiveView:
                 if cell["text"]:
                     self.canvas.create_text(x + CELL / 2, y + CELL / 2, text=cell["text"],
                                             fill="white", font=("TkDefaultFont", 16, "bold"))
-        lines = [f"role: {status['role']}   sub-game: {status['sub_game']}",
-                 f"phase: {status['phase']}",
-                 f"my steps: {status['my_steps']}   opp steps: {status['opp_steps']}",
-                 f"barriers used: {status['barriers_used']}",
-                 f"hint trust: {status['trust']:.2f}   tokens: {status['tokens_used']}", ""]
-        lines += [f"[{h['dir']}] {h['hint']}" for h in status.get("hints", [])]
-        if status.get("end"):
-            lines += ["", f"END: {status['end']}"]
+                if cell["ring"]:
+                    self.canvas.create_oval(x + 6, y + 6, x + CELL - 6, y + CELL - 6,
+                                            outline="#aa1111", width=2)
+        lines = info_lines(status)
         self.info.configure(state="normal")
         self.info.delete("1.0", "end")
         self.info.insert("1.0", "\n".join(lines))
