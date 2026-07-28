@@ -16,11 +16,12 @@ POLL_MS = 400
 
 
 class LiveView:
-    def __init__(self, status_fn: Any, title: str) -> None:
+    def __init__(self, status_fn: Any, title: str, role: str = "police") -> None:
         import tkinter as tk
 
         self._tk = tk
         self.status_fn = status_fn
+        self.role = role
         self.root = tk.Tk()
         self.root.title(title)
         self.banner = tk.Label(self.root, text="...", font=("TkDefaultFont", 14, "bold"),
@@ -37,7 +38,7 @@ class LiveView:
         strip = self._tk.Canvas(self.root, height=26, bg="white", highlightthickness=0)
         strip.pack(side="bottom", fill="x")
         x = 8
-        for color, label in legend_items():
+        for color, label in legend_items(self.role):
             strip.create_rectangle(x, 6, x + 16, 22, fill=color, outline="#999999")
             text = strip.create_text(x + 22, 14, text=label, anchor="w")
             x = strip.bbox(text)[2] + 14

@@ -108,6 +108,23 @@ def test_legend_covers_every_board_glyph():
     assert all(re.fullmatch(r"#[0-9a-f]{6}", color) for color, _ in items)
 
 
+def test_end_banner_color_reflects_outcome_for_this_role():
+    end = {"ending": "capture", "winner": "police"}
+    assert banner({"end": end, "role": "police"})[1] == "#22aa44"  # we won
+    assert banner({"end": end, "role": "thief"})[1] == "#cc4444"   # we lost
+    tie = {"ending": "tie", "winner": None}
+    assert banner({"end": tie, "role": "police"})[1] == "#4488ff"  # neutral
+
+
+def test_own_cell_uses_role_accent():
+    from p2p_pursuit.gui.view_model import ROLE_ACCENT, board_cells
+
+    status = {"board_size": 2, "belief": [[0.0] * 2 for _ in range(2)],
+              "barriers": [], "own_pos": [0, 0], "role": "thief"}
+    assert board_cells(status)[0][0]["fill"] == ROLE_ACCENT["thief"]
+    assert ROLE_ACCENT["police"] != ROLE_ACCENT["thief"]
+
+
 def test_board_cells_local_truth_only():
     """The live board renders belief, barriers and OUR pos - opponent pos nowhere."""
     status = {"board_size": 3, "belief": [[0.1] * 3 for _ in range(3)],

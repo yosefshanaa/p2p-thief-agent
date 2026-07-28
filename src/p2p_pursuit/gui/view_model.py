@@ -26,11 +26,19 @@ def scent_hex(value: float) -> str:
     return f"#{g:02x}{g:02x}ff"
 
 
+ROLE_ACCENT = {"police": "#2266dd", "thief": "#dd6622"}
+
+
 def banner(status: dict[str, Any]) -> tuple[str, str]:
-    """(text, color): green when it is our turn, gray once our commit is out."""
+    """(text, color): green when it is our turn, gray once our commit is out;
+    at sub-game end the color states the outcome from OUR side of the board."""
     if status.get("end"):
         end = status["end"]
-        return f"{end['ending'].upper()} - winner: {end['winner']}", "#4488ff"
+        text = f"{end['ending'].upper()} - winner: {end['winner']}"
+        role, winner = status.get("role"), end.get("winner")
+        if role and winner in ROLE_ACCENT:
+            return text, "#22aa44" if winner == role else "#cc4444"
+        return text, "#4488ff"
     if status.get("my_turn"):
         return "YOUR TURN", "#22aa44"
     return "LOCKED", "#888888"
@@ -57,7 +65,8 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
             if (r, c) in barriers:
                 cell = {"fill": "#222222", "text": "#"}
             elif (r, c) == own:
-                cell = {"fill": "#2266dd", "text": status["role"][0].upper()}
+                cell = {"fill": ROLE_ACCENT.get(status["role"], "#2266dd"),
+                        "text": status["role"][0].upper()}
             else:
                 cell = {"fill": heat_hex(belief[r][c], peak), "text": ""}
             scented = cell["text"] == "" and scent[r][c] > SCENT_VISIBLE
@@ -72,13 +81,13 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
     return cells
 
 
-def legend_items() -> list[tuple[str, str]]:
+def legend_items(role: str = "police") -> list[tuple[str, str]]:
     """Swatch/label pairs for the legend strip under the live board."""
     return [(heat_hex(0.7, 1.0), "belief heat"),
             ("#aa1111", "belief peak"),
             (scent_hex(0.6), "scent trace"),
             ("#222222", "barrier"),
-            ("#2266dd", "you")]
+            (ROLE_ACCENT.get(role, "#2266dd"), "you")]
 
 
 def belief_stats(belief: list[list[float]]) -> tuple[tuple[int, int], float]:
