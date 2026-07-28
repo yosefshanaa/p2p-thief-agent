@@ -47,7 +47,8 @@ def cmd_peer(args: argparse.Namespace) -> int:
         try:
             from .gui.live_view import LiveView
 
-            LiveView(runtime.service.status, f"p2p-pursuit - {args.role}").run()
+            LiveView(runtime.service.status, f"p2p-pursuit - {args.role}",
+                     args.role).run()
         except Exception as exc:  # noqa: BLE001 - no display etc.
             _err(f"[gui] disabled ({exc}); running headless")
     worker.join()
