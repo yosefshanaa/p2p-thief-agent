@@ -35,12 +35,18 @@ def banner(status: dict[str, Any]) -> tuple[str, str]:
     return "LOCKED", "#888888"
 
 
+SCENT_VISIBLE = 0.05  # below this the trace has decayed past usefulness
+GRID_LINE = "#cccccc"
+
+
 def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
-    """Per-cell render info. Contains ONLY local truth (#8-9): belief, own scent
-    echo, declared barriers and our own position - never the opponent's cell."""
+    """Per-cell render info. Contains ONLY local truth (#8-9): belief, the
+    opponent's SERVED scent field (our observation), declared barriers and our
+    own position - never the opponent's cell."""
     n = status["board_size"]
     belief = status["belief"]
     peak = max(max(row) for row in belief) or 1.0
+    scent = status.get("opp_scent") or [[0.0] * n for _ in range(n)]
     barriers = {tuple(b) for b in status["barriers"]}
     own = tuple(status["own_pos"])
     cells = []
@@ -48,10 +54,14 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
         row = []
         for c in range(n):
             if (r, c) in barriers:
-                row.append({"fill": "#222222", "text": "#"})
+                cell = {"fill": "#222222", "text": "#"}
             elif (r, c) == own:
-                row.append({"fill": "#2266dd", "text": status["role"][0].upper()})
+                cell = {"fill": "#2266dd", "text": status["role"][0].upper()}
             else:
-                row.append({"fill": heat_hex(belief[r][c], peak), "text": ""})
+                cell = {"fill": heat_hex(belief[r][c], peak), "text": ""}
+            scented = cell["text"] == "" and scent[r][c] > SCENT_VISIBLE
+            cell["outline"] = scent_hex(scent[r][c]) if scented else GRID_LINE
+            cell["width"] = 3 if scented else 1
+            row.append(cell)
         cells.append(row)
     return cells
