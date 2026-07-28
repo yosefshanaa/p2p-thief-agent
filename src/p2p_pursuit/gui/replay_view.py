@@ -37,9 +37,30 @@ class ReplayView:
         bar.pack(fill="x")
         tk.Button(bar, text="<< prev", command=lambda: self._go(-1)).pack(side="left")
         tk.Button(bar, text="next >>", command=lambda: self._go(+1)).pack(side="left")
+        self.playing = False
+        self.play_btn = tk.Button(bar, text="play", width=6, command=self._toggle_play)
+        self.play_btn.pack(side="left", padx=4)
+        self.speed = tk.StringVar(value="1x")
+        tk.OptionMenu(bar, self.speed, "0.5x", "1x", "2x", "4x").pack(side="left")
         self.label = tk.Label(bar, text="")
         self.label.pack(side="left", padx=8)
         self._draw()
+
+    def _toggle_play(self) -> None:
+        self.playing = not self.playing
+        self.play_btn.configure(text="pause" if self.playing else "play")
+        if self.playing:
+            self._advance()
+
+    def _advance(self) -> None:
+        if not self.playing:
+            return
+        if self.index >= len(self.frames) - 1:
+            self._toggle_play()  # reached the end - flip back to "play"
+            return
+        self._go(+1)
+        delay = int(600 / float(self.speed.get().rstrip("x")))
+        self.root.after(delay, self._advance)
 
     def _size(self) -> int:
         cells = [p for f in self.frames for p in f["positions"].values()]
