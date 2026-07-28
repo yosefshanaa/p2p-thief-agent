@@ -89,6 +89,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [x] Gatekeeper: quota manager + token bucket (30/2/5s/3/100 minimums) + DOS lock; 429 backoff (#28–29)
 - [x] League workflow: truthful counted-game declaration (#37–38), one-counted-per-opponent (#52), warm-up flag, result-agreement handshake, **auto dual reporting** (#35)
 - [x] Burst + infinite-loop drills · **GATE M7 demo recorded**
+- [x] GUI polish pass (2026-07-28, 8-commit series synced to both repos): scent-trace overlay (closed the unrendered `scent_hex` gap), belief argmax ring + entropy readout, (row, col) coordinates + color legend, role accent theming, outcome-colored end banner; replay auto-play 0.5×–4×, keyboard nav (arrows/space/Home/End), frame slider, match-metadata header — all view-model logic unit-tested, README §5 screenshots recaptured live
 
 ## 8. League play
 - [ ] Warm-up interop game vs a reference-derived peer (uncounted; tool-name contract differs - see RUNBOOK §3b)

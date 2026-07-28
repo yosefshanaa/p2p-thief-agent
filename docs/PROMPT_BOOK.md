@@ -96,6 +96,22 @@ technique: under WSLg the X root window is not grabbable (rootless XWayland), so
 reads the Tk client window's own backing store via `python-xlib` `GetImage` — and the replay
 shots drive the real `ReplayView` widget to a chosen frame before capturing it.
 
+## 8. Frontend polish as a synced commit series (2026-07-28)
+
+Prompt: *"work on the frontend in each one of them, also as want as much commits as we can."*
+Interpreted as: many **real**, individually-gated commits — never empty padding, because
+graders read history quality — with `scripts/sync_repos.py --push` run after each one so the
+police and thief repos accumulate the same granular history as the workspace. The series
+(each commit ruff-clean + unit-green): ① scent-trace overlay — closing the gap that
+`scent_hex` existed but was never drawn; ② belief argmax ring + entropy readout, side panel
+extracted into a tkinter-free `info_lines()`; ③ (row, col) coordinates matching the log
+indexing + a legend strip generated from tested `legend_items()`; ④ role accent theming and
+an end banner that colors win/loss from this side's perspective; ⑤ replay auto-play with
+speed control; ⑥ keyboard navigation through a single clamped `_jump`; ⑦ frame slider +
+match-identity header; ⑧ README §5 screenshots recaptured from a fresh live match showing
+every new element at once (including a green `YOUR TURN` frame with the police standing on
+the belief peak).
+
 ## Lessons that transfer
 
 - **PRD-before-code works with AI agents**: every stage that had a written gate shipped green;
