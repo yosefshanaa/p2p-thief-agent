@@ -69,6 +69,33 @@ def test_board_cells_scent_overlay():
                for row in board_cells(status) for c in row)
 
 
+def test_belief_stats_and_info_lines():
+    from p2p_pursuit.gui.view_model import belief_stats, info_lines
+
+    peak_at, entropy = belief_stats([[0.25] * 2, [0.25] * 2])
+    assert entropy == 2.0  # uniform over 4 cells = log2(4) bits
+    assert belief_stats([[0.0, 0.9], [0.05, 0.05]])[0] == (0, 1)
+    status = {"role": "thief", "sub_game": 2, "phase": "WAITING", "my_steps": 3,
+              "opp_steps": 3, "barriers_used": 0, "trust": 0.4, "tokens_used": 0,
+              "belief": [[0.0, 1.0], [0.0, 0.0]],
+              "hints": [{"dir": "sent", "hint": "going north"}],
+              "end": {"ending": "survival", "winner": "thief"}}
+    lines = info_lines(status)
+    text = "\n".join(lines)
+    assert "hint trust: 0.40" in text and "[sent] going north" in text
+    assert "peak @ (0, 1)" in text and "END: survival" in text
+
+
+def test_board_cells_marks_belief_argmax_ring():
+    from p2p_pursuit.gui.view_model import board_cells
+
+    status = {"board_size": 2, "belief": [[0.1, 0.7], [0.1, 0.1]],
+              "barriers": [], "own_pos": [1, 1], "role": "police"}
+    cells = board_cells(status)
+    rings = [(r, c) for r in range(2) for c in range(2) if cells[r][c]["ring"]]
+    assert rings == [(0, 1)]
+
+
 def test_board_cells_local_truth_only():
     """The live board renders belief, barriers and OUR pos - opponent pos nowhere."""
     status = {"board_size": 3, "belief": [[0.1] * 3 for _ in range(3)],
