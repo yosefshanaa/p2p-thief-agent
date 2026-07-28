@@ -47,7 +47,9 @@ class LiveView:
                 cell = cells[r][c]
                 x, y = c * CELL, r * CELL
                 self.canvas.create_rectangle(x, y, x + CELL, y + CELL,
-                                             fill=cell["fill"], outline="#cccccc")
+                                             fill=cell["fill"],
+                                             outline=cell["outline"],
+                                             width=cell["width"])
                 if cell["text"]:
                     self.canvas.create_text(x + CELL / 2, y + CELL / 2, text=cell["text"],
                                             fill="white", font=("TkDefaultFont", 16, "bold"))

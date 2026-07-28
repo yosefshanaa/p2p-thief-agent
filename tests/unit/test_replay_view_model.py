@@ -54,6 +54,21 @@ def test_view_model_banner_and_colors():
     assert heat_hex(1.0, 1.0) == "#ff2626"
 
 
+def test_board_cells_scent_overlay():
+    """Opponent scent (a legitimate observation) renders as a violet cell
+    outline; cells without scent - and boards without any scent snapshot -
+    keep the plain grid outline."""
+    status = {"board_size": 3, "belief": [[0.0] * 3 for _ in range(3)],
+              "barriers": [], "own_pos": [0, 0], "role": "police",
+              "opp_scent": [[0.0, 0.0, 0.0], [0.0, 0.81, 0.0], [0.0, 0.0, 0.0]]}
+    cells = board_cells(status)
+    assert cells[1][1]["outline"] != "#cccccc" and cells[1][1]["width"] > 1
+    assert cells[0][2]["outline"] == "#cccccc" and cells[0][2]["width"] == 1
+    del status["opp_scent"]
+    assert all(c["outline"] == "#cccccc" and c["width"] == 1
+               for row in board_cells(status) for c in row)
+
+
 def test_board_cells_local_truth_only():
     """The live board renders belief, barriers and OUR pos - opponent pos nowhere."""
     status = {"board_size": 3, "belief": [[0.1] * 3 for _ in range(3)],
