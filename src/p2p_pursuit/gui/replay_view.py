@@ -30,9 +30,18 @@ class ReplayView:
                                font=("TkDefaultFont", 16, "bold"), fg="white",
                                bg="#22aa44" if ok else "#cc2222")
         self.banner.pack(fill="x")
+        meta = (f"game {self.log.get('game_id', '?')}   "
+                f"sub-game {self.log.get('sub_game', '?')}   "
+                f"view: {self.log.get('perspective', '?')}   "
+                f"config {str(self.log.get('config_sha256', ''))[:12]}...")
+        tk.Label(self.root, text=meta, fg="#555555").pack(fill="x")
         n = self._size()
         self.canvas = tk.Canvas(self.root, width=CELL * n, height=CELL * n, bg="white")
         self.canvas.pack(padx=4, pady=4)
+        self.scale = tk.Scale(self.root, from_=1, to=max(1, len(self.frames)),
+                              orient="horizontal", showvalue=False,
+                              command=self._on_scale)
+        self.scale.pack(fill="x", padx=4)
         bar = tk.Frame(self.root)
         bar.pack(fill="x")
         tk.Button(bar, text="|<", width=3, command=lambda: self._jump(0)).pack(side="left")
@@ -74,6 +83,10 @@ class ReplayView:
         cells = [p for f in self.frames for p in f["positions"].values()]
         return max([7] + [max(c) + 1 for c in cells]) if cells else 7
 
+    def _on_scale(self, value: str) -> None:
+        if int(value) - 1 != self.index:  # ignore the echo of our own set()
+            self._jump(int(value) - 1)
+
     def _go(self, delta: int) -> None:
         self._jump(self.index + delta)
 
@@ -100,6 +113,7 @@ class ReplayView:
                                     fill=colors.get(role, "#999999"))
             self.canvas.create_text(x + CELL / 2, y + CELL / 2, text=role[0].upper(),
                                     fill="white", font=("TkDefaultFont", 14, "bold"))
+        self.scale.set(self.index + 1)
         stamp = "Verified OK" if frame["verified"] else "TAMPERED"
         self.label.configure(
             text=f"{self.index + 1}/{len(self.frames)}  {frame['role']} step "
