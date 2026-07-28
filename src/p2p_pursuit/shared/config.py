@@ -96,6 +96,7 @@ class PeerConfig:
     trash_talk_provider: str = "template"
     trash_talk_every_n_steps: int = 1
     llm_model: str = ""
+    llm_base_url: str = ""
     llm_step_deadline_seconds: int = 30
     email_recipient: str = ""
     email_mode: str = "draft"
@@ -123,6 +124,7 @@ def load_peer(path: Path) -> PeerConfig:
         trash_talk_provider=talk.get("provider", "template"),
         trash_talk_every_n_steps=talk.get("every_n_steps", 1),
         llm_model=llm.get("model", ""),
+        llm_base_url=llm.get("base_url", ""),
         llm_step_deadline_seconds=llm.get("step_deadline_seconds", 30),
         email_recipient=email.get("recipient", ""),
         email_mode=email.get("mode", "draft"),
