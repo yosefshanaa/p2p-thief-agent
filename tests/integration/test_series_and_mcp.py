@@ -2,7 +2,6 @@
 
 import socket
 import threading
-import time
 
 import pytest
 
@@ -85,13 +84,13 @@ def test_mcp_http_roundtrip_full_sub_game():
                for r in ("thief", "police")]
     for t in threads:
         t.start()
-    # Hang guard, not a performance assertion: a loaded WSL host (live match +
-    # capture jobs sharing the box) was observed to need >90s for the 5-move
-    # roundtrip that native CI finishes in seconds.
-    deadline = time.time() + 180
-    while time.time() < deadline and any(
-            services[r].engine.end is None for r in services):
-        time.sleep(0.2)
+    # Join before auditing - the real orchestrator's ordering. Auditing on the
+    # end-flags alone raced a driver's final in-flight event delivery and once
+    # produced a false TAMPERED in CI (the server was one commitment short).
+    # The timeout is a hang guard for loaded hosts, not a performance bound.
+    for t in threads:
+        t.join(timeout=180)
+    assert not any(t.is_alive() for t in threads), "drive threads never finished"
     for role in ("police", "thief"):
         assert services[role].engine.end is not None, f"{role} never finished"
 
