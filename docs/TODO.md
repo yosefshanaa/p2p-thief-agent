@@ -62,12 +62,12 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [x] Fog sim-runner stats + regression bounds · **GATE M4 demo recorded**
 
 ## 5. Stage 5 — Cloud & tunneling (PRD-5)
-- [~] ngrok account + live drill pending · **`docs/RUNBOOK.md` written** (bring-up, URL rotation, negotiation, evidence kit, OAuth)
+- [x] Live tunnel drill executed (see GATE M5 below) · **`docs/RUNBOOK.md` written** (bring-up, URL rotation, negotiation, evidence kit, OAuth); ngrok binary installed, account created 2026-07-29 — only `ngrok config add-authtoken <token>` remains
 - [x] Public-URL config wiring (bind 0.0.0.0; `opponent_url` in TOML)
 - [x] `handshake` negotiation for real: constitution agreement, `config_sha256` exchange, refuse-on-mismatch (#11–12); per-match config copy persisted under unique name
 - [x] WAN resilience pass (simulated in CI: latency link series, dead-link ⇒ technical loss, opponent-silence ⇒ technical loss; live tunnel drill in §8)
 - [x] `smoke <url>` probe tool
-- [ ] Two-machine full sub-game over tunnels · **GATE M5 demo recorded**
+- [x] Full sub-game over public tunnels · **GATE M5 demo recorded 2026-07-29** — both peers cross-wired through public HTTPS tunnels (one per role, so *both* directions traverse the internet; inbound requests logged from public IP `89.138.5.166`, not localhost). Sub-game completed, **both sides independently reported `audit=Verified OK`**. Tunnel-kill drill: killing a tunnel mid-match produced `ending=technical_loss`, totals 0/0, `watchdog_state.json` persisted, and both processes exited — no hang. Executed over a Cloudflare quick tunnel because ngrok requires an account; the code path is identical (`opponent_url` is just a public URL) and RUNBOOK §1 documents the ngrok command, pending the authtoken
 
 ## 6. Stage 6 — Crypto (PRD-6)
 - [x] `domain/crypto.py` — `canonical_bytes`, commit(record)→(H,nonce) with `secrets`, verify (`compare_digest`); cross-platform golden vectors
