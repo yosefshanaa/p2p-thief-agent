@@ -87,3 +87,39 @@ uv run p2p-pursuit authorize     # opens browser consent; writes token.json (sen
 Testing-mode refresh tokens expire after ~7 days of disuse — rerun `authorize` if sends start
 failing with `invalid_grant`. Set `[email] mode = "send"` for league matches (`draft` = local
 dry-run; the send-only scope cannot create real Gmail drafts).
+
+## 6. Live tunnel drill — executed 2026-07-29 (GATE M5 evidence)
+
+Both peers were cross-wired through **two** public HTTPS tunnels (one per role) so traffic in
+*both* directions left the machine. Confirmation that it was genuinely remote: each peer logged
+its inbound requests from the public IP `89.138.5.166`, never `127.0.0.1`.
+
+| Drill | Result |
+|---|---|
+| Full sub-game across the internet | completed; **both peers independently reported `audit=Verified OK`** |
+| Tunnel killed mid-match | `ending=technical_loss`, totals **0/0**, `watchdog_state.json` written, both processes exited — **no hang** |
+
+### Two operational lessons
+
+1. **Start both peers within the connect window.** Each peer retries its opponent for a bounded
+   time and then exits with `opponent never came up`. Bringing one up minutes before the other
+   guarantees a failed match — open the tunnels first, exchange URLs, then start together.
+2. **A dead link cascades, and that is correct.** Killing one tunnel made the first peer exit;
+   its origin then disappeared, so the *other* tunnel began returning 502 and the second peer
+   also declared a technical loss. Both sides independently recorded 0/0, which is the book's
+   intended outcome — but note the peer that dies inside a sub-game handshake exits **without
+   emitting a result report**. The match is void either way, yet rule #35 expects both teams to
+   report; if a counted match ever dies this way, send the result manually from the artifacts.
+
+### ngrok (spec default) vs the no-account fallback
+
+`opponent_url` is just a public URL, so any tunnel works and the code path is identical. ngrok
+is installed but needs a one-time credential:
+
+```bash
+ngrok config add-authtoken <token-from-dashboard.ngrok.com>
+ngrok http 8801                        # thief;  use 8802 for police
+```
+
+A Cloudflare quick tunnel (`cloudflared tunnel --url http://localhost:8801`) needs no account
+and was used for the drill above when ngrok's credential was not yet available.
