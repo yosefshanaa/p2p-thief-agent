@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -49,12 +50,15 @@ class PeerRuntime:
             prior_counted_games=prior_counted_games)
         self.service = PeerService(self.engine, handshake)
         net, rate = self.shared.network, self.shared.rate_limiter
+        self.watchdog = Watchdog(timeout_sec=net.get("watchdog_timeout_sec", 60),
+                                 on_freeze=self._persist_and_note)
+        # A slow-but-alive link must not read as a frozen loop: the retry
+        # budget outlasts the watchdog threshold, so beat on every attempt.
         self.deadline = DeadlineTracker(
             timeout_sec=net.get("response_timeout_sec", 30),
             max_retries=rate.get("max_retries", 3),
-            backoff_sec=rate.get("retry_backoff_sec", 5))
-        self.watchdog = Watchdog(timeout_sec=net.get("watchdog_timeout_sec", 60),
-                                 on_freeze=self._persist_and_note)
+            backoff_sec=rate.get("retry_backoff_sec", 5),
+            on_attempt=self.watchdog.beat)
         self.sub_results: list[dict[str, Any]] = []
         self.link: Any = None
 
@@ -80,6 +84,26 @@ class PeerRuntime:
         runtime_reports.write_declaration(self, theirs)
         return True
 
+    def _await_turn(self) -> bool:
+        """Wait for the opponent's move, beating the watchdog in slices.
+
+        The agreed turn timeout (180s) is longer than the watchdog threshold
+        (60s), so waiting in one blocking call let the watchdog shut down a
+        perfectly healthy peer whenever an opponent took over a minute -
+        routine across a real tunnel, and a self-inflicted technical loss.
+        Slicing keeps the watchdog's purpose intact: a genuinely frozen loop
+        never reaches this code, so it still stops beating and is still caught.
+        """
+        slice_sec = max(1.0, self.watchdog.timeout_sec / 3)
+        deadline = time.monotonic() + self.peer.turn_timeout_seconds
+        while True:
+            self.watchdog.beat()
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return False
+            if self.service.wait_for_my_turn(min(slice_sec, remaining)):
+                return True
+
     # -- one sub-game over the wire -----------------------------------------
     def play_sub_game(self, n: int) -> None:
         self.service.ensure_sub_game(n)
@@ -94,7 +118,7 @@ class PeerRuntime:
                 except DeadlineExpiredError as exc:
                     with self.service.locked():
                         engine.declare_technical(engine.other, f"no response: {exc}")
-            elif not self.service.wait_for_my_turn(self.peer.turn_timeout_seconds):
+            elif not self._await_turn():
                 with self.service.locked():
                     engine.declare_technical(
                         engine.other, f"turn timeout ({self.peer.turn_timeout_seconds}s)")

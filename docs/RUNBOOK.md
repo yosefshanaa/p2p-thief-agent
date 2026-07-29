@@ -111,6 +111,21 @@ its inbound requests from the public IP `89.138.5.166`, never `127.0.0.1`.
    emitting a result report**. The match is void either way, yet rule #35 expects both teams to
    report; if a counted match ever dies this way, send the result manually from the artifacts.
 
+### Bug found by this drill — watchdog vs. turn timeout (fixed)
+
+The drill exposed a defect that **only appears over a real network**. The agreed turn timeout is
+**180 s**, but the watchdog threshold is **60 s**, and the peer spent the whole turn wait inside
+one blocking `wait_for_my_turn` call without emitting a heartbeat. Over localhost an opponent
+always answers within 60 s, so it never fired; over a tunnel the watchdog decided our own
+healthy peer had frozen, persisted state and shut it down — a **self-inflicted technical loss
+in the middle of a working match**. The retry path had the same shape: a full budget
+(4 attempts × 30 s + backoff) also outlasts the watchdog.
+
+Fixed by slicing the wait and beating between slices, and by beating on every deadline attempt.
+The watchdog keeps its purpose — a genuinely frozen loop never reaches that code, so it still
+stops beating and is still caught. Re-running the same match afterwards produced **zero**
+watchdog firings where the previous run had killed the peer.
+
 ### ngrok (spec default) vs the no-account fallback
 
 `opponent_url` is just a public URL, so any tunnel works and the code path is identical. ngrok
@@ -123,3 +138,16 @@ ngrok http 8801                        # thief;  use 8802 for police
 
 A Cloudflare quick tunnel (`cloudflared tunnel --url http://localhost:8801`) needs no account
 and was used for the drill above when ngrok's credential was not yet available.
+
+### Tunnel choice for counted matches — measured
+
+| Tunnel | Handshake | Full sub-game with mutual audit |
+|---|---|---|
+| Cloudflare quick tunnel | ✅ | ✅ `Verified OK` on both sides |
+| ngrok free tier | ✅ 200 OK | ⚠️ MCP session dropped mid-game (`Client failed to connect`) with the agent healthy and the peer still serving |
+
+ngrok authenticates and proxies fine, but the free tier did not hold the long-lived
+streamable-HTTP MCP session for a whole sub-game. **Recommendation: run counted matches over a
+Cloudflare quick tunnel (or Localtonet, also permitted by the book), and treat ngrok free as a
+handshake-capable fallback.** This is a hosting-tier characteristic, not a defect in the peer —
+the identical peer build completes cleanly over Cloudflare.
