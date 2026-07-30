@@ -33,8 +33,9 @@ def cmd_peer(args: argparse.Namespace) -> int:
     runtime = sdk.create_peer(args.role, Path(args.config_dir) if args.config_dir else None,
                               out_dir=Path(args.out), seed=args.seed, counted=args.counted,
                               prior_counted_games=args.prior_counted, num_games=args.games)
+    runtime.attach(sdk.make_link(runtime.peer.opponent_url))
     runtime.start_server()
-    if not runtime.connect(sdk.make_link(runtime.peer.opponent_url)):
+    if not runtime.connect():
         return 2
     result_holder: dict = {}
 
@@ -62,36 +63,17 @@ def cmd_peer(args: argparse.Namespace) -> int:
 
 def cmd_sim(args: argparse.Namespace) -> int:
     from .domain.game_ids import make_game_id, new_game_uid
-    from .peer import log_manager
-    from .report import artifacts, results
-    from .shared import sysinfo
+    from .report import artifacts, sim_artifacts
+    from .shared.config import load_role
 
     sdk = PursuitSDK()
     game_uid, game_id = new_game_uid(), make_game_id("police-sim", "thief-sim")
     out = Path(args.out) / f"sim-{game_id}"
     rows: list[dict] = []
-    shared_holder: dict = {}
-
-    def per_sub_game(police, thief, outcome) -> None:
-        audit = {"mine_of_them": outcome.audit_of_thief,
-                 "theirs_of_us": outcome.audit_of_police}
-        log = log_manager.build_log(police, thief.my_records, game_uid=game_uid,
-                                    game_id=game_id, audit=audit)
-        log_manager.write_log(log, out)
-        artifacts.write_config_copy(out, game_id, outcome.index,
-                                    shared_holder["shared"].raw, game_uid)
-        rows.append(results.sub_game_row(
-            index=outcome.index, ending=outcome.ending, winner=outcome.winner,
-            cause=outcome.cause, police_score=outcome.police_score,
-            thief_score=outcome.thief_score, moves_played=outcome.thief_steps,
-            github_commit=sysinfo.git_commit(),
-            audit_verdict=outcome.audit_of_thief["verdict"]))
-        _err(f"[sim] g{outcome.index}: {outcome.ending} winner={outcome.winner} "
-             f"({outcome.cause})")
-
-    from .shared.config import load_role
-
-    shared_holder["shared"], _ = load_role(Path("config/police"))
+    loaded_shared, _ = load_role(Path("config/police"))
+    per_sub_game = sim_artifacts.sub_game_writer(
+        out=out, game_uid=game_uid, game_id=game_id, shared=loaded_shared,
+        rows=rows, log_fn=_err)
     shared, police_cfg, _thief_cfg, series = sdk.run_local_series(
         num_games=args.games, seed=args.seed, on_sub_game=per_sub_game)
     result = sdk.build_local_result(
@@ -125,9 +107,13 @@ def cmd_replay(args: argparse.Namespace) -> int:
 
 
 def cmd_smoke(args: argparse.Namespace) -> int:
-    health = PursuitSDK().smoke(args.url)
-    print(json.dumps({"url": args.url, "health": health}))
-    return 0 if health.get("ok") else 4
+    probe = PursuitSDK().smoke(args.url)
+    if probe["reachable"]:
+        _err(f"[smoke] dialect={probe['dialect']}: {probe['guidance']}")
+    else:
+        _err(f"[smoke] unreachable: {probe['error']}")
+    print(json.dumps({"url": args.url, **probe}))
+    return 0 if probe["reachable"] else 4
 
 
 def cmd_authorize(args: argparse.Namespace) -> int:

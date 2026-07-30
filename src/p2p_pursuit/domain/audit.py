@@ -11,7 +11,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .board import MOVES, Board, Cell
-from .crypto import digest, verify
+from .crypto import NATIVE, commit_digest, verify
 from .protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, KIND_STEP
 from .rules import Decision, validate
 from .scent import ScentField
@@ -20,9 +20,9 @@ VERIFIED_OK = "Verified OK"
 TAMPERED = "TAMPERED"
 
 
-def verify_entry(entry: dict[str, Any], commit_hash: str) -> bool:
+def verify_entry(entry: dict[str, Any], commit_hash: str, dialect: str = NATIVE) -> bool:
     """One replay-viewer step: does the revealed record still match its commitment?"""
-    return verify(entry, commit_hash)
+    return verify(entry, commit_hash, dialect)
 
 
 def audit_opponent(
@@ -35,6 +35,7 @@ def audit_opponent(
     grid_size: int,
     quota: int,
     barriers_before_step: Callable[[int], set[Cell]],
+    dialect: str = NATIVE,
 ) -> tuple[str, list[str]]:
     """Re-verify the opponent's full revealed log against what we saw live.
 
@@ -59,7 +60,7 @@ def audit_opponent(
         if pub is not None and h not in pub_by_hash:
             pub_by_hash[h] = pub
     for i, entry in enumerate(entries):
-        d = digest(entry)
+        d = commit_digest(entry, dialect)
         if available.get(d, 0) > 0:
             available[d] -= 1
         else:

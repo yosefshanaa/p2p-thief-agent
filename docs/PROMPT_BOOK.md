@@ -112,6 +112,29 @@ match-identity header; ⑧ README §5 screenshots recaptured from a fresh live m
 every new element at once (including a green `YOUR TURN` frame with the police standing on
 the belief peak).
 
+## 9. "Read the continuation prompt and continue" → interop, proven not assumed (2026-07-29)
+
+With league play blocked on scheduling humans, the open work was the one item that needed no
+opponent: the warm-up interop contract (TODO §8.1). Instead of designing against the runbook's
+prose description of the reference peer, the first move was to **clone the reference repo and
+read its source** — which immediately falsified our own documentation. The runbook claimed the
+cryptographic content was "identical, a naming difference only". It is not: they hash
+`canonical(payload)|nonce`, we hash the record with the nonce inside it, so neither side could
+have verified the other. That would have surfaced in a *counted* match, at the audit, with
+nothing to be done about it.
+
+Two decisions followed, both put to the user because they changed the shape of the work:
+adopt their digest behind a per-match `[interop] dialect` switch (default `native`, pinned
+byte-identical by a golden vector), and validate against the real reference peer rather than a
+mock. The live warm-up then earned its keep twice over — it found a crash in *their* reporting
+caused by three fields our identity payload omitted, and a bug in *our* replay viewer that
+stamped a clean interop match `TAMPERED`. Neither was reachable from unit tests written against
+our own assumptions.
+
+The transferable move: when an integration is described in prose, go read the other side's
+code, and then actually run against it. Interop bugs live in the gap between two correct
+implementations, and that gap is invisible from either side alone.
+
 ## Lessons that transfer
 
 - **PRD-before-code works with AI agents**: every stage that had a written gate shipped green;

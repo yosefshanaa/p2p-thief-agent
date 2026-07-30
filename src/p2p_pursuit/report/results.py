@@ -10,6 +10,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
+from ..domain.audit import VERIFIED_OK
 from ..domain.crypto import digest
 from ..domain.rules import POLICE
 from ..shared.version import CODE_VERSION
@@ -50,10 +51,25 @@ def build_result(*, game_uid: str, game_id: str, my_group: dict[str, Any],
 
 def sub_game_row(*, index: int, ending: str, winner: str, cause: str,
                  police_score: int, thief_score: int, moves_played: int,
-                 github_commit: str, audit_verdict: str) -> dict[str, Any]:
+                 github_commit: str, audit_verdict: str,
+                 opponent_audit: str = "not reported") -> dict[str, Any]:
+    """One sub-game's scored outcome. Both audit directions are recorded: our
+    verdict of their log, and the verdict they returned on ours."""
     return {
         "index": index, "ending": ending, "winner": winner, "cause": cause,
         "cop_score": police_score, "thief_score": thief_score,
         "moves_played": moves_played, "github_commit": github_commit,
-        "audit": audit_verdict,
+        "audit": audit_verdict, "opponent_audit": opponent_audit,
     }
+
+
+def agreement_reached(sub_games: list[dict[str, Any]]) -> bool:
+    """True only when every sub-game was audited clean *in both directions*.
+
+    A dialect that never returns the opponent's verdict (or an opponent that
+    goes silent) therefore reports no mutual agreement, which is the truth:
+    claiming otherwise would put an unverified assertion into a signed result.
+    """
+    return bool(sub_games) and all(
+        row.get("audit") == VERIFIED_OK and row.get("opponent_audit") == VERIFIED_OK
+        for row in sub_games)

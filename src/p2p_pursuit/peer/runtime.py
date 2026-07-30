@@ -34,7 +34,10 @@ class PeerRuntime:
     def __init__(self, role: str, config_dir: Path, *, out_dir: Path = Path("results"),
                  seed: int | None = None, counted: bool = False,
                  prior_counted_games: int = 0, num_games: int | None = None) -> None:
-        self.role, self.counted = role, counted
+        # `role` is this peer's NATURAL role; engine.role is what it plays right
+        # now, which differs on even sub-games when roles alternate.
+        self.role = self.natural_role = role
+        self.counted = counted
         self.shared, self.peer = load_role(config_dir)
         talk = make_talk_provider(self.peer.trash_talk_provider, self.peer.llm_model,
                                   self.peer.llm_step_deadline_seconds,
@@ -61,15 +64,43 @@ class PeerRuntime:
             on_attempt=self.watchdog.beat)
         self.sub_results: list[dict[str, Any]] = []
         self.link: Any = None
+        self.bridge: Any = None
 
     # -- lifecycle ----------------------------------------------------------
+    def make_bridge(self, link: Any) -> Any:
+        """Interop matches only: the translator that lets a reference peer play us."""
+        from ..infra.interop_bridge import ReferenceBridge
+        from ..infra.interop_codec import interop_identity, interop_terms
+        from ..shared import sysinfo
+
+        return ReferenceBridge(
+            self.service, link, grid_size=self.shared.grid_size,
+            terms=interop_terms(self.shared, num_games=self.num_games),
+            identity=interop_identity(
+                self.peer, mcp_url=f"http://0.0.0.0:{self.peer.my_port}/mcp",
+                spec=sysinfo.collect()))
+
     def start_server(self) -> None:
         serve_in_thread(self.service, host="0.0.0.0", port=self.peer.my_port,
-                        name=f"p2p-pursuit-{self.role}")
-        _log(f"[{self.role}] FastMCP server on 0.0.0.0:{self.peer.my_port}")
+                        name=f"p2p-pursuit-{self.role}", bridge=self.bridge)
+        _log(f"[{self.role}] FastMCP server on 0.0.0.0:{self.peer.my_port}"
+             f"{' (+reference dialect)' if self.bridge else ''}")
 
-    def connect(self, link: Any) -> bool:
-        self.link = link
+    def attach(self, link: Any) -> Any:
+        """Bind the outbound link, wrapping it in the interop bridge when this
+        match is played in the reference dialect. Run before ``start_server``,
+        so the server also answers the opponent's tool names."""
+        if self.peer.interop_dialect == "reference":
+            self.bridge = self.make_bridge(link)
+            self.link = self.bridge
+        else:
+            self.link = link
+        return self.link
+
+    def connect(self, link: Any = None) -> bool:
+        if link is not None or self.link is None:
+            self.attach(link)
+        link = self.link
         if not wait_until_up(link):
             _log(f"[{self.role}] opponent never came up at {self.peer.opponent_url}")
             return False
@@ -106,6 +137,10 @@ class PeerRuntime:
 
     # -- one sub-game over the wire -----------------------------------------
     def play_sub_game(self, n: int) -> None:
+        from . import series_protocol
+
+        if not series_protocol.prepare_sub_game(self, n, _log):
+            return
         self.service.ensure_sub_game(n)
         engine = self.engine
         while engine.end is None:

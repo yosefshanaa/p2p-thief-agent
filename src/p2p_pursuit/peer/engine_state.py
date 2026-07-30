@@ -35,8 +35,12 @@ class EngineState:
                  seed: int | None = None) -> None:
         self.role, self.shared, self.peer = role, shared, peer
         self.other = THIEF if role == POLICE else POLICE
-        spec = peer.strategy.get("police_class" if role == POLICE else "thief_class")
-        self.brain = brain or load_brain(spec, role)
+        # Which digest composition seals our records (RUNBOOK 3b): negotiated
+        # per match, so an unmodified reference peer can audit us on its terms.
+        self.commit_dialect = peer.interop_dialect
+        self._injected_brain = brain
+        self._brains: dict[str, BrainBase] = {}
+        self.brain = self._brain_for(role)
         self.talk = talk
         self.rng = random.Random(seed)
         self.score_table = ScoreTable.from_config(shared.scoring)
@@ -44,6 +48,26 @@ class EngineState:
         self.tokens_used = 0
         self.sub_game = 0
         self.start_sub_game(1)
+
+    def _brain_for(self, role: str) -> BrainBase:
+        """The brain for one side, built once and cached (roles may alternate)."""
+        if self._injected_brain is not None:
+            return self._injected_brain
+        if role not in self._brains:
+            spec = self.peer.strategy.get(
+                "police_class" if role == POLICE else "thief_class")
+            self._brains[role] = load_brain(spec, role)
+        return self._brains[role]
+
+    def set_role(self, role: str) -> None:
+        """Swap sides for the next sub-game (role alternation, RUNBOOK 3b).
+
+        Must be called *before* ``start_sub_game``, which reads the role to pick
+        the starting cell, the opponent's start and the first mover.
+        """
+        self.role = role
+        self.other = THIEF if role == POLICE else POLICE
+        self.brain = self._brain_for(role)
 
     def start_sub_game(self, n: int) -> None:
         self.sub_game = n

@@ -92,7 +92,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [x] GUI polish pass (2026-07-28, 8-commit series synced to both repos): scent-trace overlay (closed the unrendered `scent_hex` gap), belief argmax ring + entropy readout, (row, col) coordinates + color legend, role accent theming, outcome-colored end banner; replay auto-play 0.5×–4×, keyboard nav (arrows/space/Home/End), frame slider, match-metadata header — all view-model logic unit-tested, README §5 screenshots recaptured live
 
 ## 8. League play
-- [ ] Warm-up interop game vs a reference-derived peer (uncounted; tool-name contract differs - see RUNBOOK §3b)
+- [x] Warm-up interop game vs a reference-derived peer (uncounted) — **played 2026-07-29 against the lecturer's unmodified reference implementation**, full 35-step sub-game, both sides agreed the outcome: their audit of our log `log_verified: true / tampered: false`, ours of theirs `Verified OK`. Built for it: dialect detection in `smoke`, the `[interop] dialect` switch (their tool names, their push/inbox framing, their commit formula), cross-dialect audit, and unsealed-signal handling. Evidence + reproduction in `matches/warmup-reference-interop/`; the four real contract differences (the runbook previously claimed the crypto was "identical" — it is not) in RUNBOOK §3b
+- [x] ~~BLOCKER for multi-sub-game interop matches~~ **fixed 2026-07-30**: reference peers re-negotiate before every sub-game and alternate roles (odd = natural, even = opposite) while our peer did neither, so sub-game 2 died with `Opponent never sent its agreement`. Both are now supported behind `[interop] alternate_roles` / `handshake_per_sub_game` (default off, since our published repos are role-fixed) — `peer/series_protocol.py`, engine `set_role()` with per-side brain caching. Verified live with `--games 2` against the unmodified reference peer: sub-game 1 as police, sub-game 2 alternated to thief and ran to a capture, both completed
 - [ ] Partner-team #1: negotiate, lock, play 6 sub-games, audit, agree, both report, archive artifacts+config to repos
 - [ ] Partner-team #2: same (pass gate = 2 counted matches vs different teams)
 - [ ] Optional additional counted matches (≤10 total; diversity reward per new opponent)
@@ -106,7 +107,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [ ] Annotated tag on both repos: `git tag -a v1.0-submission -m "Final submission: Police-Thief P2P, group <code>"` + push (#41)
 - [ ] Moodle: download form, fill (no field changes), save as PDF; **each member submits separately**; 8-char group code (#43–45)
 - [ ] Self-grade = code quality only, not match results (#55)
-- [ ] Final sweep of the book's pre-submission checklist (ch. 11.5) — every layer demoed end-to-end
+- [x] Final sweep of the book's pre-submission checklist (ch. 11.5 + the ch. 11.6 submission list) — mapped item-by-item to evidence in [`SUBMISSION_CHECKLIST.md`](SUBMISSION_CHECKLIST.md) (2026-07-29). Layers 1–5 green; #6 (both-sides Gmail report) and #7 (tag) wait on a counted match by design; #8 needs opposing teams
 
 ## External inputs needed
 | Item | Owner | Status |

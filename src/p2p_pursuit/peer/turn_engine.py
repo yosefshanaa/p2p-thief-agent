@@ -57,7 +57,7 @@ class TurnEngine(EngineState):
             role=self.role, sub_game=self.sub_game, step=self.my_steps,
             pos_before=pos_before, pos_after=self.own_pos, move=decision.move,
             barrier=decision.barrier, intent=intent, hint=hint, scent=served)
-        sealed, h = seal(record)
+        sealed, h = seal(record, self.commit_dialect)
         public = self._record(sealed, h)
         self.machine.transition(COMMITTING)
         commit = {"kind": "commit", "role": self.role, "sub_game": self.sub_game,
@@ -80,7 +80,7 @@ class TurnEngine(EngineState):
 
     def _seal_event(self, record: dict, ending: str, winner: str, cause: str) -> dict:
         """Seal a forced game event, log it and finish the sub-game."""
-        sealed, h = seal(record)
+        sealed, h = seal(record, self.commit_dialect)
         public = self._record(sealed, h)
         self._finish(ending, winner, cause)
         return {"public": public, "hash": h}
@@ -149,7 +149,7 @@ class TurnEngine(EngineState):
         record = protocol.capture_answer_record(
             role=self.role, sub_game=self.sub_game, at_step=self.my_steps,
             claim_cell=tuple(claim["cell"]), answer=answer)
-        sealed, h = seal(record)
+        sealed, h = seal(record, self.commit_dialect)
         public = self._record(sealed, h)
         if answer:
             self._finish(CAPTURE, POLICE, f"captured at {claim['cell']}")

@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from ..domain.audit import TAMPERED, VERIFIED_OK
-from ..domain.crypto import digest
+from ..domain.crypto import NATIVE, REFERENCE, commit_digest, verify_reference_record
 from ..domain.protocol import KIND_STEP
 
 
@@ -21,12 +21,13 @@ def load_log(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def verify_side(records: list[dict], hashes: list[str]) -> list[bool]:
+def verify_side(records: list[dict], hashes: list[str],
+                dialect: str = NATIVE) -> list[bool]:
     """Content-addressed: each record must match one live-received commitment."""
     available = Counter(hashes)
     marks = []
     for record in records:
-        d = digest(record)
+        d = commit_digest(record, dialect)
         ok = available.get(d, 0) > 0
         if ok:
             available[d] -= 1
@@ -34,20 +35,61 @@ def verify_side(records: list[dict], hashes: list[str]) -> list[bool]:
     return marks
 
 
+def opponent_display(log: dict[str, Any],
+                     marks: list[bool]) -> tuple[list[dict[str, Any]], list[bool]]:
+    """The opponent's records and their verification marks, in our display shape.
+
+    An interop opponent reveals ``{payload, nonce, commit}`` envelopes holding
+    their own field names; unwrapping them here is what keeps both sides of the
+    match visible in the replay rather than only ours. Marks are filtered
+    alongside the records so the two never drift apart.
+    """
+    if log.get("commit_dialect", NATIVE) != REFERENCE:
+        return log["opponent_records"], marks
+    other = "thief" if log.get("perspective") == "police" else "police"
+    out, kept = [], []
+    for record, ok in zip(log["opponent_records"], marks, strict=False):
+        payload = record.get("payload", {})
+        if "position" not in payload:
+            continue  # their step-0 system_spec record has no move to draw
+        out.append({"kind": KIND_STEP, "role": other, "step": payload.get("step", 0),
+                    "pos_after": list(payload["position"]), "barrier": None,
+                    "hint": payload.get("hint", ""),
+                    "intent": payload.get("intent", "")})
+        kept.append(ok)
+    return out, kept
+
+
+def _verify_reference_side(records: list[dict], hashes: list[str]) -> tuple[list[bool], bool]:
+    """Their envelope: each record binds to its own commit, and every commitment
+    we witnessed live must be among those revealed - their own audit checks only
+    the first half, so a withheld step would otherwise pass unnoticed."""
+    marks = [verify_reference_record(record) for record in records]
+    revealed = {record.get("commit") for record in records}
+    return marks, all(h in revealed for h in hashes)
+
+
 def verdict_of(log: dict[str, Any]) -> tuple[str, list[bool], list[bool]]:
-    mine = verify_side(log["my_records"], log["my_hashes"])
-    theirs = verify_side(log["opponent_records"], log["opponent_hashes"])
-    ok = all(mine) and all(theirs) and len(log["opponent_records"]) == len(
-        log["opponent_hashes"])
+    # Logs written before interop mode existed carry no marker and are native.
+    dialect = log.get("commit_dialect", NATIVE)
+    mine = verify_side(log["my_records"], log["my_hashes"], dialect)
+    if dialect == REFERENCE:
+        theirs, complete = _verify_reference_side(
+            log["opponent_records"], log["opponent_hashes"])
+    else:
+        theirs = verify_side(log["opponent_records"], log["opponent_hashes"], dialect)
+        complete = len(log["opponent_records"]) == len(log["opponent_hashes"])
+    ok = all(mine) and all(theirs) and complete
     return (VERIFIED_OK if ok else TAMPERED), mine, theirs
 
 
 def timeline(log: dict[str, Any]) -> list[dict[str, Any]]:
     """Merged, ordered step list for display: thief step k before police step k."""
     _, mine_ok, theirs_ok = verdict_of(log)
+    opp_records, opp_ok = opponent_display(log, theirs_ok)
     items = []
     for records, marks, owner in ((log["my_records"], mine_ok, "mine"),
-                                  (log["opponent_records"], theirs_ok, "opponent")):
+                                  (opp_records, opp_ok, "opponent")):
         for record, ok in zip(records, marks, strict=False):
             if record.get("kind") != KIND_STEP:
                 continue

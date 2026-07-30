@@ -69,7 +69,8 @@ class PursuitSDK:
             opp_group=None, sub_games=sub_games, police_total=police_total,
             thief_total=thief_total, tie_score=shared.scoring.get("tie_score", 2),
             tokens_used=tokens_used, github_commit=sysinfo.git_commit(),
-            my_role=POLICE, mutual_agreement=True)
+            my_role=POLICE,
+            mutual_agreement=results.agreement_reached(sub_games))
 
     def pick_email_transport(self, mode: str, notify: Any = print):
         from ..infra.email_sender import DryRunTransport
@@ -95,4 +96,27 @@ class PursuitSDK:
 
     # -- diagnostics -------------------------------------------------------------
     def smoke(self, url: str, timeout: float = 10) -> dict[str, Any]:
-        return self.make_link(url).health(timeout=timeout)
+        """Probe a peer: reachability, advertised tools and which dialect they speak.
+
+        Liveness is decided by the tool listing, not by our ``health_check``:
+        a reference-derived peer has no such tool and would otherwise read as
+        dead while it is perfectly ready to play.
+        """
+        from ..infra import dialect
+        from ..infra.transport import LinkError
+
+        link, error, tools = self.make_link(url), None, []
+        try:
+            tools = sorted(link.list_tools(timeout=timeout))
+        except LinkError as exc:
+            error = str(exc)
+        name = dialect.classify(tools)
+        health: dict[str, Any] = {}
+        if "health_check" in tools:
+            try:
+                health = link.health(timeout=timeout)
+            except LinkError as exc:
+                error = str(exc)
+        return {"reachable": bool(tools), "dialect": name,
+                "guidance": dialect.describe(name), "tools": tools,
+                "health": health, "error": error}

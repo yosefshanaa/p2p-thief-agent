@@ -39,6 +39,19 @@ class McpLink:
         except Exception as exc:  # noqa: BLE001 - normalize transport failures
             raise LinkError(f"{tool} failed against {self.url}: {exc}") from exc
 
+    def list_tools(self, timeout: float | None = None) -> list[str]:
+        """Names of the tools the opponent advertises - how we classify their dialect."""
+        from fastmcp import Client
+
+        async def go() -> list[str]:
+            async with Client(self.url, timeout=timeout) as client:
+                return [tool.name for tool in await client.list_tools()]
+
+        try:
+            return asyncio.run(go())
+        except Exception as exc:  # noqa: BLE001 - normalize transport failures
+            raise LinkError(f"list_tools failed against {self.url}: {exc}") from exc
+
     def handshake(self, payload: dict, timeout: float | None = None) -> dict:
         return self._call("handshake", {"payload": payload}, timeout)
 
@@ -53,6 +66,16 @@ class McpLink:
 
     def audit(self, package: dict, timeout: float | None = None) -> dict:
         return self._call("audit_exchange", {"package": package}, timeout)
+
+    # -- reference dialect: fire-and-forget pushes, replies arrive at our server --
+    def negotiate(self, signed: dict, timeout: float | None = None) -> dict:
+        return self._call("negotiate", {"message": signed}, timeout)
+
+    def receive_turn(self, message: dict, timeout: float | None = None) -> dict:
+        return self._call("receive_turn", {"message": message}, timeout)
+
+    def submit_audit(self, payload: dict, timeout: float | None = None) -> dict:
+        return self._call("submit_audit", {"payload": payload}, timeout)
 
     def health(self, timeout: float | None = None) -> dict:
         return self._call("health_check", {}, timeout)
