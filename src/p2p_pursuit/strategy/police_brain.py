@@ -15,8 +15,17 @@ three defects that instrumenting real games exposed:
   are now relative to a rolling window of recent peaks, which also self-calibrates
   to an opponent whose scent model - and so whose posterior scale - differs.
 
-Barriers stay deliberately rare: spending them was measured and it *loses*
-(see BELIEF_FLOOR). Every placement still passes the flood-fill self-trap veto.
+v5 adds the doctrine the book calls "the heart of the police's strategic
+challenge" (3.4) and which v4 had measured its way out of: **the squeeze**. The
+book names a third capture path - a thief with no legal move left is captured -
+which costs only two barriers in a corner, where landing on a moving equal-speed
+evader is near-impossible. `squeeze.py` closes its exits one at a time; this
+module decides *when*, and the answer is "once the gap has stopped closing".
+Against something that does not actually flee - a random walker - chasing still
+wins outright, and spending those turns on doors cost 25/30 -> 20/30.
+
+Barriers are otherwise still rare: an unconditional spend was measured and it
+loses (see BELIEF_FLOOR). Every placement passes the flood-fill self-trap veto.
 """
 
 from __future__ import annotations
@@ -28,6 +37,7 @@ from ..domain.brains_base import BrainBase, BrainView
 from ..domain.hints import region_of
 from ..domain.rules import Decision
 from .pathing import bfs_distances, still_connected
+from .squeeze import squeeze_play, squeeze_target
 
 # Barrier thresholds are RELATIVE to the sharpest posterior seen so far in this
 # sub-game, not absolute. Absolute constants were calibrated by eye against our
@@ -42,6 +52,7 @@ from .pathing import bfs_distances, still_connected
 # forgets the opening certainty and tracks the fog-of-war scale the game settles
 # into.
 PEAK_WINDOW = 12
+GAP_WINDOW = 4   # turns of no closure before we switch from chasing to squeezing
 KILL_SHOT_RATIO = 0.85
 SEAL_RATIO = 0.60
 SEAL_DISTANCE = 3
@@ -71,12 +82,14 @@ class PoliceBrain(BrainBase):
         self._last_move: str | None = None
         self._recent: deque[float] = deque(maxlen=PEAK_WINDOW)
         self._camped = 0
+        self._gaps: deque[int] = deque(maxlen=GAP_WINDOW)
 
     def _decide_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
             self._sub_game, self._prev_fresh, self._fresh = view.sub_game, None, None
             self._last_move, self._camped = None, 0
             self._recent.clear()
+            self._gaps.clear()
         # Track the scent trail on EVERY turn, including barrier turns: tracking
         # it inside the interception branch meant one barrier placement blinded
         # the velocity estimate for the turn after it (displacement of 2).
@@ -84,11 +97,32 @@ class PoliceBrain(BrainBase):
         peak = view.belief.argmax()
         b_max = view.belief.grid[peak[0]][peak[1]]
         barrier = self._barrier_play(view, peak, b_max)
+        # The squeeze (book 3.4): once the evader is on cramped ground, take its
+        # exits one at a time. Enclosure - no legal move left - captures just as
+        # landing on it does, and costs only 2 barriers in a corner.
+        quarry = self._fresh or peak
+        # Squeeze only against a quarry that is genuinely evading. If we are
+        # still closing the gap, chasing wins outright - that is how a random
+        # walker gets caught, and spending those turns on doors instead cost
+        # 25/30 -> 20/30 against one. Barriers are for the opponent that
+        # distance alone can never catch. Evaluated ONCE per turn: it advances
+        # a rolling window, so calling it twice would halve the window.
+        evading = self._evading(view, quarry)
+        if barrier is None and evading:
+            barrier = squeeze_play(view.board, view.own_pos, quarry,
+                                   quota_left=view.barrier_quota - view.barriers_used,
+                                   reserve=ENDGAME_RESERVE)
         if barrier is not None:
             self._last_move = None
             return Decision(move="STAY", barrier=barrier)
-        target = self._intercept_target(view) or peak
-        return self._pursue(view, target)
+        target = squeeze_target(view.board, view.own_pos, quarry) if evading else None
+        return self._pursue(view, target or self._intercept_target(view) or peak)
+
+    def _evading(self, view: BrainView, quarry: Cell) -> bool:
+        """Has the gap stopped closing? Then distance alone will not finish this."""
+        gap = bfs_distances(view.board, view.own_pos).get(quarry, 99)
+        self._gaps.append(gap)
+        return len(self._gaps) == self._gaps.maxlen and gap >= self._gaps[0]
 
     def _track_trail(self, view: BrainView) -> None:
         """Remember the freshest served-scent cell, turn over turn."""

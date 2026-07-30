@@ -149,6 +149,54 @@ as the best of five, and on **50 untouched hold-out seeds** it is 30.0% → **26
 direction on both sets and a sound mechanism, but only two games in fifty, so not statistically
 established. Shipped on the mechanism, not the number.
 
+## 7. v5 — the squeeze (book §3.4), and what it does *not* prove
+
+Re-reading §3.4 showed the earlier "barriers lose" conclusion was a verdict on our
+*placement policy*, not on the mechanic. The book is emphatic: the quota "is the heart of the
+police's strategic challenge", the police is "an **architect of the arena**", and it must
+"**squeeze the thief into a corner** without blocking its own access routes". Most importantly it
+names a **third capture path** we had implemented but never played for: *a thief with no legal
+move — every neighbour a barrier or the board edge — is captured.*
+
+That changes the arithmetic completely. Landing on a moving equal-speed evader is near-impossible;
+enclosure costs **2 barriers in a corner, 3 on an edge, 4 in the open**. So `squeeze.py` closes the
+evader's exits one at a time, and the police aims at the *door* rather than the evader.
+
+Two calibration findings, both counter-intuitive and both measured:
+
+- **Gating the doctrine ruins it.** Restricting the squeeze to a "cornered" quarry
+  (exits ≤ 3, range ≤ 3) scored 22%/3%; ungated it scored 75%/78%. The placement rule already
+  supplies the only gate that matters — a barrier must go within one step of the police, so a
+  door can only be closed from beside it.
+- **But it must be conditional on the quarry actually evading.** Squeezing a random walker cost
+  25/30 → 20/30, because a walker does not flee and plain chasing catches it. The switch is
+  "the gap has not closed in `GAP_WINDOW` turns". That window is knife-edge: 2 → 6%, 3 → 76%,
+  **4 → 92%**, 5 → 26%.
+
+| Police capture rate | v4 thief | v3 thief | reference policy | random walker |
+|---|---|---|---|---|
+| v4 (chase only) | ~30% | ~42% | 100% | 83% |
+| **v5 (squeeze)** | **90–98%** | **92%** | **100%** | **93%** (gate 10/10) |
+
+Validated on two seed sets never used for tuning (4000–4049, 5000–5049).
+
+### The caveat that matters more than the number
+
+**None of it transfers to the live reference peer: still 0/5.** Instrumenting the live match shows
+why — the squeeze fired only twice, always the same two cells, because it needs the police
+adjacent to one of the evader's exits and the reference thief never lets us that close. So the
+90–98% is measuring **our own thief's willingness to be approached, not our police's strength**,
+and self-play remains an unreliable predictor of league performance.
+
+The same caution cuts the other way, and is why the thief was *not* rewritten to answer the
+squeeze: in-sim our thief is caught 97.5% by our own v5 police, yet live it has never been caught
+at all. An anti-squeeze term was implemented and measured at **zero effect at every weight**
+(including after fixing a radius bug — the trail reports where the pursuer *was*, so a barrable
+door lies within two of it, not one), and was removed rather than shipped as decoration.
+Over-fitting the evader to a simulation that disagrees with every live result would be the wrong
+trade. **Establishing why the sim and the wire disagree remains the single highest-value piece of
+work on this project.**
+
 ### v4 negative results — kept on the record because they cost real effort
 
 4. **Barriers are a tempo trap on this board, and the quota is a red herring.** The book grants
