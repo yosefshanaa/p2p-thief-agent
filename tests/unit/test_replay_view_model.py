@@ -1,8 +1,14 @@
 """Replay verification logic + the live GUI's local-truth invariant."""
 
 from p2p_pursuit.domain.audit import TAMPERED, VERIFIED_OK
+from p2p_pursuit.gui import theme
 from p2p_pursuit.gui.replay_data import frames, timeline, verdict_of
-from p2p_pursuit.gui.view_model import banner, board_cells, heat_hex
+from p2p_pursuit.gui.view_model import (
+    banner,
+    board_cells,
+    heat_hex,
+    scent_radius,
+)
 from p2p_pursuit.peer import audit_bridge, log_manager
 from p2p_pursuit.peer.local_match import play_sub_game
 from p2p_pursuit.peer.turn_engine import TurnEngine
@@ -47,26 +53,29 @@ def test_frames_accumulate_positions_and_barriers():
 
 def test_view_model_banner_and_colors():
     assert banner({"end": None, "my_turn": True})[0] == "YOUR TURN"
-    assert banner({"end": None, "my_turn": False})[0] == "LOCKED"
+    assert banner({"end": None, "my_turn": False})[0] == "COMMITTED"
     text, _ = banner({"end": {"ending": "capture", "winner": "police"}, "my_turn": False})
     assert "CAPTURE" in text
-    assert heat_hex(0.0, 1.0) == "#ffffff"
-    assert heat_hex(1.0, 1.0) == "#ff2626"
+    # The ramp is sequential: zero probability sits on the panel tone and the
+    # peak lands on the field colour. Asserted against the tokens, not literals,
+    # so a retheme changes one file instead of the test suite.
+    assert heat_hex(0.0, 1.0) == theme.PANEL
+    assert heat_hex(1.0, 1.0) == theme.FIELD_HI
 
 
 def test_board_cells_scent_overlay():
-    """Opponent scent (a legitimate observation) renders as a violet cell
-    outline; cells without scent - and boards without any scent snapshot -
-    keep the plain grid outline."""
+    """Opponent scent (a legitimate observation) is carried on its own channel -
+    a disc whose radius grows with intensity - so it never competes with the
+    posterior ramp for the same cell's fill."""
     status = {"board_size": 3, "belief": [[0.0] * 3 for _ in range(3)],
               "barriers": [], "own_pos": [0, 0], "role": "police",
               "opp_scent": [[0.0, 0.0, 0.0], [0.0, 0.81, 0.0], [0.0, 0.0, 0.0]]}
     cells = board_cells(status)
-    assert cells[1][1]["outline"] != "#cccccc" and cells[1][1]["width"] > 1
-    assert cells[0][2]["outline"] == "#cccccc" and cells[0][2]["width"] == 1
+    assert cells[1][1]["scent"] == 0.81
+    assert scent_radius(0.81) > scent_radius(0.2) > 0    # radius carries intensity
+    assert cells[0][2]["scent"] == 0.0
     del status["opp_scent"]
-    assert all(c["outline"] == "#cccccc" and c["width"] == 1
-               for row in board_cells(status) for c in row)
+    assert all(c["scent"] == 0.0 for row in board_cells(status) for c in row)
 
 
 def test_belief_stats_and_info_lines():
@@ -103,17 +112,17 @@ def test_legend_covers_every_board_glyph():
 
     items = legend_items()
     labels = " ".join(label for _, label in items)
-    for needed in ("belief", "peak", "scent", "barrier", "you"):
+    for needed in ("posterior", "argmax", "trace", "barrier", "you"):
         assert needed in labels
-    assert all(re.fullmatch(r"#[0-9a-f]{6}", color) for color, _ in items)
+    assert all(re.fullmatch(r"#[0-9a-fA-F]{6}", color) for color, _ in items)
 
 
 def test_end_banner_color_reflects_outcome_for_this_role():
     end = {"ending": "capture", "winner": "police"}
-    assert banner({"end": end, "role": "police"})[1] == "#22aa44"  # we won
-    assert banner({"end": end, "role": "thief"})[1] == "#cc4444"   # we lost
+    assert banner({"end": end, "role": "police"})[1] == theme.ASSURE  # we won
+    assert banner({"end": end, "role": "thief"})[1] == theme.ALARM    # we lost
     tie = {"ending": "tie", "winner": None}
-    assert banner({"end": tie, "role": "police"})[1] == "#4488ff"  # neutral
+    assert banner({"end": tie, "role": "police"})[1] == theme.MUTED   # neutral
 
 
 def test_own_cell_uses_role_accent():
@@ -131,6 +140,7 @@ def test_board_cells_local_truth_only():
               "barriers": [[0, 1]], "own_pos": [2, 2], "role": "police"}
     cells = board_cells(status)
     glyphs = {cells[r][c]["text"] for r in range(3) for c in range(3)}
-    assert glyphs <= {"", "#", "P"}          # never a thief marker
-    assert cells[0][1]["fill"] == "#222222"  # barrier
-    assert cells[2][2]["text"] == "P"        # our own cell
+    assert glyphs <= {"", "P"}                 # never a thief marker
+    assert cells[0][1]["fill"] == theme.INK    # barrier
+    assert cells[0][1]["barrier"] is True
+    assert cells[2][2]["text"] == "P"          # our own cell
