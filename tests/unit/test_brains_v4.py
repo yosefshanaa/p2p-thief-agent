@@ -156,3 +156,49 @@ def test_thief_lie_is_not_a_deterministic_function_of_public_data():
         if intent == "lie":
             regions.add(region)
     assert len(regions) > 1, "a single region every time is a decodable lie"
+
+
+# -- v5: claiming an enclosure ------------------------------------------------
+def test_police_claims_an_enclosed_thief():
+    """Book 3.4: a thief with no legal move is captured. A foreign peer never
+    confesses it - we squeezed the reference peer into a corner in a live match,
+    sealed both exits, and still lost to "survival" 23 turns later."""
+    from p2p_pursuit.peer.turn_engine import TurnEngine
+    from tests.conftest import make_peer, make_shared
+
+    shared = make_shared()
+    engine = TurnEngine("police", shared, make_peer("police"), seed=1)
+    corner = (shared.grid_size - 1, shared.grid_size - 1)
+    for cell in [(corner[0] - 1, corner[1]), (corner[0], corner[1] - 1)]:
+        engine.board.add_barrier(cell)
+    scent = [[0.0] * shared.grid_size for _ in range(shared.grid_size)]
+    scent[corner[0]][corner[1]] = 0.9          # their trail names the corner
+    engine.opp_public.append({"kind": "step", "scent": scent})
+    engine.opp_hashes.append("x")
+
+    package = engine.build_own_step()
+    assert "event" in package, "an enclosed thief must be claimed, not chased"
+    assert engine.end is not None
+    assert engine.end.ending == "capture"
+    assert engine.end.winner == "police"
+    assert "enclosed" in engine.end.cause
+
+
+def test_police_does_not_claim_on_a_stale_trail():
+    """A claim we cannot substantiate is worse than a missed capture."""
+    from p2p_pursuit.peer.turn_engine import TurnEngine
+    from tests.conftest import make_peer, make_shared
+
+    shared = make_shared()
+    engine = TurnEngine("police", shared, make_peer("police"), seed=1)
+    corner = (shared.grid_size - 1, shared.grid_size - 1)
+    for cell in [(corner[0] - 1, corner[1]), (corner[0], corner[1] - 1)]:
+        engine.board.add_barrier(cell)
+    scent = [[0.0] * shared.grid_size for _ in range(shared.grid_size)]
+    scent[corner[0]][corner[1]] = 0.3          # too decayed to name a cell
+    engine.opp_public.append({"kind": "step", "scent": scent})
+    engine.opp_hashes.append("x")
+
+    package = engine.build_own_step()
+    assert "commit" in package, "an unsubstantiated enclosure must not be claimed"
+    assert engine.end is None

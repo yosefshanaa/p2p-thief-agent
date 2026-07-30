@@ -25,6 +25,8 @@ from .state_machine import (
     WAITING_FOR_OPPONENT,
 )
 
+ENCLOSURE_SCENT_MIN = 0.7  # below this the trail cannot name a cell to claim
+
 __all__ = ["SubGameEnd", "TurnEngine"]
 
 
@@ -35,6 +37,10 @@ class TurnEngine(EngineState):
         self.machine.transition(COMPUTING_MOVE)
         if self.role == THIEF and self.board.is_enclosed(self.own_pos):
             return {"event": self._captured_event("enclosed")}
+        if self.role == POLICE:
+            trapped = self._enclosed_opponent()
+            if trapped is not None:
+                return {"event": self._enclosure_claim(trapped)}
         view = self._view()
         decision = safe_decision(self.board, self.role, self.own_pos, self.barriers_used,
                                  self.shared.max_barriers, self.brain.decide(view))
@@ -84,6 +90,37 @@ class TurnEngine(EngineState):
         public = self._record(sealed, h)
         self._finish(ending, winner, cause)
         return {"public": public, "hash": h}
+
+    def _enclosed_opponent(self) -> Cell | None:
+        """The thief's cell, if our barriers have left it no legal move (book 3.4).
+
+        A native peer confesses this itself, but a foreign implementation simply
+        holds and plays on: we squeezed the reference peer into a corner on turn
+        12 of a live match, sealed both its exits, and then lost the sub-game to
+        "survival" 23 turns later. The police must therefore claim the enclosure.
+
+        The claim is independently checkable rather than taken on trust: barrier
+        placements are public and truthful by rule, and the opponent's own signed
+        log reveals where it stood, so the audit can confirm both halves.
+        """
+        scent = self._last_opp_scent()
+        if not scent:
+            return None
+        top = max(max(row) for row in scent)
+        if top < ENCLOSURE_SCENT_MIN:
+            return None  # too stale to name a cell, so too stale to claim one
+        size = self.board.size
+        cell = max(((r, c) for r in range(size) for c in range(size)),
+                   key=lambda p: scent[p[0]][p[1]])
+        if self.board.is_open(cell) and self.board.is_enclosed(cell):
+            return cell
+        return None
+
+    def _enclosure_claim(self, cell: Cell) -> dict:
+        return self._seal_event(
+            protocol.captured_event_record(role=self.role, sub_game=self.sub_game,
+                                           at_step=self.my_steps, cause=f"enclosed at {cell}"),
+            CAPTURE, POLICE, f"enclosed at {cell}")
 
     def _captured_event(self, cause: str) -> dict:
         return self._seal_event(
