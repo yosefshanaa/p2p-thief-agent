@@ -100,6 +100,16 @@ class PeerConfig:
     llm_step_deadline_seconds: int = 30
     email_recipient: str = ""
     email_mode: str = "draft"
+    #: Wire + digest contract for this match: "native" or "reference" (RUNBOOK 3b).
+    interop_dialect: str = "native"
+    #: Swap sides between sub-games (natural role on odd, opposite on even).
+    #: Reference-derived peers do this; a fixed-role peer collides with them
+    #: from sub-game 2. Negotiated per match, never assumed.
+    alternate_roles: bool = False
+    #: Re-run the handshake before every sub-game. Reference-derived peers
+    #: rebuild their runtime per sub-game and renegotiate; a peer that
+    #: handshakes once leaves them waiting until their timeout.
+    handshake_per_sub_game: bool = False
 
 
 def load_shared(path: Path) -> SharedConfig:
@@ -111,6 +121,7 @@ def load_peer(path: Path) -> PeerConfig:
     raw = tomllib.loads(path.read_text(encoding="utf-8"))
     game, net = raw.get("game", {}), raw.get("network", {})
     talk, llm, email = raw.get("trash_talk", {}), raw.get("llm", {}), raw.get("email", {})
+    interop = raw.get("interop", {})
     return PeerConfig(
         raw=raw,
         group_name=game.get("group_name", ""),
@@ -128,6 +139,9 @@ def load_peer(path: Path) -> PeerConfig:
         llm_step_deadline_seconds=llm.get("step_deadline_seconds", 30),
         email_recipient=email.get("recipient", ""),
         email_mode=email.get("mode", "draft"),
+        interop_dialect=interop.get("dialect", "native"),
+        alternate_roles=bool(interop.get("alternate_roles", False)),
+        handshake_per_sub_game=bool(interop.get("handshake_per_sub_game", False)),
     )
 
 

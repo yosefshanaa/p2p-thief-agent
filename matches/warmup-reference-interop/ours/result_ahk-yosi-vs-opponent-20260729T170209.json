@@ -1,0 +1,61 @@
+{
+  "report_type": "game_result",
+  "game_uid": "70ae668a1b39",
+  "game_id": "ahk-yosi-vs-opponent-20260729T170209",
+  "generated_at": "2026-07-29T17:02:43+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "fd8c1fdf1647bd5b157413f5ebee68c3d7e2db25",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "segal-thief-team",
+      "group_name": "Segal-Thief-Team",
+      "members": [
+        "id-2001",
+        "id-2002",
+        "id-2003"
+      ],
+      "repos": {
+        "cop": "https://github.com/rmisegal/Game-P2P-Cop-Chase",
+        "thief": "https://github.com/rmisegal/Game-P2P-Cop-Chase"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "fd8c1fdf1647bd5b157413f5ebee68c3d7e2db25",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    }
+  ],
+  "totals": {
+    "police": 5,
+    "thief": 10
+  },
+  "my_role": "police",
+  "my_total": 5,
+  "opponent_total": 10,
+  "series_winner": "thief",
+  "tokens_used": 0,
+  "mutual_agreement": false,
+  "result_sha256": "7374342a375ece919dc9b7ac8e7311a07b5744fd1e3f159390dd4cdcc686f6ed"
+}

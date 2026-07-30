@@ -12,7 +12,31 @@ from typing import Any
 from ..peer.service import PeerService
 
 
-def build_server(service: PeerService, name: str = "p2p-pursuit-peer"):
+def _add_reference_tools(mcp: Any, bridge: Any) -> None:
+    """Also answer to the reference peer's tool names, routed through the bridge."""
+
+    @mcp.tool
+    def negotiate(message: dict) -> dict:
+        """Reference dialect: the opponent's signed game agreement."""
+        return bridge.on_negotiate(message)
+
+    @mcp.tool
+    def receive_turn(message: dict) -> dict:
+        """Reference dialect: one whole turn (commit + public reveal together)."""
+        return bridge.on_receive_turn(message)
+
+    @mcp.tool
+    def submit_audit(payload: dict) -> dict:
+        """Reference dialect: end-of-game reveal of records and nonces."""
+        return bridge.on_submit_audit(payload)
+
+    @mcp.tool
+    def receive_control(message: dict) -> dict:
+        """Reference dialect: advisory control signal (accepted, not acted on)."""
+        return bridge.on_receive_control(message)
+
+
+def build_server(service: PeerService, name: str = "p2p-pursuit-peer", bridge: Any = None):
     from fastmcp import FastMCP
 
     mcp = FastMCP(name)
@@ -52,13 +76,16 @@ def build_server(service: PeerService, name: str = "p2p-pursuit-peer"):
         """Liveness probe."""
         return service.health()
 
+    if bridge is not None:
+        _add_reference_tools(mcp, bridge)
     return mcp
 
 
 def serve_in_thread(service: PeerService, *, host: str, port: int,
-                    name: str = "p2p-pursuit-peer") -> threading.Thread:
+                    name: str = "p2p-pursuit-peer",
+                    bridge: Any = None) -> threading.Thread:
     """Run the FastMCP HTTP server on a daemon thread; returns once started."""
-    mcp = build_server(service, name)
+    mcp = build_server(service, name, bridge)
 
     def run() -> None:
         mcp.run(transport="http", host=host, port=port, show_banner=False)

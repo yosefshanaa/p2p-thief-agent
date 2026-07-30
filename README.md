@@ -203,13 +203,15 @@ A forged match is void: technical loss 0/0, no appeal (rule #20).
 | 2. FastMCP P2P infra — peer server+client, state machine, deadline tracker, watchdog | ✅ |
 | 3. Strategy module — `BrainBase` plug-in, police/thief doctrine, sim lab | ✅ |
 | 4. Language + scent — emission/decay, belief map, trust model, 4 banter providers | ✅ |
-| 5. Cloud exposure — public-URL config, smoke probe, [`docs/RUNBOOK.md`](docs/RUNBOOK.md), CI chaos drills (latency / dead link / silence) | ✅ code / ☐ live tunnel drill |
+| 5. Cloud exposure — public-URL config, smoke probe, [`docs/RUNBOOK.md`](docs/RUNBOOK.md), CI chaos drills (latency / dead link / silence) | ✅ incl. live two-tunnel drill + tunnel-kill drill |
 | 6. Crypto — commit-reveal, nonces, mutual audit, step-0 declaration, locks | ✅ |
 | 7. Reporting + GUI — 4 JSON artifacts, Gatekeeper, Gmail (draft/send), live GUI, replay verifier | ✅ |
+| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer |
 
-**Quality gate:** 89 tests, coverage ≥94% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-every file ≤150 code lines, CI on every push. League play vs. real opposing teams and the
-two-repo submission split are still ahead (see [`docs/TODO.md`](docs/TODO.md) §8–9).
+**Quality gate:** 165 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+every file ≤150 code lines, CI on every push. Counted league matches vs. real opposing teams
+are the remaining work (see [`docs/TODO.md`](docs/TODO.md) §8–9); the submission repos are
+already split, public and green.
 
 ## 7. Installation
 
@@ -247,8 +249,10 @@ uv run p2p-pursuit peer --role police --no-gui   # terminal 2 (port 8802)
 # Verify + view a sealed log (green "Verified OK" / red TAMPERED; exit 3 on tamper):
 uv run p2p-pursuit replay --log results/sim-*/log_*_g01.json --no-gui
 
-# Probe a (remote) peer endpoint / one-time Gmail consent:
-uv run p2p-pursuit smoke http://127.0.0.1:8801/mcp
+# Probe a (remote) peer: reachability + which wire dialect they speak:
+uv run p2p-pursuit smoke http://127.0.0.1:8801/mcp     # dialect=native|reference|unknown
+
+# One-time Gmail consent:
 uv run p2p-pursuit authorize
 ```
 
@@ -313,6 +317,8 @@ docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers |
 | [`docs/PROMPT_BOOK.md`](docs/PROMPT_BOOK.md) | Prompt-engineering log (guidelines §8.3) |
 | [`docs/COST_ANALYSIS.md`](docs/COST_ANALYSIS.md) | LLM token/cost model per banter provider |
+| [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) | The book's ch. 11.5/11.6 final sweep, mapped to evidence |
+| [`matches/`](matches/) | Per-match archives (artifacts, configs, terminal evidence) |
 
 ## 13. Interpretation log (academic freedom, book p. 5)
 
@@ -342,6 +348,23 @@ Decisions where the book under-specifies or contradicts itself — documented as
    and an unconditional fall back to the zero-token template, so no backend can stall a turn
    (unit-tested for all five). API keys live only in a git-ignored `.env`, never in `config/`,
    because config files are exchanged with the opponent and hashed into `config_sha256`.
+
+7. **The commit *formula* is a negotiable term, not a constant.** The book fixes what must be
+   sealed, not how the digest is composed, and two honest implementations diverged: ours hashes
+   the record with the nonce inside it, the reference hashes `canonical(payload)|nonce`. Neither
+   can verify the other, so `[interop] dialect` selects the composition per match (default
+   `native`; every log records which one sealed it). Adopting the opponent's composition changes
+   nothing about *what* is committed to or how binding it is — a nonce is still withheld until
+   the audit, and tamper sensitivity is unit-tested under both. Proven against the unmodified
+   reference peer: `matches/warmup-reference-interop/`.
+8. **An opponent's unsealed assertions are acted on but recorded as unsealed.** The reference
+   protocol carries the thief's capture answer and the survival claim as plain fields outside
+   its commitment, where ours binds both (rule #21). Refusing them would hang the match, so they
+   are applied with `(unsealed claim)` / `(unsealed answer)` in the cause string, which then
+   travels into the log, the result and the replay. Relatedly, our result reports
+   `mutual_agreement: false` for a reference-dialect match: that dialect never returns the
+   opponent's verdict of us, and asserting an agreement we never received would be a lie in a
+   signed artifact.
 
 ## 14. Secrets & Gmail
 

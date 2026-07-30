@@ -59,7 +59,8 @@ def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
         index=n, ending=ending, winner=winner, cause=cause,
         police_score=p_score, thief_score=t_score,
         moves_played=engine.my_steps if rt.role == "thief" else engine.opp_steps,
-        github_commit=sysinfo.git_commit(), audit_verdict=my_verdict["verdict"])
+        github_commit=sysinfo.git_commit(), audit_verdict=my_verdict["verdict"],
+        opponent_audit=their_view["verdict"])
     log_fn(f"[{rt.role}] sub-game {n}: {ending} winner={winner} ({cause}) "
            f"audit={my_verdict['verdict']}")
     return row
@@ -78,7 +79,7 @@ def build_result(rt: Any) -> dict[str, Any]:
         sub_games=rt.sub_results, police_total=police_total, thief_total=thief_total,
         tie_score=rt.shared.scoring.get("tie_score", 2),
         tokens_used=rt.engine.tokens_used, github_commit=sysinfo.git_commit(),
-        my_role=rt.role, mutual_agreement=True)
+        my_role=rt.role, mutual_agreement=results.agreement_reached(rt.sub_results))
     artifacts.write_result(rt.out_dir, rt.game_id, result)
     return result
 

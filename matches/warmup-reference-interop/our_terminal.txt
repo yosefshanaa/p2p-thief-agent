@@ -1,0 +1,4 @@
+[police] FastMCP server on 0.0.0.0:8802 (+reference dialect)
+[police] sub-game 1: survival winner=thief (survival at 35 steps (unsealed claim)) audit=Verified OK
+[email] mode='draft': dry-run (send-only scope has no drafts)
+[email] {'delivered': True, 'receipt': {'id': 'dry-run-1'}, 'mode': 'draft'}

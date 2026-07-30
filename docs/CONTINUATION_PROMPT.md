@@ -28,6 +28,26 @@ reveal → mutual audit (tamper ⇒ technical loss 0/0). Team **`ahk-yosi`**: Yo
   `/mnt/c/Users/yosef/Downloads`. Both are Hebrew RTL — pypdf extraction needs bidi
   line-reversal post-processing (reverse each line, un-reverse Latin/digit runs, mirror brackets).
 
+## Interop is built and proven — do not redesign it
+
+Reference-derived opponents were the biggest un-de-riskable unknown. It is now closed:
+
+- `uv run p2p-pursuit smoke <url>` reports `dialect=native|reference|unknown` from their tool
+  listing. Run it against every new opponent before anything else.
+- `[interop] dialect = "reference"` in `config/<role>/game.toml` switches the whole adaptation:
+  their tool names, their push/inbox framing, **and their commit formula**.
+- **The runbook used to claim the crypto was "identical". It is not** — they hash
+  `canonical(payload)|nonce`, we hash the record with the nonce inside it. Neither side can
+  verify the other until one adopts the other's digest. That is what interop mode does; the
+  native path is unchanged and pinned by a golden vector.
+- **Warm-up played 2026-07-29 against the lecturer's unmodified reference peer**: full 35-step
+  sub-game, their audit of us `log_verified: true`, ours of them `Verified OK`, scores agreed.
+  Evidence + reproduction: `matches/warmup-reference-interop/`. Details: RUNBOOK §3b.
+- Interop caveats that are real and documented: no mutually enforceable scent-model lock, their
+  claim answers/win claims are unsealed, and they never return their verdict of us (so our
+  result honestly reports `mutual_agreement: false` for such a match). **Prefer the native
+  dialect for counted matches** when the opponent will run the shim.
+
 ## Already done — do not redo
 
 Gmail OAuth (consent complete, `[email] mode = "send"` in both configs, verified by a real send
@@ -94,12 +114,9 @@ counts are non-zero.
 
 ### A. League play — the only real blocker (needs opposing teams; the human schedules, you run)
 
-1. **Warm-up interop first, uncounted.** Reference-derived peers expose
-   `negotiate`/`receive_turn`/`submit_audit`/`receive_control`; ours exposes
-   `handshake`/`receive_commit`→`receive_reveal`→`receive_event`/`audit_exchange`. The crypto
-   content is identical and the wire contract is pair-negotiated (RUNBOOK §3b) — agree it during
-   warm-up; never discover a mismatch inside a counted match. A thin shim in
-   `infra/mcp_client.py` + the service facade covers adaptation.
+1. **Warm-up interop first, uncounted.** The shim exists and is proven (see above): probe with
+   `smoke`, set `[interop] dialect` to match, play one uncounted sub-game, confirm both audits.
+   Never discover a contract mismatch inside a counted match.
 2. **Two counted matches vs two different teams:** negotiate a byte-identical `game.json`
    (minimums may only rise; the handshake refuses on `config_sha256` mismatch), exchange the
    scent-model lock, declare prior-counted truthfully, play 6 sub-games, mutual audit, agree the
@@ -124,7 +141,9 @@ README §5 (the other three are already embedded as images) and sync to both rep
 
 ### C. Submission mechanics (book ch. 9/11 + Appendix C)
 
-1. Final sweep against the book's **ch. 11.5 pre-submission checklist** — every layer demoed.
+1. ~~Final sweep against ch. 11.5~~ **done** — `docs/SUBMISSION_CHECKLIST.md` maps every item of
+   ch. 11.5 *and* the ch. 11.6 submission list to evidence. Layers 1–5 are green; items 6 (both
+   sides' Gmail reports) and 7 (the tag) wait on a counted match by design.
 2. Annotated tag on **both** repos, then push:
    `git tag -a v1.0-submission -m "Final submission: Police-Thief P2P, group ahk-yosi"`
 3. Moodle: download the form, fill it without changing fields, save as PDF, **each member

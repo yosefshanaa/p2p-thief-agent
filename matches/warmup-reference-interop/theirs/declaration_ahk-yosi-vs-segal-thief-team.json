@@ -1,0 +1,74 @@
+{
+  "_schema": "Static declaration for the WHOLE game (the full series of sub-games) between two teams. This is the single home for every field that does NOT change while the sub-games are played: team identity, members, cop/thief repository URLs, MCP server URLs, hardware spec, LLM model, the agreed max-tokens-per-game cap, and the game start/end times. Roles (cop/thief) switch across the sub-games, so no role and no sub_game_number appear here. Both teams sign it and lock it cryptographically before play (book ch5 Step-0). Data that changes per sub-game (github_commit, moves, scores) lives in 3-game-log.json and 4-final-result.json.",
+  "schema_version": "1.1",
+  "declaration_type": "pre_game_declaration",
+  "game_id": "ahk-yosi-vs-segal-thief-team",
+  "game_uid": "647ae484-d9d9-274d-17ee-930bc75d1f6b",
+  "links": {
+    "_remark": "These are logical roles, NOT fixed filenames. Each actual file name MUST be derived from the game_id so that files from different games are never mixed. Match-level files (declaration, result) are named <role>_<game_id>.json; per-sub-game files (config, log) are named <role>_<game_id>_g<NN>.json where <NN> is the sub_game_number. The names below are examples for game_id=S01R02-team07-vs-team13.",
+    "declaration": "declaration_ahk-yosi-vs-segal-thief-team.json",
+    "config": "config_ahk-yosi-vs-segal-thief-team_g<NN>.json",
+    "log": "log_ahk-yosi-vs-segal-thief-team_g<NN>.json",
+    "result": "result_ahk-yosi-vs-segal-thief-team.json"
+  },
+  "timezone": "Asia/Jerusalem",
+  "game_started_at": "2026-07-29T17:02:22.302660+00:00",
+  "game_ended_at": "2026-07-29T17:02:24.902660+00:00",
+  "num_sub_games": 1,
+  "max_tokens_per_game": 200000,
+  "groups": {
+    "group_1": {
+      "group_id": "segal-thief-team",
+      "group_name": "Segal-Thief-Team",
+      "members": [
+        "id-2001",
+        "id-2002",
+        "id-2003"
+      ],
+      "repos": {
+        "cop": "https://github.com/rmisegal/Game-P2P-Cop-Chase",
+        "thief": "https://github.com/rmisegal/Game-P2P-Cop-Chase"
+      },
+      "mcp_servers": {
+        "cop": "http://127.0.0.1:8801/mcp",
+        "thief": "http://127.0.0.1:8801/mcp"
+      },
+      "llm_model": "claude-opus-4-8[1m]",
+      "hardware_spec": {
+        "cpu_type": "unknown",
+        "cpu_freq_mhz": "unknown",
+        "cpu_cores": 12,
+        "ram_gb": "unknown",
+        "gpu_model": "unknown",
+        "vram_gb": "unknown"
+      },
+      "signature": "06cd2ee550ec67e864a016e3eeb93b944f6ead652b2def6e7ef2c8331461a8da"
+    },
+    "group_2": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_servers": {
+        "cop": "http://0.0.0.0:8802/mcp",
+        "thief": "http://0.0.0.0:8802/mcp"
+      },
+      "llm_model": "template",
+      "hardware_spec": {
+        "cpu_type": null,
+        "cpu_freq_mhz": null,
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu_model": "none",
+        "vram_gb": null
+      },
+      "signature": "f5e43318dace1b80d57301a7c3464037c9fb93ef545886ffd2b9e7102e3b3ef9"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "result": "survival",
+  "winner": "thief",
+  "steps": 35,
+  "log": "logs/result_ahk-yosi-vs-segal-thief-team.json",
+  "email": {
+    "sent": false,
+    "reason": "disabled"
+  }
+}
