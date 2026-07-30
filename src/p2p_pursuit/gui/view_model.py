@@ -9,24 +9,25 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from . import theme
+
 
 def heat_hex(value: float, peak: float) -> str:
-    """Belief heat: white -> deep red as probability approaches the current peak."""
-    if peak <= 0:
-        return "#ffffff"
-    x = max(0.0, min(1.0, value / peak))
-    g_b = int(255 * (1.0 - x * 0.85))
-    return f"#ff{g_b:02x}{g_b:02x}"
+    """One posterior cell on the sequential ramp (theme.field_fill)."""
+    return theme.field_fill(value, peak)
 
 
-def scent_hex(value: float) -> str:
-    """Opponent scent overlay: white -> deep violet with intensity."""
-    x = max(0.0, min(1.0, value / 0.9))
-    g = int(255 * (1.0 - x * 0.75))
-    return f"#{g:02x}{g:02x}ff"
+def scent_radius(value: float) -> float:
+    """Trace intensity as a FRACTION OF THE CELL, not a colour.
+
+    The posterior already owns the fill ramp. Scent is a different quantity, so
+    it gets a different channel - a disc whose radius grows with intensity -
+    and the two can then be read at once instead of fighting for the same cell.
+    """
+    return max(0.0, min(1.0, value / 0.9)) * 0.26
 
 
-ROLE_ACCENT = {"police": "#2266dd", "thief": "#dd6622"}
+ROLE_ACCENT = dict(theme.ROLE)
 
 
 def banner(status: dict[str, Any]) -> tuple[str, str]:
@@ -37,15 +38,15 @@ def banner(status: dict[str, Any]) -> tuple[str, str]:
         text = f"{end['ending'].upper()} - winner: {end['winner']}"
         role, winner = status.get("role"), end.get("winner")
         if role and winner in ROLE_ACCENT:
-            return text, "#22aa44" if winner == role else "#cc4444"
-        return text, "#4488ff"
+            return text, theme.ASSURE if winner == role else theme.ALARM
+        return text, theme.MUTED
     if status.get("my_turn"):
-        return "YOUR TURN", "#22aa44"
-    return "LOCKED", "#888888"
+        return "YOUR TURN", theme.ASSURE
+    return "COMMITTED", theme.MUTED
 
 
 SCENT_VISIBLE = 0.05  # below this the trace has decayed past usefulness
-GRID_LINE = "#cccccc"
+GRID_LINE = theme.RULE
 
 
 def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
@@ -63,15 +64,17 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
         row = []
         for c in range(n):
             if (r, c) in barriers:
-                cell = {"fill": "#222222", "text": "#"}
+                cell = {"fill": theme.INK, "text": ""}
             elif (r, c) == own:
-                cell = {"fill": ROLE_ACCENT.get(status["role"], "#2266dd"),
+                cell = {"fill": ROLE_ACCENT.get(status["role"], theme.ROLE["police"]),
                         "text": status["role"][0].upper()}
             else:
-                cell = {"fill": heat_hex(belief[r][c], peak), "text": ""}
-            scented = cell["text"] == "" and scent[r][c] > SCENT_VISIBLE
-            cell["outline"] = scent_hex(scent[r][c]) if scented else GRID_LINE
-            cell["width"] = 3 if scented else 1
+                cell = {"fill": theme.field_fill(belief[r][c], peak), "text": ""}
+            cell["belief"] = belief[r][c]
+            cell["barrier"] = (r, c) in barriers
+            cell["scent"] = scent[r][c] if scent[r][c] > SCENT_VISIBLE else 0.0
+            cell["outline"] = GRID_LINE
+            cell["width"] = 1
             cell["ring"] = False
             row.append(cell)
         cells.append(row)
@@ -83,11 +86,11 @@ def board_cells(status: dict[str, Any]) -> list[list[dict[str, Any]]]:
 
 def legend_items(role: str = "police") -> list[tuple[str, str]]:
     """Swatch/label pairs for the legend strip under the live board."""
-    return [(heat_hex(0.7, 1.0), "belief heat"),
-            ("#aa1111", "belief peak"),
-            (scent_hex(0.6), "scent trace"),
-            ("#222222", "barrier"),
-            (ROLE_ACCENT.get(role, "#2266dd"), "you")]
+    return [(theme.field_fill(0.7, 1.0), "posterior"),
+            (theme.FIELD_HI, "argmax"),
+            (theme.TRACE, "trace"),
+            (theme.INK, "barrier"),
+            (ROLE_ACCENT.get(role, theme.ROLE["police"]), "you")]
 
 
 def belief_stats(belief: list[list[float]]) -> tuple[tuple[int, int], float]:
@@ -99,7 +102,7 @@ def belief_stats(belief: list[list[float]]) -> tuple[tuple[int, int], float]:
     if total <= 0:
         return peak_at, 0.0
     entropy = -sum((v / total) * math.log2(v / total) for v, _ in flat if v > 0)
-    return peak_at, entropy
+    return peak_at, entropy + 0.0  # normalise -0.0, which reads as an error
 
 
 def info_lines(status: dict[str, Any]) -> list[str]:
@@ -116,3 +119,20 @@ def info_lines(status: dict[str, Any]) -> list[str]:
     if status.get("end"):
         lines += ["", f"END: {status['end']['ending']}"]
     return lines
+
+
+def telemetry_lines(status: dict[str, Any]) -> list[str]:
+    """Counters, in the aligned columns an instrument reports them in."""
+    return [f"steps    {status['my_steps']:>3} / {status['opp_steps']:<3} opp",
+            f"barriers {status['barriers_used']:>3}",
+            f"trust    {status['trust']:>5.2f}",
+            f"tokens   {status['tokens_used']:>5}"]
+
+
+def signal_lines(status: dict[str, Any]) -> list[str]:
+    """The hint feed as prose, newest last, with direction as a glyph."""
+    out = []
+    for hint in status.get("hints", []):
+        arrow = "sent" if hint.get("dir") == "sent" else "recv"
+        out.append(f"{arrow}  {hint.get('hint', '')}")
+    return out or ["no hints yet"]

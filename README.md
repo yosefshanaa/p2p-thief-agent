@@ -157,7 +157,7 @@ the first counted match.)*
 
 ### Live GUI — Bayesian belief heatmap (local truth only)
 
-![Live belief heatmap: police peer mid-match](docs/img/live_belief_heatmap.png)
+![Live belief field: the police peer's posterior mid-match](docs/img/live_belief_heatmap.png)
 
 Police peer during sub-game 5 of a live two-peer match (`uv run p2p-pursuit peer --role
 police`, thief running as a separate process). Red mass = posterior over the thief's cell
