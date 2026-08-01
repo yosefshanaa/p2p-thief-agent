@@ -1,9 +1,10 @@
 {
   "team": "segal-reference",
   "source": "matches/warmup-reference-2026-08-01",
-  "samples": 204,
+  "samples": 387,
   "agreement": {
-    "thief": 0.9706
+    "thief": 0.9706,
+    "police": 0.7284
   },
   "weights": {
     "thief": {
@@ -15,6 +16,16 @@
       "stay": -2.157524579884158,
       "straight": 1.8035676122713742,
       "reverse": 1.2572352750418316
+    },
+    "police": {
+      "pursuer_dist": -3.9566787401641004,
+      "mobility": 2.338095023248867,
+      "mobility2": 0.6041183601059705,
+      "edge": -1.2577393652779905,
+      "centre": -0.008069666532621422,
+      "stay": -2.6424985891317654,
+      "straight": 0.21370939903493102,
+      "reverse": -0.6999930354814032
     }
   }
 }

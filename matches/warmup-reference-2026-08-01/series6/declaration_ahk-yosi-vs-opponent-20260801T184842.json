@@ -1,0 +1,52 @@
+{
+  "report_type": "declaration",
+  "game_uid": "43a8c8e57db9",
+  "game_id": "ahk-yosi-vs-opponent-20260801T184842",
+  "game_number": 1,
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "scent_model_sha256": "ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28",
+  "token_cap": 200000,
+  "started_at": "2026-08-01T18:49:18+00:00",
+  "ended_at": null,
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8802/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72"
+    },
+    "opponent": {
+      "group_id": "segal-thief-team",
+      "group_name": "Segal-Thief-Team",
+      "members": [
+        "id-2001",
+        "id-2002",
+        "id-2003"
+      ],
+      "repos": {
+        "cop": "https://github.com/rmisegal/Game-P2P-Cop-Chase",
+        "thief": "https://github.com/rmisegal/Game-P2P-Cop-Chase"
+      },
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "10193ae1cc0e8dabe50196b4d38f89e4494357305d9507bc66fea9ef74d390b2"
+}

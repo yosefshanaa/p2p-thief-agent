@@ -14,7 +14,9 @@ link surface it already uses:
 
 from __future__ import annotations
 
+import contextlib
 import queue
+from datetime import UTC, datetime
 from typing import Any
 
 from ..domain.protocol import KIND_CAPTURE_ANSWER
@@ -33,6 +35,7 @@ class ReferenceBridge:
         self._commit_hash: str | None = None
         self._owed_claim_response: dict | None = None
         self._owed_win_claim: dict | None = None
+        self._last_turn: dict | None = None
 
     # -- inbound: their pushes into our server -------------------------------
     def on_negotiate(self, message: dict) -> dict:
@@ -147,18 +150,49 @@ class ReferenceBridge:
             claim_response=self._owed_claim_response, win_claim=self._owed_win_claim)
         self._commit_hash = None
         self._owed_claim_response = self._owed_win_claim = None
+        self._last_turn = message
         self.link.receive_turn(message, timeout=timeout)
         return {"ok": True, "events": []}
 
     def event(self, envelope: dict, timeout: float | None = None) -> dict:
-        """Our sealed events have no standalone message; they ride the next turn."""
+        """Our sealed events have no standalone message; they ride the next turn.
+
+        A **win claim** is the exception, because it is terminal: the sub-game
+        is over, so there is no next turn to carry it. Left to ride, their peer
+        waits out its turn timeout - and `timeout` sits in their
+        `NO_AUDIT_RESULTS`, so they skip the audit exchange altogether. Measured
+        live 2026-08-01: every even sub-game (us as thief, surviving 35 steps)
+        came back `audit=no package received` with zero opponent records.
+        """
         public = envelope.get("public", {})
         if public.get("kind") == KIND_CAPTURE_ANSWER:
             self._owed_claim_response = {"claim": list(public["claim_cell"]),
                                          "caught": bool(public["answer"])}
         else:
             self._owed_win_claim = {"type": public.get("kind", "survival")}
+            self._flush_win_claim(timeout)
         return {"ok": True}
+
+    def _flush_win_claim(self, timeout: float | None) -> None:
+        """Send the terminal claim on a copy of our last turn.
+
+        Their protocol has no standalone end-of-game message - a win claim is a
+        field on a TurnMessage - so we repeat the last one we sent with the claim
+        attached. Re-sending a commit they already hold is safe: their audit
+        re-verifies hash binding inside our revealed records, not against the
+        turns they received, and their handler ends the game the moment it reads
+        the claim, so the duplicated belief update never affects a decision.
+        """
+        if self._last_turn is None or self._owed_win_claim is None:
+            return
+        final = dict(self._last_turn)
+        final["win_claim"] = self._owed_win_claim
+        final["timestamp"] = datetime.now(UTC).isoformat()
+        self._owed_win_claim = None
+        # Best effort: the opponent may already have stopped listening, and a
+        # failed courtesy message must never turn a won sub-game into an error.
+        with contextlib.suppress(Exception):
+            self.link.receive_turn(final, timeout=timeout)
 
     def audit(self, package: dict, timeout: float | None = None) -> dict:
         """Reveal our nonces in their envelope.

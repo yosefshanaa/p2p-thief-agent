@@ -1,0 +1,121 @@
+{
+  "report_type": "game_result",
+  "game_uid": "43a8c8e57db9",
+  "game_id": "ahk-yosi-vs-opponent-20260801T184842",
+  "generated_at": "2026-08-01T18:49:33+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "segal-thief-team",
+      "group_name": "Segal-Thief-Team",
+      "members": [
+        "id-2001",
+        "id-2002",
+        "id-2003"
+      ],
+      "repos": {
+        "cop": "https://github.com/rmisegal/Game-P2P-Cop-Chase",
+        "thief": "https://github.com/rmisegal/Game-P2P-Cop-Chase"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    },
+    {
+      "index": 2,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    },
+    {
+      "index": 3,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    },
+    {
+      "index": 4,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    },
+    {
+      "index": 5,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    },
+    {
+      "index": 6,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ad4e1b5650eb7498f3ebc244e7ba5116f052bd72",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)"
+    }
+  ],
+  "totals": {
+    "police": 30,
+    "thief": 60
+  },
+  "my_role": "police",
+  "my_total": 30,
+  "opponent_total": 60,
+  "series_winner": "thief",
+  "tokens_used": 0,
+  "mutual_agreement": false,
+  "result_sha256": "3f77f4e7ed28d32d17b2e0f6bd2de0c7e2d668e25226b820e09418cb808a277f"
+}

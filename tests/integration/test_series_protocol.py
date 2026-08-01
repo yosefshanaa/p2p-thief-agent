@@ -127,3 +127,25 @@ def test_a_fixed_role_peer_is_untouched_by_the_boundary_rule():
     engine = TurnEngine("police", make_shared(), make_peer("police"), seed=3)
     engine.begin_sub_game(2)
     assert engine.role == "police"
+
+
+def test_the_audit_wait_is_bounded_when_we_rehandshake_each_sub_game():
+    """A reference-derived peer negotiates the next sub-game the instant it
+    finishes the last one and waits only ~60 s for our agreement. Our audit wait
+    sits directly in front of that re-handshake, so a 360 s one does not merely
+    delay us - it blows their window and costs the next sub-game entirely
+    ("Opponent never sent its agreement", measured live 2026-08-01).
+    """
+    from types import SimpleNamespace
+
+    from p2p_pursuit.peer import runtime_reports
+    from tests.conftest import make_peer
+
+    def rt(**peer_kw):
+        return SimpleNamespace(deadline=SimpleNamespace(timeout_sec=180.0),
+                               peer=make_peer("police", **peer_kw))
+
+    assert runtime_reports._audit_wait(rt()) == 360.0, "a fixed-role series can be patient"
+    bounded = runtime_reports._audit_wait(rt(handshake_per_sub_game=True))
+    assert bounded == runtime_reports.REHANDSHAKE_AUDIT_WAIT
+    assert bounded < 60.0, "must land inside their negotiate window"
