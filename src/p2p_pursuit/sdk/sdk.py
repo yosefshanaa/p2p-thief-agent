@@ -72,20 +72,35 @@ class PursuitSDK:
             my_role=POLICE,
             mutual_agreement=results.agreement_reached(sub_games))
 
+    #: Cloud Run mounts one secret per directory, so a hosted peer cannot have
+    #: token.json and credentials.json sitting side by side in /app. The paths
+    #: therefore have to be addressable, like the port and the opponent URL.
+    TOKEN_PATH_VAR = "P2P_GMAIL_TOKEN"
+    CREDENTIALS_PATH_VAR = "P2P_GMAIL_CREDENTIALS"
+
+    @classmethod
+    def gmail_paths(cls) -> tuple[Path, Path]:
+        """(credentials, token), overridable for a mounted deployment."""
+        import os
+
+        return (Path(os.environ.get(cls.CREDENTIALS_PATH_VAR) or "credentials.json"),
+                Path(os.environ.get(cls.TOKEN_PATH_VAR) or "token.json"))
+
     def pick_email_transport(self, mode: str, notify: Any = print):
         from ..infra.email_sender import DryRunTransport
 
+        credentials, token = self.gmail_paths()
         if mode != "send":
             notify(f"[email] mode={mode!r}: dry-run (send-only scope has no drafts)")
-        elif Path("token.json").exists():
+        elif token.exists():
             try:
                 from ..infra.email_sender import GmailTransport
 
-                return GmailTransport()
+                return GmailTransport(credentials, token)
             except Exception as exc:  # noqa: BLE001 - fall back, never crash a report
                 notify(f"[email] Gmail unavailable ({exc}); dry-run transport")
         else:
-            notify("[email] no token.json; dry-run (report written, not sent)")
+            notify(f"[email] no token at {token}; dry-run (report written, not sent)")
         return DryRunTransport()
 
     def authorize_gmail(self, credentials: Path = Path("credentials.json"),

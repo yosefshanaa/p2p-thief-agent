@@ -21,7 +21,7 @@ from pathlib import Path
 from ..domain.brains_base import BrainBase
 from ..domain.rules import POLICE, THIEF
 from ..strategy.params import REPO_ROOT, Doctrine
-from .opponents import BarrierHappy, Greedy, Holder, Momentum, RandomWalker
+from .opponents import BarrierHappy, Camper, Greedy, Holder, Momentum, RandomWalker
 
 Factory = Callable[[str], BrainBase]
 #: Package-relative, like the doctrine: a clone directory that fails to resolve
@@ -55,6 +55,7 @@ BUILTIN: dict[str, Member] = {
     "noisy": Member(lambda role: Greedy(flee=role == THIEF, jitter=0.25)),
     "barrier": Member(lambda role: BarrierHappy(), roles=(POLICE,)),
     "holder": Member(lambda role: Holder(), roles=(THIEF,)),
+    "camper": Member(lambda role: Camper(), roles=(THIEF,)),
     "mirror": Member(ours),
 }
 

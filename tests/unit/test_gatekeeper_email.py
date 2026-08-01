@@ -116,3 +116,30 @@ def test_a_read_only_token_mount_does_not_lose_the_report(tmp_path, monkeypatch)
 
     sender = email_sender.GmailTransport(tmp_path / "credentials.json", token)
     assert sender._service == "service", "a read-only mount must not stop the send"
+
+
+def test_gmail_paths_follow_the_mount_a_hosted_peer_gets(monkeypatch, tmp_path):
+    """Cloud Run mounts one secret per directory, so a hosted peer cannot keep
+    token.json and credentials.json side by side in /app. The paths have to be
+    addressable, exactly like the port and the opponent URL."""
+    from p2p_pursuit.sdk.sdk import PursuitSDK
+
+    creds, token = PursuitSDK.gmail_paths()
+    assert (creds.name, token.name) == ("credentials.json", "token.json")
+
+    monkeypatch.setenv("P2P_GMAIL_CREDENTIALS", str(tmp_path / "c" / "credentials.json"))
+    monkeypatch.setenv("P2P_GMAIL_TOKEN", str(tmp_path / "t" / "token.json"))
+    creds, token = PursuitSDK.gmail_paths()
+    assert creds.parent != token.parent, "each secret gets its own mount directory"
+    assert PursuitSDK().pick_email_transport("send", notify=lambda _m: None)
+
+
+def test_a_missing_mounted_token_degrades_to_dry_run_not_a_crash(monkeypatch, tmp_path):
+    """A report that raises is a forfeited report; one that falls back still
+    writes the artifact."""
+    from p2p_pursuit.infra.email_sender import DryRunTransport
+    from p2p_pursuit.sdk.sdk import PursuitSDK
+
+    monkeypatch.setenv("P2P_GMAIL_TOKEN", str(tmp_path / "absent" / "token.json"))
+    assert isinstance(PursuitSDK().pick_email_transport("send", notify=lambda _m: None),
+                      DryRunTransport)
