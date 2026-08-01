@@ -60,7 +60,7 @@ provider live · watchdog-vs-turn-timeout bug fixed (see below).
 
 ## LLM banter — configured and working
 
-`[trash_talk] provider = "openai"`, `[llm] model = "gpt-5.4"` in **both** role configs. The key
+`[trash_talk] provider = "openai"`, `[llm] model = "gpt-5.6-luna"` in **both** role configs. The key
 lives **only** in git-ignored `.env` (`OPENAI_API_KEY`) — never in `config/`, because config
 files are exchanged with the opponent and hashed into `config_sha256`. Moves are **always pure
 Python** (book rule #25); the LLM only writes the ≤15-word taunt. Three live-tested traps, all
