@@ -115,6 +115,6 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 | Partner availability + 2+ opposing teams | both | ☐ |
 | 8-char group code: **`ahk-yosi`** (decided 2026-07-29) | both | ☑ |
 | ngrok/Localtonet account(s) | ops | ☐ |
-| Google OAuth: consent completed 2026-07-29, `[email] mode="send"` in both configs, verified by a real send to the user's own address (Gmail id `19faa992daa0516b`). *Testing-mode caveat: refresh token dies after ~7 idle days - re-run `authorize` if matches slip past ~2026-08-04* | user | ☑ |
+| Google OAuth: **re-authorized 2026-08-02**, `[email] mode="send"` in both configs, verified by a real send to the test address (Gmail id `19fbf624ca766fec`; the earlier 2026-07-29 token was `19faa992daa0516b`). *Testing-mode caveat: the refresh token dies after ~7 idle days - re-run `authorize` if matches slip past ~**2026-08-09**, or publish the OAuth consent screen to remove the limit entirely* | user | ☑ |
 | Decision: repo visibility — **PUBLIC** (both repos flipped 2026-07-29; grader needs no invite) | both | ☑ |
 | Optional: Ollama install / Anthropic key for banter | ops | ☐ |

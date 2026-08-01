@@ -73,3 +73,46 @@ def test_send_report_respects_gate_and_delivers():
     sent = send_report(transport=t, gatekeeper=OpenGate(), to_addr="a@b.c",
                        subject="s", attachments={"r.json": {}}, mode="draft")
     assert sent["delivered"] and t.sent[0]["mode"] == "draft"
+
+
+def test_a_read_only_token_mount_does_not_lose_the_report(tmp_path, monkeypatch):
+    """A hosted peer gets its token as a read-only Secret Manager mount, and the
+    access token expires hourly. Persisting the refresh is an optimisation - the
+    credential is already live in memory - so an unguarded write would turn the
+    routine refresh into the thing that loses the match report, the one artifact
+    whose absence forfeits that side's points.
+    """
+    import sys
+    import types
+
+    from p2p_pursuit.infra import email_sender
+
+    token = tmp_path / "token.json"
+    token.write_text("{}", encoding="utf-8")
+
+    class Creds:
+        expired, refresh_token = True, "r"
+
+        def refresh(self, _request):
+            self.expired = False
+
+        def to_json(self):
+            return "{}"
+
+    def read_only_write(*_a, **_k):
+        raise OSError(30, "Read-only file system")
+
+    monkeypatch.setattr(type(token), "write_text", read_only_write)
+    fake_creds = types.ModuleType("google.oauth2.credentials")
+    fake_creds.Credentials = types.SimpleNamespace(from_authorized_user_file=lambda *_a: Creds())
+    fake_req = types.ModuleType("google.auth.transport.requests")
+    fake_req.Request = lambda: None
+    fake_disc = types.ModuleType("googleapiclient.discovery")
+    fake_disc.build = lambda *_a, **_k: "service"
+    for name, mod in (("google.oauth2.credentials", fake_creds),
+                      ("google.auth.transport.requests", fake_req),
+                      ("googleapiclient.discovery", fake_disc)):
+        monkeypatch.setitem(sys.modules, name, mod)
+
+    sender = email_sender.GmailTransport(tmp_path / "credentials.json", token)
+    assert sender._service == "service", "a read-only mount must not stop the send"

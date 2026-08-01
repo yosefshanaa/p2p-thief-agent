@@ -8,6 +8,7 @@ a draft instead of sending; tests use the DryRunTransport.
 from __future__ import annotations
 
 import base64
+import contextlib
 import json
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -47,7 +48,14 @@ class GmailTransport:
         creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
         if creds.expired and creds.refresh_token:
             creds.refresh(Request())
-            token_path.write_text(creds.to_json(), encoding="utf-8")
+            # Persisting the renewal is an optimisation, not a requirement: the
+            # refreshed credential is already live in memory. On a hosted peer
+            # the token arrives as a read-only Secret Manager mount, and an
+            # unguarded write here turns the hourly refresh into the thing that
+            # loses the match report - the one artifact whose absence forfeits
+            # that side's points.
+            with contextlib.suppress(OSError):
+                token_path.write_text(creds.to_json(), encoding="utf-8")
         self._service = build("gmail", "v1", credentials=creds)
 
     def deliver(self, raw_b64: str, mode: str) -> dict[str, Any]:

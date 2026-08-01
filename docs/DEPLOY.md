@@ -69,8 +69,24 @@ Both are consequences of secrets and artifacts being git-ignored — correctly �
 absent from the image:
 
 1. **It cannot email the report.** `token.json` / `credentials.json` are not in the image, so the
-   Gmail step will not run. Mount them from Secret Manager, or run the reporting step locally
-   against the downloaded result JSON. A missing report forfeits that side's points (RUNBOOK §4).
+   Gmail step will not run. A missing report forfeits that side's points (RUNBOOK §4). Neither
+   file is something new to obtain: `credentials.json` is the OAuth client from the Cloud
+   Console, and `token.json` is written by `uv run p2p-pursuit authorize`. Mount the pair you
+   already have:
+
+   ```bash
+   gcloud secrets create p2p-gmail-token       --data-file=token.json
+   gcloud secrets create p2p-gmail-credentials --data-file=credentials.json
+   gcloud run services update p2p-pursuit-police --region me-west1 \
+     --set-secrets="/app/token.json=p2p-gmail-token:latest,\
+   /app/credentials.json=p2p-gmail-credentials:latest" --quiet
+   ```
+
+   A Secret Manager mount is **read-only** and the access token expires hourly, so
+   `GmailTransport` persists a refresh best-effort rather than raising `Read-only file system`
+   at exactly the moment the report is due. Re-uploading the secret after each `authorize` is
+   the only maintenance: the OAuth app is in *testing* mode, where the refresh token lapses
+   after ~7 idle days.
 2. **Its artifacts are ephemeral.** `/app/results` dies with the instance, taking the sealed logs
    the `matches/` archive and any later `learn clone` depend on. Mount a GCS bucket at
    `/app/results` (`--add-volume` / `--add-volume-mount`) before a match that counts.
