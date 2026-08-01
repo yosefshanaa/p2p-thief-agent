@@ -88,3 +88,42 @@ def test_alternation_is_off_unless_configured():
     assert cfg.alternate_roles is False
     swapped = dataclasses.replace(cfg, alternate_roles=True)
     assert swapped.alternate_roles is True
+
+
+def test_an_inbound_commit_at_the_boundary_still_lands_in_the_right_role():
+    """The race that voided sub-game 2 live (2026-08-01).
+
+    The opponent starts its next sub-game the moment it finishes the last one,
+    so its first commit can arrive while we are still completing the audit
+    exchange - and an inbound commit advances the sub-game. If the role is only
+    swapped by our series loop, the board is built for the wrong side: we
+    announced "playing as thief" and then played it out as police, and both
+    peers sat in a turn timeout. Whoever crosses the boundary first must pick
+    the role.
+    """
+    from p2p_pursuit.peer.turn_engine import TurnEngine
+    from tests.conftest import make_peer, make_shared
+
+    shared = make_shared()
+    engine = TurnEngine("police", shared, make_peer("police", alternate_roles=True), seed=3)
+    assert engine.role == "police"
+    assert engine.own_pos == shared.cop_start
+
+    engine.begin_sub_game(2)          # as an inbound commit would
+    assert engine.role == "thief", "sub-game 2 is the alternated role"
+    assert engine.own_pos == shared.thief_start, "the board must be built for that role"
+    assert engine.next_mover == shared.first_mover
+
+    engine.begin_sub_game(3)
+    assert engine.role == "police" and engine.own_pos == shared.cop_start
+
+
+def test_a_fixed_role_peer_is_untouched_by_the_boundary_rule():
+    """Alternation is pair-negotiated and off by default; the published repos
+    are role-fixed and must stay that way."""
+    from p2p_pursuit.peer.turn_engine import TurnEngine
+    from tests.conftest import make_peer, make_shared
+
+    engine = TurnEngine("police", make_shared(), make_peer("police"), seed=3)
+    engine.begin_sub_game(2)
+    assert engine.role == "police"

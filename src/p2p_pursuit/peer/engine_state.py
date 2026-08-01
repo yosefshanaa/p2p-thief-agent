@@ -34,6 +34,10 @@ class EngineState:
                  brain: BrainBase | None = None, talk: Any = None,
                  seed: int | None = None) -> None:
         self.role, self.shared, self.peer = role, shared, peer
+        #: The role this peer was configured with. Under role alternation the
+        #: role played in sub-game n is derived from it, never from whatever the
+        #: previous sub-game happened to leave behind.
+        self.natural_role = role
         self.other = THIEF if role == POLICE else POLICE
         # Which digest composition seals our records (RUNBOOK 3b): negotiated
         # per match, so an unmodified reference peer can audit us on its terms.
@@ -68,6 +72,26 @@ class EngineState:
         self.role = role
         self.other = THIEF if role == POLICE else POLICE
         self.brain = self._brain_for(role)
+
+    def begin_sub_game(self, n: int) -> None:
+        """Enter sub-game ``n`` playing the role we owe it.
+
+        The role has to be chosen BEFORE ``start_sub_game``, which reads it to
+        pick both starting cells and the first mover. Doing that only in the
+        series loop loses a race: the opponent starts its next sub-game as soon
+        as it finishes the last one, so its first commit can arrive while we are
+        still completing the audit exchange - and an inbound commit advances the
+        sub-game too. Measured live 2026-08-01: we announced "playing as thief"
+        and then played the sub-game out as police, which deadlocks both peers
+        into a turn timeout. This is the one place the two steps are ordered.
+        """
+        if self.peer.alternate_roles:
+            from .series_protocol import role_for
+
+            role = role_for(self.natural_role, n)
+            if role != self.role:
+                self.set_role(role)
+        self.start_sub_game(n)
 
     def start_sub_game(self, n: int) -> None:
         self.sub_game = n
