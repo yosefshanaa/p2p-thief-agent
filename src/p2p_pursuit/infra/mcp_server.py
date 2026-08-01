@@ -96,10 +96,21 @@ def serve_in_thread(service: PeerService, *, host: str, port: int,
 
 
 def wait_until_up(link: Any, *, attempts: int = 60, delay: float = 2.0) -> bool:
-    """Retry the opponent's health tool until their server is up (start order agnostic)."""
+    """Retry the opponent's health tool until their server is up (start order agnostic).
+
+    Every iteration also asks the link whether the opponent has *already reached
+    us*, because that is both faster and stronger evidence than a probe of ours.
+    It matters over a tunnel: each failed probe costs its whole timeout, so this
+    loop can run for minutes, while a reference-derived peer gives us only ~60 s
+    to answer its `negotiate` before it exits. Measured 2026-08-01 over two
+    Cloudflare tunnels: both peers alive and reachable, neither able to start.
+    """
     import time
 
+    contacted = getattr(link, "opponent_already_contacted", None)
     for _ in range(attempts):
+        if contacted is not None and contacted():
+            return True
         try:
             if link.health(timeout=5).get("ok"):
                 return True

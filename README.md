@@ -377,6 +377,7 @@ docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_
 | [`docs/TODO.md`](docs/TODO.md) | Task tracking with milestone gates |
 | [`docs/GAP_ANALYSIS.md`](docs/GAP_ANALYSIS.md) | HW6 vs. final-project spec |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers, **and the between-match learning loop (§4b)** |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Hosting both peers on stable public HTTPS (`Dockerfile`, `$PORT` / `$P2P_OPPONENT_URL`) — and why that beats a tunnel |
 | [`docs/PROMPT_BOOK.md`](docs/PROMPT_BOOK.md) | Prompt-engineering log (guidelines §8.3) |
 | [`docs/COST_ANALYSIS.md`](docs/COST_ANALYSIS.md) | LLM token/cost model per banter provider |
 | [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) | The book's ch. 11.5/11.6 final sweep, mapped to evidence |

@@ -8,8 +8,9 @@ shared key always wins over a private one (book Appendix B).
 from __future__ import annotations
 
 import json
+import os
 import tomllib
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -152,9 +153,33 @@ def load_peer(path: Path) -> PeerConfig:
     )
 
 
+#: Cloud hosts hand the port to the process and terminate HTTPS in front of it,
+#: so neither value can be pinned in a committed file. ``PORT`` is what Cloud
+#: Run / Render / Fly inject; the ``P2P_`` names are explicit overrides for
+#: everything else. An exported variable always wins over the TOML, matching how
+#: `.env` secrets already behave.
+PORT_VARS = ("P2P_MY_PORT", "PORT")
+OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
+
+
+def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
+    """Overlay the deployment-time values a container cannot know in advance."""
+    patch: dict[str, Any] = {}
+    for name in PORT_VARS:
+        raw = os.environ.get(name)
+        if raw and raw.strip().isdigit():
+            patch["my_port"] = int(raw.strip())
+            break
+    url = os.environ.get(OPPONENT_URL_VAR)
+    if url and url.strip():
+        patch["opponent_url"] = url.strip()
+    return replace(peer, **patch) if patch else peer
+
+
 def load_role(config_dir: Path) -> tuple[SharedConfig, PeerConfig]:
     """Load one role's configuration pair from its private directory."""
-    return load_shared(config_dir / "game.json"), load_peer(config_dir / "game.toml")
+    return (load_shared(config_dir / "game.json"),
+            apply_env_overrides(load_peer(config_dir / "game.toml")))
 
 
 def load_rate_limits(config_dir: Path, service: str = "gmail") -> dict[str, Any]:

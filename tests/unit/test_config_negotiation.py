@@ -67,3 +67,35 @@ def test_artifact_names_from_appendix_f():
     assert config_name("gid", 3) == "config_gid_g03.json"
     assert log_name("gid", 12) == "log_gid_g12.json"
     assert result_name("gid") == "result_gid.json"
+
+
+def test_deployment_env_overrides_the_committed_port_and_url(monkeypatch, tmp_path):
+    """A container cannot know its own port or the opponent's URL at build time:
+    the platform injects $PORT and the opponent's address is exchanged hours
+    before the match. Both must beat the committed TOML, or a hosted peer binds
+    the wrong port and never comes up.
+    """
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import load_role
+
+    monkeypatch.setenv("PORT", "8080")
+    monkeypatch.setenv("P2P_OPPONENT_URL", "https://their-host.example/mcp")
+    _shared, peer = load_role(Path("config/police"))
+    assert peer.my_port == 8080
+    assert peer.opponent_url == "https://their-host.example/mcp"
+
+
+def test_a_blank_or_junk_port_leaves_the_configured_one_alone(monkeypatch):
+    """An empty PORT is common in shells and CI; it must not silently become 0."""
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+
+    peer = load_peer(Path("config/police/game.toml"))
+    for junk in ("", "   ", "not-a-port"):
+        monkeypatch.setenv("PORT", junk)
+        assert apply_env_overrides(peer).my_port == peer.my_port
+    monkeypatch.setenv("P2P_MY_PORT", "9001")
+    monkeypatch.setenv("PORT", "8080")
+    assert apply_env_overrides(peer).my_port == 9001, "the explicit name wins"

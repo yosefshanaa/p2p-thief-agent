@@ -80,3 +80,28 @@ def test_watchdog_fires_once_and_persists():
     assert w.check() == SHUTDOWN
     assert w.check() == SHUTDOWN  # stays down, callback fired exactly once
     assert fired == [True]
+
+
+def test_wait_until_up_stops_as_soon_as_the_opponent_reaches_us():
+    """Over a tunnel each failed probe costs its full timeout, so this loop runs
+    for minutes - while a reference peer allows ~60 s for our answer before it
+    exits. An agreement already in our inbox proves they reached us, so the loop
+    must watch for it every iteration, not merely once before starting."""
+    from p2p_pursuit.infra.mcp_server import wait_until_up
+
+    class NeverHealthy:
+        def __init__(self):
+            self.probes = 0
+            self.reached = False
+
+        def opponent_already_contacted(self):
+            return self.reached
+
+        def health(self, timeout=None):
+            self.probes += 1
+            self.reached = self.probes >= 2   # their negotiate lands mid-loop
+            raise RuntimeError("no route yet")
+
+    link = NeverHealthy()
+    assert wait_until_up(link, attempts=10, delay=0.0) is True
+    assert link.probes == 2, "it must notice the inbox, not probe to exhaustion"

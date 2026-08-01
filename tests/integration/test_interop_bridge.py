@@ -324,3 +324,17 @@ def test_a_claim_answer_still_rides_the_next_turn():
                              "answer": False}}, timeout=1)
     assert len(peer.turns) == sent_before, "it waits for the next turn"
     assert bridge._owed_claim_response == {"claim": [1, 2], "caught": False}
+
+
+def test_an_inbound_agreement_counts_as_liveness():
+    """Over a tunnel each failed liveness probe costs its full timeout, so sixty
+    of them take minutes - while a reference peer allows only ~60 s for our
+    answer before exiting with "Opponent never sent its agreement" (measured
+    2026-08-01 over two Cloudflare tunnels, both peers alive, neither able to
+    start). An agreement already in our inbox proves they reached us, which is
+    stronger evidence than any probe of ours.
+    """
+    bridge, _service, _peer = _bridge()
+    assert bridge.opponent_already_contacted() is False
+    bridge.on_negotiate({"terms": {}, "nonce": "n", "signature": "s", "identity": {}})
+    assert bridge.opponent_already_contacted() is True
