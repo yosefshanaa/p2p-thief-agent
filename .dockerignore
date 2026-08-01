@@ -1,0 +1,25 @@
+# What `docker build` must NEVER put in the build context.
+#
+# gcloud falls back to .gitignore when this file is absent, which would happen
+# to cover the secrets below - but "happens to" is not a control. Secrets are
+# listed here explicitly so the guarantee survives someone editing .gitignore.
+.env
+.env.*
+credentials.json
+token.json
+
+# Build context hygiene: none of this belongs in an image or a staging bucket.
+.git/
+.github/
+.venv/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+results/
+matches/
+notebooks/
+docs/img/
+tests/
