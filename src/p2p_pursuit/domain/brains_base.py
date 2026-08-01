@@ -36,6 +36,12 @@ class BrainView:
     trust: float
     map_area: str
     rng: random.Random
+    #: Did this opponent agree that an enclosed thief is captured (book 3.4)?
+    #: When they did not, completing an enclosure is a self-inflicted loss: the
+    #: evader is sealed into a pocket we cannot enter either, and the sub-game
+    #: runs to survival. Measured live 2026-08-01 - 5 points where 20 was on
+    #: offer. The squeeze must therefore stop one door short.
+    claim_enclosure: bool = True
 
 
 class BrainBase:

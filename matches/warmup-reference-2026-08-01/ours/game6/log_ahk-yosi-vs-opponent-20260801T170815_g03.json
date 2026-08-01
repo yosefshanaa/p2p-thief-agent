@@ -1,0 +1,170 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "add94b69e8de",
+  "game_id": "ahk-yosi-vs-opponent-20260801T170815",
+  "sub_game": 3,
+  "perspective": "police",
+  "code_version": "1.00",
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "commit_dialect": "reference",
+  "my_records": [
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 3,
+      "step": 1,
+      "pos_before": [
+        0,
+        0
+      ],
+      "pos_after": [
+        0,
+        1
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by Brooklyn Bridge, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "9f93ae5f71239351d3d2ac44dfb52286"
+    }
+  ],
+  "my_hashes": [
+    "d9b3fbce03875cbb1b34f0f2a7229531c19bd2d0c4a68e198eb46c45457c6b99"
+  ],
+  "opponent_records": [
+    {
+      "payload": {
+        "step": 0,
+        "type": "system_spec",
+        "spec": {
+          "os": "Linux 6.6.87.2-microsoft-standard-WSL2 (#1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025)",
+          "cpu_type": "unknown",
+          "cpu_cores": 12,
+          "cpu_freq_mhz": "unknown",
+          "ram_gb": "unknown",
+          "gpu_type": "unknown",
+          "gpu_cores_or_cuda": "unknown",
+          "vram_gb": "unknown"
+        },
+        "model": "claude-opus-4-8[1m]",
+        "code_version": "3.0.0",
+        "group_name": "Segal-Thief-Team",
+        "sub_game_number": 3
+      },
+      "nonce": "52aabec6b8f69600a55723416f48f1a9",
+      "commit": "7121303524cc9fcf7b2d4131be220c9d08cab2cc25c7e82ff3bf068f81f4b27d"
+    },
+    {
+      "payload": {
+        "step": 1,
+        "state": "grid=7x7;self=[4, 3];barriers=[]",
+        "position": [
+          4,
+          3
+        ],
+        "move": "MOVE:S",
+        "intent": "lie",
+        "verdict": "lie",
+        "hint": "Catch me if you can - I'm slipping past Wall Street!",
+        "prompt_discussion": {
+          "llm_prompt": "",
+          "llm_reasoning": "",
+          "bluff_classification": "lie"
+        },
+        "model": "stub",
+        "tokens_step": 0,
+        "tokens_total": 0,
+        "response_seconds": 0.0,
+        "random_move": false
+      },
+      "nonce": "5beae0552aeb4c009bac3b8562899cbb",
+      "commit": "eb857a6437840195255ed702079bdf710ac23dea2a3030eb13960beae0d44122"
+    }
+  ],
+  "opponent_hashes": [
+    "eb857a6437840195255ed702079bdf710ac23dea2a3030eb13960beae0d44122"
+  ],
+  "result": {
+    "ending": "technical_loss",
+    "winner": "police",
+    "cause": "turn timeout (180s)",
+    "my_steps": 1,
+    "opp_steps": 1
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "Verified OK",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    }
+  },
+  "tokens_used": 0
+}

@@ -137,7 +137,31 @@ be agreed explicitly, like the wire dialect.
 dialect = "reference"
 alternate_roles = true          # natural role on odd sub-games, opposite on even
 handshake_per_sub_game = true   # re-negotiate before every sub-game
+claim_enclosure = false         # they do not implement book 3.4 - see below
 ```
+
+### ⚠️ The enclosure claim voids a series against an unmodified reference peer
+
+**Measured live 2026-08-01, and it is the most expensive interop finding so far.** Book §3.4 says
+a thief with no legal move is captured, and our police plays for it — it is what turned 0/5 into
+5/5. Against the reference peer it wins sub-game 1 and then destroys the match:
+
+| Sub-game | What happened |
+|---|---|
+| 1 | We enclosed their thief at (6,6) and claimed the capture at step 12. **We recorded 0 opponent records** — they never accepted the ending, so the audit exchange never ran. |
+| 2 | `technical_loss`, cause `both peers claim role 'thief'` — we had advanced a sub-game, they had not. |
+
+Their runtime simply has no enclosure rule: it keeps playing, never sends its audit package, and
+the series desynchronises permanently. A counted match would score one capture and then five
+technical losses — strictly worse than never claiming.
+
+So the claim is now a **per-opponent negotiation item, exactly like the dialect and role
+alternation**: `claim_enclosure` (default `true`, our book-backed doctrine; set `false` for any
+peer that has not agreed to §3.4 in the warm-up). With it off, the same pairing played sub-game 1
+to the full 35 steps and the audit delivered **36 opponent records**.
+
+Ask every opponent three questions before a counted match: *which dialect, do roles alternate,
+and is an enclosed thief captured?*
 
 Verified live on 2026-07-30 against the unmodified reference peer with `--games 2`: sub-game 1
 played us as police (their thief survived 35), sub-game 2 logged

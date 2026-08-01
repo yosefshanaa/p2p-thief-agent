@@ -112,7 +112,8 @@ class EngineState:
             barriers_used=self.barriers_used, barrier_quota=self.shared.max_barriers,
             steps_remaining=self.shared.max_moves - self.my_steps,
             survival_threshold=self.shared.survival_threshold,
-            trust=self.trust.value, map_area=self.shared.map_area, rng=self.rng)
+            trust=self.trust.value, map_area=self.shared.map_area, rng=self.rng,
+            claim_enclosure=self.peer.claim_enclosure)
 
     def _last_opp_scent(self) -> list[list[float]]:
         for pub in reversed(self.opp_public):
