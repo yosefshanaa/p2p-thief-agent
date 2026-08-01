@@ -99,3 +99,25 @@ def test_a_blank_or_junk_port_leaves_the_configured_one_alone(monkeypatch):
     monkeypatch.setenv("P2P_MY_PORT", "9001")
     monkeypatch.setenv("PORT", "8080")
     assert apply_env_overrides(peer).my_port == 9001, "the explicit name wins"
+
+
+def test_the_environment_can_force_draft_email_for_a_hosted_rehearsal(monkeypatch):
+    """A deployed peer must be incapable of mailing the lecturer from a test.
+    Editing the committed config to achieve that invites shipping the edit, so
+    the environment overrides it - and only to a value the sender understands.
+    """
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+
+    peer = load_peer(Path("config/police/game.toml"))
+    assert peer.email_mode == "send", "the committed config stays league-ready"
+
+    monkeypatch.setenv("P2P_EMAIL_MODE", "draft")
+    monkeypatch.setenv("P2P_EMAIL_RECIPIENT", "apexmediamind@gmail.com")
+    safe = apply_env_overrides(peer)
+    assert safe.email_mode == "draft"
+    assert safe.email_recipient == "apexmediamind@gmail.com"
+
+    monkeypatch.setenv("P2P_EMAIL_MODE", "nonsense")
+    assert apply_env_overrides(peer).email_mode == "send", "junk must not disable reporting"

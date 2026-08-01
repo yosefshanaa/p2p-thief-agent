@@ -89,8 +89,44 @@ Then exchange the two public URLs with the opposing team and run
 | Opponent URL from the environment | ✅ implemented + unit-tested |
 | Container image | ✅ provider-agnostic `Dockerfile`, role-parameterised |
 | Six-sub-game series over the reference dialect | ✅ proven on localhost, every audit `Verified OK` |
-| **Six-sub-game series over a real network path** | ⛔ **not yet proven.** The tunnel rehearsal was blocked by the 421 above. This is the last untested combination before a counted match. |
-| A live public HTTPS URL | ⛔ external — needs your cloud account |
+| **Six-sub-game series over a real network path** | ✅ **proven 2026-08-01 on Cloud Run** — see below |
+| A live public HTTPS URL | ✅ deployed (`me-west1`, project `cop-thief-hw6-0f43`) |
 
-Nothing here fakes a deployment: the image and the env plumbing are verifiable locally today; the
-live host and the public URL are the external step.
+## Live result — Cloud Run, 2026-08-01
+
+Both peers deployed as two services and cross-wired at each other's public URL. Several complete
+six-sub-game series ran back to back, **every sub-game `audit=Verified OK`**. One of them:
+
+| Sub-game | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| Result | capture (barrier) | capture (**enclosed**) | capture (barrier) | capture (barrier) | capture (barrier) | capture (barrier) |
+
+Three things this settles:
+
+- **The protocol holds over a real network.** Commit-reveal, per-sub-game mutual audit, deadlines
+  and the watchdog all survive genuine latency, TLS termination and a platform proxy. That was
+  the last untested combination.
+- **`$PORT` and `$P2P_OPPONENT_URL` work in production** — the hosted peer logged
+  `FastMCP server on 0.0.0.0:8080` and `doctrine: tuned from /app/config/doctrine.json
+  (20 of 20 fields differ from the defaults)`, so it played the tuned policy, not the fallback.
+- **The barrier doctrine converts on the wire.** Almost every capture is `(barrier)` — the
+  offline search's most counter-intuitive result (`belief_floor` 0.22 → 0.069, reversing v4's
+  "barriers are a tempo trap") paying off in live matches rather than only in simulation.
+
+It does **not** cover the reference dialect: both peers here are ours, so they speak native. The
+reference-dialect series fixes are proven on localhost (RUNBOOK §3b), not yet over a network.
+
+### Cost control
+
+Both services are parked at `--min-instances=0`, so they cost nothing idle and the URLs survive.
+**Before a counted match, put them back:**
+
+```bash
+gcloud run services update p2p-pursuit-police --region me-west1 --min-instances=1 --quiet
+gcloud run services update p2p-pursuit-thief  --region me-west1 --min-instances=1 --quiet
+```
+
+At zero, the first inbound request cold-starts the container and begins a *fresh* series — fine
+for sharing URLs ahead of a match, wrong for the match itself.
+
+Nothing here fakes a deployment: the image, the env plumbing and the live series are all real.

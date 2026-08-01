@@ -160,6 +160,12 @@ def load_peer(path: Path) -> PeerConfig:
 #: `.env` secrets already behave.
 PORT_VARS = ("P2P_MY_PORT", "PORT")
 OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
+#: The reporting address is a *deployment* decision, not a code one. A hosted
+#: rehearsal must be incapable of mailing the lecturer, and the only safe way to
+#: guarantee that is to let the environment force `draft` - editing the
+#: committed config to run a test invites shipping the edit by accident.
+EMAIL_MODE_VAR = "P2P_EMAIL_MODE"
+EMAIL_RECIPIENT_VAR = "P2P_EMAIL_RECIPIENT"
 
 
 def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
@@ -173,6 +179,12 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     url = os.environ.get(OPPONENT_URL_VAR)
     if url and url.strip():
         patch["opponent_url"] = url.strip()
+    mode = (os.environ.get(EMAIL_MODE_VAR) or "").strip()
+    if mode in ("draft", "send"):
+        patch["email_mode"] = mode
+    recipient = (os.environ.get(EMAIL_RECIPIENT_VAR) or "").strip()
+    if recipient:
+        patch["email_recipient"] = recipient
     return replace(peer, **patch) if patch else peer
 
 
