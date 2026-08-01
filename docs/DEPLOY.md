@@ -39,13 +39,44 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/mcp   # 406 = hea
 `406` is the success case: a FastMCP endpoint refuses a bare `GET`. Configure the platform's
 health check as a **TCP** probe, not HTTP, or it will read that 406 as a failure.
 
-## Deploy (any container platform)
+## Deploy — Google Cloud Run
+
+The same platform HW6 went live on, and the account is already set up
+(`gcloud auth list`, project `cop-thief-hw6-0f43`). Deploy **once per role**, two services:
 
 ```bash
-# example shape - substitute your platform's CLI
-<platform> deploy --image p2p-pursuit --env ROLE=police --env P2P_OPPONENT_URL=https://their-host/mcp
-<platform> deploy --image p2p-pursuit --env ROLE=thief  --env P2P_OPPONENT_URL=https://their-host/mcp
+gcloud run deploy p2p-pursuit-police --source . --region me-west1 --allow-unauthenticated \
+  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 \
+  --set-env-vars="ROLE=police,P2P_OPPONENT_URL=https://their-host/mcp" --quiet
+
+gcloud run deploy p2p-pursuit-thief  --source . --region me-west1 --allow-unauthenticated \
+  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 \
+  --set-env-vars="ROLE=thief,P2P_OPPONENT_URL=https://their-host/mcp" --quiet
 ```
+
+### Four flags that are not optional here
+
+| Flag | Why this project needs it |
+|---|---|
+| `--min-instances=1 --max-instances=1` | The game state — belief map, commit chain, scent field — lives in memory. A second autoscaled instance forks the match; a cold start blows the opponent's ~60 s negotiate window. One instance, always warm. (HW6 learned this the same way.) |
+| **`--no-cpu-throttling`** | New here. Cloud Run throttles CPU to near-zero between requests by default, and our peer drives its own turns from a background thread (`cli.py`, `name="series"`). Throttled, it stops playing the moment nobody is calling it — and forfeits on the turn timeout. |
+| `--timeout=3600` | MCP streamable-HTTP sessions are long-lived; the 300 s default cuts them mid-series. |
+| `--allow-unauthenticated` | Opens the network path. Unlike HW6 there is **no bearer token** in this project: the gate is the handshake's `config_sha256`, which refuses any peer not holding the byte-identical constitution. Strangers can reach the endpoint; they cannot start a game. |
+
+### Two things a hosted peer cannot do by itself
+
+Both are consequences of secrets and artifacts being git-ignored — correctly — and therefore
+absent from the image:
+
+1. **It cannot email the report.** `token.json` / `credentials.json` are not in the image, so the
+   Gmail step will not run. Mount them from Secret Manager, or run the reporting step locally
+   against the downloaded result JSON. A missing report forfeits that side's points (RUNBOOK §4).
+2. **Its artifacts are ephemeral.** `/app/results` dies with the instance, taking the sealed logs
+   the `matches/` archive and any later `learn clone` depend on. Mount a GCS bucket at
+   `/app/results` (`--add-volume` / `--add-volume-mount`) before a match that counts.
+
+Neither matters for a **rehearsal**, which is what the outstanding WAN validation needs. Both
+matter for a counted match.
 
 Then exchange the two public URLs with the opposing team and run
 `uv run p2p-pursuit smoke <their-url>` before agreeing anything else (RUNBOOK §3b).
