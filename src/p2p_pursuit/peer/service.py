@@ -33,12 +33,13 @@ class PeerService:
     def ensure_sub_game(self, n: int) -> None:
         with self._cv:
             if self.engine.sub_game < n:
-                self.engine.start_sub_game(n)
+                self.engine.begin_sub_game(n)
 
     def receive_commit(self, msg: dict[str, Any]) -> dict[str, Any]:
         with self._cv:
             if msg.get("sub_game", 0) > self.engine.sub_game:
-                self.engine.start_sub_game(msg["sub_game"])
+                # Their commit can beat our own series loop to the boundary.
+                self.engine.begin_sub_game(msg["sub_game"])
             return self.engine.on_commit(msg)
 
     def receive_reveal(self, pub: dict[str, Any]) -> dict[str, Any]:
