@@ -25,7 +25,7 @@ Against something that does not actually flee - a random walker - chasing still
 wins outright, and spending those turns on doors cost 25/30 -> 20/30.
 
 Barriers are otherwise still rare: an unconditional spend was measured and it
-loses (see BELIEF_FLOOR). Every placement passes the flood-fill self-trap veto.
+loses (see `belief_floor`). Every placement passes the flood-fill self-trap veto.
 """
 
 from __future__ import annotations
@@ -36,35 +36,36 @@ from ..domain.board import Cell, target_of
 from ..domain.brains_base import BrainBase, BrainView
 from ..domain.hints import region_of
 from ..domain.rules import Decision
+from .params import Doctrine, active
 from .pathing import bfs_distances, still_connected
 from .squeeze import squeeze_play, squeeze_target
 
-# Barrier thresholds are RELATIVE to the sharpest posterior seen so far in this
-# sub-game, not absolute. Absolute constants were calibrated by eye against our
-# own scent model and silently went dead: the old kill shot needed 0.30 while
-# the measured posterior peak never exceeded 0.294 over 385 turns, so the
-# barrier-capture rule (#46) never fired once. A ratio self-calibrates to any
-# opponent's scent model, whose posterior scale we cannot know in advance.
+# The numbers live in params.Doctrine (so the offline search in learn/ can
+# address them); the reasoning stays here, next to the code that spends it.
 #
-# The reference must be a ROLLING window, not an all-time max: step 1's belief is
-# a delta on the known start cell (b_max = 1.0), which pins an all-time maximum
-# forever and reproduces the very dead-threshold bug this replaces. The window
-# forgets the opening certainty and tracks the fog-of-war scale the game settles
-# into.
-PEAK_WINDOW = 12
-GAP_WINDOW = 4   # turns of no closure before we switch from chasing to squeezing
-KILL_SHOT_RATIO = 0.85
-SEAL_RATIO = 0.60
-SEAL_DISTANCE = 3
-ENDGAME_RESERVE = 2
-# BELIEF_FLOOR is deliberately high, and the number is measured rather than
-# guessed. A placement forfeits the move, and the swept trade-off (STRATEGY.md
-# v4) says tempo beats area on this board: at floor 0.10 the police placed
-# 2.45 barriers/game and captured 20%, while at every floor from 0.18 up it
-# placed none and captured 45% - identical to a barriers-off control. An area-
-# denial doctrine was implemented too, measured at zero effect, and removed.
-# Barriers are therefore a rare, decisive kill shot only.
-BELIEF_FLOOR = 0.22
+# `kill_shot_ratio` / `seal_ratio` are RELATIVE to the sharpest posterior seen
+# recently in this sub-game, never absolute. Absolute constants were calibrated
+# by eye against our own scent model and silently went dead: the old kill shot
+# needed 0.30 while the measured posterior peak never exceeded 0.294 over 385
+# turns, so the barrier-capture rule (#46) never fired once. A ratio
+# self-calibrates to any opponent's scent model, whose scale we cannot know.
+#
+# The reference must be a ROLLING window (`peak_window`), not an all-time max:
+# step 1's belief is a delta on the known start cell (b_max = 1.0), which pins
+# an all-time maximum forever and reproduces the very dead-threshold bug this
+# replaces. The window forgets the opening certainty and tracks the fog-of-war
+# scale the game settles into.
+#
+# `belief_floor` is deliberately high, and measured rather than guessed. A
+# placement forfeits the move, and the swept trade-off (STRATEGY.md v4) says
+# tempo beats area on this board: at floor 0.10 the police placed 2.45
+# barriers/game and captured 20%, while at every floor from 0.18 up it placed
+# none and captured 45% - identical to a barriers-off control. An area-denial
+# doctrine was implemented too, measured at zero effect, and removed. Barriers
+# are therefore a rare, decisive kill shot only.
+#
+# `gap_window` is turns of no closure before we switch from chasing to
+# squeezing, and it is knife-edge: 2 -> 6%, 3 -> 76%, 4 -> 92%, 5 -> 26%.
 
 OPPOSITE = {"north": "south", "south": "north", "east": "west", "west": "east",
             "northeast": "southwest", "southwest": "northeast",
@@ -73,16 +74,16 @@ REVERSE = {"N": "S", "S": "N", "E": "W", "W": "E"}
 
 
 class PoliceBrain(BrainBase):
-    claim_threshold = 0.15
-
-    def __init__(self) -> None:
+    def __init__(self, doctrine: Doctrine | None = None) -> None:
+        self.p = doctrine or active()
+        self.claim_threshold = self.p.claim_threshold
         self._prev_fresh: Cell | None = None
         self._fresh: Cell | None = None
         self._sub_game: int | None = None
         self._last_move: str | None = None
-        self._recent: deque[float] = deque(maxlen=PEAK_WINDOW)
+        self._recent: deque[float] = deque(maxlen=self.p.peak_window)
         self._camped = 0
-        self._gaps: deque[int] = deque(maxlen=GAP_WINDOW)
+        self._gaps: deque[int] = deque(maxlen=self.p.gap_window)
 
     def _decide_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
@@ -111,7 +112,7 @@ class PoliceBrain(BrainBase):
         if barrier is None and evading:
             barrier = squeeze_play(view.board, view.own_pos, quarry,
                                    quota_left=view.barrier_quota - view.barriers_used,
-                                   reserve=ENDGAME_RESERVE)
+                                   reserve=self.p.endgame_reserve)
         if barrier is not None:
             self._last_move = None
             return Decision(move="STAY", barrier=barrier)
@@ -129,7 +130,7 @@ class PoliceBrain(BrainBase):
         scent = view.opp_scent
         top = max(max(row) for row in scent)
         fresh = None
-        if top >= 0.7:  # only a genuinely fresh trail testifies
+        if top >= self.p.police_fresh_min:  # only a genuinely fresh trail testifies
             fresh = max(((r, c) for r in range(view.board.size)
                          for c in range(view.board.size)),
                         key=lambda cell: scent[cell[0]][cell[1]])
@@ -166,17 +167,17 @@ class PoliceBrain(BrainBase):
         # "has the posterior just sharpened relative to recent history".
         reference = max(self._recent) if self._recent else b_max
         self._recent.append(b_max)
-        sharp = max(BELIEF_FLOOR, KILL_SHOT_RATIO * reference)
+        sharp = max(self.p.belief_floor, self.p.kill_shot_ratio * reference)
         adjacent_open = [c for c in view.board.neighbors4(view.own_pos) if view.board.is_open(c)]
         # Kill shot: our sharpest posterior sits on a cell we can bar now (#46).
         if b_max >= sharp and target in adjacent_open:
             return target
-        if left <= ENDGAME_RESERVE:
+        if left <= self.p.endgame_reserve:
             return None
         # Corner seal: cornered belief mass close by - pinch its exit.
-        if b_max >= max(BELIEF_FLOOR, SEAL_RATIO * reference):
+        if b_max >= max(self.p.belief_floor, self.p.seal_ratio * reference):
             dist = bfs_distances(view.board, view.own_pos)
-            if dist.get(target, 99) <= SEAL_DISTANCE and self._is_cornered(view, target):
+            if dist.get(target, 99) <= self.p.seal_distance and self._is_cornered(view, target):
                 for cell in adjacent_open:
                     if target in view.board.neighbors4(cell) and cell != target and \
                             still_connected(view.board, cell, view.own_pos, target):
@@ -251,7 +252,7 @@ class PoliceBrain(BrainBase):
 
     def hint_plan(self, view: BrainView, decision: Decision) -> tuple[str, str]:
         """Herding lie: claim to close in from the opposite side of our true region."""
-        if view.rng.random() < 0.2:
+        if view.rng.random() < self.p.police_truth_rate:
             return region_of(view.own_pos, view.board.size), "truth"
         true_region = region_of(view.own_pos, view.board.size)
         return OPPOSITE.get(true_region, "north"), "lie"

@@ -100,7 +100,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done.
 - [ ] Evidence kit per match: heatmap screenshot, `Verified OK` screenshot, terminal output, Gmail id
 
 ## 9. Submission (book ch. 9/11 + Appendix C)
-- [~] Academic README — 5 mandatory components **written** (Dec-POMDP formalization §1 · FastMCP orchestration dilemmas §2 · strategies §3 → `docs/STRATEGY.md` · RL n/a note §4 · screenshots §5 **embedded 2026-07-28**: live belief heatmap + replay `Verified OK` + tamper drill, captured from a real localhost two-peer match); sister cross-links filled; synced to both repos; **still pending**: `league_match_terminal.png` during the first counted match (#49)
+- [~] Academic README — 5 mandatory components **written** (Dec-POMDP formalization §1 · FastMCP orchestration dilemmas §2 · strategies §3 → `docs/STRATEGY.md` · **RL §4 — offline policy search (CEM over the doctrine vector) + behaviour cloning of real opponents from sealed logs, `src/p2p_pursuit/learn/`, added 2026-08-01** · screenshots §5 **embedded 2026-07-28**: live belief heatmap + replay `Verified OK` + tamper drill, captured from a real localhost two-peer match); sister cross-links filled; synced to both repos; **still pending**: `league_match_terminal.png` during the first counted match (#49)
 - [x] Both repos contain: README, `/config`, PRD files, PLAN, TODO (#50) — synced by `scripts/sync_repos.py`; per-match configs auto-archive under `matches/` as league play happens
 - [ ] Per-match commit hashes recorded in declarations + result files
 - [x] Verify no secrets in either repo **history**; `.gitignore` present (#39–40) — verified 2026-07-28 on both fresh repos; the check is also baked into every `sync_repos.py --push`

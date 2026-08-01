@@ -79,12 +79,12 @@ flowchart LR
         A_GUI[Live GUI\nbelief heatmap] --> A_SDK
         A_SDK[PursuitSDK] --> A_RT[PeerRuntime\nstate machine + watchdog]
         A_RT --> A_ENG[TurnEngine\ncommit/reveal/audit]
-        A_ENG --> A_BR[PoliceBrain v3]
+        A_ENG --> A_BR[PoliceBrain\ntuned doctrine]
         A_ENG --> A_BEL[Belief map + trust]
         A_RT --> A_GK[Gatekeeper] --> A_MAIL[Gmail reporter]
     end
     subgraph PeerB["Thief peer (port 8801)"]
-        B_ENG[TurnEngine] --> B_BR[ThiefBrain v3]
+        B_ENG[TurnEngine] --> B_BR[ThiefBrain\ntuned doctrine]
     end
     A_RT <-->|"FastMCP HTTP:\nhandshake · receive_commit ·\nreceive_reveal · receive_event ·\naudit_exchange"| B_ENG
     A_MAIL -->|result JSON| L[rmisegal+uoh26finalgame@gmail.com]
@@ -121,33 +121,81 @@ referee-less FastMCP orchestration forces, and how this project resolves them:
 The graded core. Full doctrine, tuning history and evaluation evidence:
 [`docs/STRATEGY.md`](docs/STRATEGY.md).
 
-**Police v3 — scent-trail-velocity interception.** The freshest scent cell marks where the
-thief *was*; consecutive freshest cells yield a velocity estimate, and the brain solves a small
-pursuit curve to step toward where the thief *will be* (lookahead k ∈ 0..4). Claims are
-disciplined — a claim leaks our exact cell, so we claim only at belief ≥ 0.15, kill-shot
-directly at ≥ 0.30, and spend barriers to seal corners at ≥ 0.20 (desperation lowers the bar in
-the last 8 steps). Flood-fill vetoes self-trapping barrier placements.
+**Police — interception, then the squeeze.** The freshest scent cell marks where the thief *was*;
+consecutive freshest cells yield a velocity estimate, and the brain solves a small pursuit curve
+to step toward where the thief *will be* (lookahead k ∈ 0..4). Every threshold is a **ratio of a
+rolling window of recent belief peaks**, never an absolute — v3's kill shot needed 0.30 while the
+measured peak never exceeded 0.294 over 385 turns, so it was unreachable dead code. Ambush the
+argmax for exactly one turn (a second is the camping pathology that idled 21% of all turns), and
+break ties against reversing (28% of real moves were A→B→A step-backs). Once the gap stops
+closing, switch from chasing to the book's third capture path (§3.4): **close the evader's exits
+one at a time** — enclosure costs two barriers in a corner, where landing on a moving equal-speed
+evader is near-impossible. Flood-fill vetoes self-trapping placements, and an enclosed opponent
+is *claimed*, because a foreign peer will never confess it (that fix alone turned 0/5 into 5/5
+against the live reference peer).
 
-**Thief v3 — claim-radius risk avoidance.** The thief scores candidate cells by the police's
-*projected* belief mass within claim range (BFS ≤ 2), forward-projects the interceptor one step,
-jukes only when actually being chased (run ≥ 2 closing steps at distance ≤ 3 — always-on zigzag
-measurably hurts), avoids corners in the first half, never STAYs, and tells **scent-consistent
-lies**: hints that fit what the police can already smell, but bend the inferred direction.
+**Thief — risk-aware evasion off the pursuer's trail.** Candidate cells are scored by the
+police's *projected* belief mass within claim range (BFS ≤ 2), fleeing the pursuer's **scent
+trail** rather than our posterior of it (measured: our belief of the police sits 1.85 cells off,
+so fleeing the posterior means fleeing a phantom). Two-ply mobility, forward-projected
+interception risk, juking only under genuine close pursuit, corner discipline scaled by the
+pursuer's *remaining* barrier quota, never STAY twice, and **scent-consistent lies** sampled with
+a private RNG — the old lie picked the furthest stale cell of a field we transmit ourselves,
+making it a deterministic function of public data.
 
-**Evidence (CI-gated, cross-version validated):** the v3 thief cuts the previous-generation
-police's captures 16 → 11 over the standard 12-seed tournament; v3 police vs v3 thief lands
-54/144 captures (37.5%, vs 25% score break-even); police captures a random walker 27/30; thief
-survives a random police 30/30. Reproduce a parameter study with
-`uv run python notebooks/strategy_sweep.py`.
+**Evidence.** Validation seeds unseen by both the search and its hold-out, scored in league points
+against a population of opponent archetypes (not self-play — see §4): **12.35 → 13.00
+points/sub-game, capture 75.0% → 79.8%, survival 80.0% → 92.0%**. Live against the reference implementation: police 5/5 captures, thief
+never caught. Full tuning history, including the negative results that cost real effort and the
+two hand-measured verdicts the search overturned: [`docs/STRATEGY.md`](docs/STRATEGY.md).
 
 ## 4. Reinforcement learning
 
-**Not used — by design.** The move policy is deterministic, auditable Python over an exact
-Bayes filter (the book's requirement that the move never comes from an LLM is honored — the LLM,
-when enabled at all, only writes banter). Strategy quality was driven by a measured
-tune-evaluate loop (seeded cross-version tournaments, regressions reverted on evidence) rather
-than gradient learning, so the "RL learning curves" README component does not apply. The
-sub-game-level *trust coefficient* does adapt online, but it is a Bayesian update, not RL.
+**Used, offline, in the policy-search family — and deliberately never during a match.**
+Package: [`src/p2p_pursuit/learn/`](src/p2p_pursuit/learn/). Method: the cross-entropy method
+over the doctrine vector, plus behaviour cloning of real opponents from sealed match logs.
+
+**Why not online.** The league grants at most ten counted games, one per opponent, each sealed
+after reporting. That is ten terminal rewards against ten different non-stationary opponents —
+far too few to fit anything, and every sample is irreversible. Worse, a policy that updates
+mid-league means the version that earned game 3 is not the version playing game 7, which the
+per-sub-game `github_commit` in the report is supposed to pin down. So the agent that plays a
+counted match is **frozen**: `config/doctrine.json`, committed, reproducible from the hash.
+
+**What is learned.** Every constant either brain reads is a field of
+[`strategy/params.py`](src/p2p_pursuit/strategy/params.py) (23 dimensions), and CEM samples
+policies, keeps the elite quarter, and refits the sampling distribution. Three properties make
+it honest on a noisy objective, and each is asserted by a test: **common random numbers** (every
+candidate in a generation is judged on the same seeds, so comparing them is not comparing luck),
+**elitism** (the incumbent is re-scored every generation and competes), and a **variance floor**
+(without it the distribution collapses into the first plausible basin and stops searching). The
+objective is *league points per sub-game*, not capture rate — the table pays 20/5 as police and
+5/10 as thief, so a doctrine can win the capture metric and lose the league.
+
+**Why the opponent pool is the real contribution.** Self-play here is a measured liar: the v5
+police scored 90–98% against our own thief and **0/5** against the live reference peer, because a
+simulation containing one evader teaches you about that evader. Candidates are therefore scored
+against a population of archetypes — random walker, momentum runner, distance-gradient chaser and
+fleer, trail hound, barrier-spender, mobility-preserving holder, and ourselves — each declaring
+*which roles it is genuinely distinct in*, because listing an archetype in a role where it plays
+an identical trajectory would silently triple that behaviour's weight in the objective.
+
+**Learning between matches (the part that compounds).** After the audit exchange, a sealed log
+holds the opponent's exact position and move at every step — the protocol hands us a labelled
+dataset of a real team. `learn clone` fits a linear policy to it and adds that team to the pool,
+so the next search answers opponents that are no longer hypothetical:
+
+```bash
+uv run p2p-pursuit learn clone --match matches/<team>            # their moves -> a playable policy
+uv run p2p-pursuit learn tune  --role police --workers 12        # search, hold-out gated
+```
+
+`tune` writes `config/doctrine.json` **only if a hold-out seed set the search never saw
+improves** — a gain on the training seeds is the optimizer reporting its own noise back.
+
+Two things are still not RL and are not claimed as such: the per-turn move remains deterministic,
+auditable Python over an exact Bayes filter (rule #25 — the LLM only ever writes banter), and the
+sub-game trust coefficient adapts online by Bayesian update, not by reward.
 
 ## 5. Screenshots
 
@@ -207,9 +255,10 @@ A forged match is void: technical loss 0/0, no appeal (rule #20).
 | 6. Crypto — commit-reveal, nonces, mutual audit, step-0 declaration, locks | ✅ |
 | 7. Reporting + GUI — 4 JSON artifacts, Gatekeeper, Gmail (draft/send), live GUI, replay verifier | ✅ |
 | 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer |
+| 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 165 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-every file ≤150 code lines, CI on every push. Counted league matches vs. real opposing teams
+**Quality gate:** 213 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+CI on every push. Counted league matches vs. real opposing teams
 are the remaining work (see [`docs/TODO.md`](docs/TODO.md) §8–9); the submission repos are
 already split, public and green.
 
@@ -254,6 +303,13 @@ uv run p2p-pursuit smoke http://127.0.0.1:8801/mcp     # dialect=native|referenc
 
 # One-time Gmail consent:
 uv run p2p-pursuit authorize
+
+# --- offline only; never during a match (see 4) -------------------------------
+# Fit a policy to a team we have played, from their sealed logs, and pool it:
+uv run p2p-pursuit learn clone --match matches/<archived-dir> --name <team>
+
+# Search the doctrine vector; writes config/doctrine.json only if a hold-out improves:
+uv run p2p-pursuit learn tune --role police --generations 20 --seeds 40 --workers 12
 ```
 
 Flags: `--games N` (dev override; counted matches force 6), `--seed` (reproducibility),
@@ -292,7 +348,11 @@ src/p2p_pursuit/
   sdk/        PursuitSDK - single business-logic entry point (CLI/GUI go through it)
   domain/     board, rules, scoring, scent, belief, trust, hints,
               crypto, protocol, audit, declarations, negotiation, brains_base
-  strategy/   police_brain, thief_brain, pathing, talk_template, talk_llm
+  strategy/   police_brain, thief_brain, params (the tunable doctrine vector),
+              pathing, squeeze, talk_template, talk_llm
+  learn/      OFFLINE ONLY - cem (policy search), arena (points objective),
+              population + opponents (sparring archetypes), clone_data + clone_fit
+              (fit a real opponent from its sealed logs)
   peer/       engine_state, turn_engine, service, runtime(+reports), local_match,
               state_machine, deadline, watchdog, log_manager, audit_bridge
   infra/      mcp_server, mcp_client, transport, email_sender
@@ -300,6 +360,8 @@ src/p2p_pursuit/
   gui/        live_view (belief heatmap + banner), replay_view, replay_data, view_model
   shared/     config (JSON constitution + private TOML), gatekeeper, rate_limiter, sysinfo
 config/police/  config/thief/   # byte-identical game.json + role-private game.toml
+config/doctrine.json            # the frozen tuned doctrine a counted match plays
+config/opponents/               # policies cloned from teams we have already played
 matches/     # tracked per-match artifact archive (configs, logs, results)
 tests/unit/  tests/integration/ # 89 tests incl. real MCP round-trip + cheat harness
 docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_BOOK, COST_ANALYSIS
@@ -311,10 +373,10 @@ docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_
 |---|---|
 | [`docs/PRD.md`](docs/PRD.md) + [`docs/PRD/`](docs/PRD/) | Master requirements, 55-rule map, binding parameters, seven stage PRDs |
 | [`docs/PLAN.md`](docs/PLAN.md) | Architecture, mermaid diagrams, ADRs, reuse map, milestones, risks |
-| [`docs/STRATEGY.md`](docs/STRATEGY.md) | The graded core: doctrine + evaluation numbers |
+| [`docs/STRATEGY.md`](docs/STRATEGY.md) | The graded core: doctrine + evaluation numbers, including the offline policy search (§8) and every negative result it overturned |
 | [`docs/TODO.md`](docs/TODO.md) | Task tracking with milestone gates |
 | [`docs/GAP_ANALYSIS.md`](docs/GAP_ANALYSIS.md) | HW6 vs. final-project spec |
-| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers |
+| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers, **and the between-match learning loop (§4b)** |
 | [`docs/PROMPT_BOOK.md`](docs/PROMPT_BOOK.md) | Prompt-engineering log (guidelines §8.3) |
 | [`docs/COST_ANALYSIS.md`](docs/COST_ANALYSIS.md) | LLM token/cost model per banter provider |
 | [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) | The book's ch. 11.5/11.6 final sweep, mapped to evidence |
