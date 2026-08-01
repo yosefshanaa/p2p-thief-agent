@@ -118,6 +118,17 @@ class ReferenceBridge:
                     engine, str(win.get("type", "survival")))
 
     # -- outbound: our link surface, spoken in their dialect ------------------
+    def opponent_already_contacted(self) -> bool:
+        """Have they reached us already? Then stop probing and handshake.
+
+        Over a tunnel each failed liveness probe costs its full timeout, so
+        sixty attempts take minutes - while a reference peer gives us only ~60 s
+        to answer its `negotiate` before it exits with "Opponent never sent its
+        agreement". An agreement sitting in our inbox is stronger evidence of
+        liveness than any probe of ours could be: they demonstrably reached us.
+        """
+        return not self.agreements.empty()
+
     def health(self, timeout: float | None = None) -> dict:
         """They serve no health tool; reachability is the tool listing itself."""
         return {"ok": bool(self.link.list_tools(timeout=timeout))}
