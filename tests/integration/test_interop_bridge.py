@@ -287,3 +287,40 @@ def test_mutual_agreement_needs_both_directions():
     assert results.agreement_reached(both) is True
     assert results.agreement_reached(one_way) is False
     assert results.agreement_reached([]) is False
+
+
+def test_a_win_claim_is_sent_immediately_not_carried_to_a_turn_that_never_comes():
+    """Measured live 2026-08-01. A win claim is terminal - the sub-game is over,
+    so there is no next turn to ride. Left owed, their peer waits out its turn
+    timeout, and `timeout` is in their NO_AUDIT_RESULTS: they skip the audit
+    exchange entirely. Every even sub-game came back `audit=no package received`
+    with zero opponent records, which is also why cloning got no data from the
+    role we play on even sub-games.
+    """
+    bridge, _service, peer = _bridge()
+    bridge.commit({"hash": "c" * 64}, timeout=1)
+    bridge.reveal(_reveal(role="thief", step=4, hash="c" * 64), timeout=1)
+    sent_before = len(peer.turns)
+
+    bridge.event({"public": {"kind": "survival"}}, timeout=1)
+
+    assert len(peer.turns) == sent_before + 1, "the claim must go out on its own"
+    final = peer.turns[-1]
+    assert final["win_claim"] == {"type": "survival"}
+    assert final["step"] == 4 and final["commit"] == "c" * 64, "a copy of our last turn"
+    assert bridge._owed_win_claim is None, "nothing is left owed"
+
+
+def test_a_claim_answer_still_rides_the_next_turn():
+    """The capture answer is NOT terminal - the game continues - so it keeps the
+    original behaviour and must not be pushed as a message of its own."""
+    from p2p_pursuit.domain.protocol import KIND_CAPTURE_ANSWER
+
+    bridge, _service, peer = _bridge()
+    bridge.commit({"hash": "d" * 64}, timeout=1)
+    bridge.reveal(_reveal(role="thief", step=4, hash="d" * 64), timeout=1)
+    sent_before = len(peer.turns)
+    bridge.event({"public": {"kind": KIND_CAPTURE_ANSWER, "claim_cell": [1, 2],
+                             "answer": False}}, timeout=1)
+    assert len(peer.turns) == sent_before, "it waits for the next turn"
+    assert bridge._owed_claim_response == {"claim": [1, 2], "caught": False}

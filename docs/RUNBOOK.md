@@ -163,6 +163,40 @@ to the full 35 steps and the audit delivered **36 opponent records**.
 Ask every opponent three questions before a counted match: *which dialect, do roles alternate,
 and is an enclosed thief captured?*
 
+### Full six-sub-game series over the reference dialect — proven 2026-08-01
+
+A six-sub-game series with role alternation now completes end to end against the unmodified
+reference peer, **every sub-game `audit=Verified OK`, 216 opponent records exchanged**:
+
+| Sub-game | We played | Ending | Audit |
+|---|---|---|---|
+| 1, 3, 5 | police | survival at 35 | Verified OK |
+| 2, 4, 6 | thief | survived 35 | Verified OK |
+
+All-survival ties 45–45 under alternation, as expected with `claim_enclosure = false`.
+
+Three defects stood between a working sub-game 1 and a working series, and all three were
+invisible in a one- or two-sub-game warm-up:
+
+1. **The role race.** They start the next sub-game the moment they finish the last, so their
+   first commit can arrive while we are still in the audit exchange — and an inbound commit
+   advances the sub-game. With the role swap living only in our series loop, whichever crossed
+   the boundary first decided the board: we logged *"playing as thief"* and played it out as
+   police, and both peers died on a turn timeout. Fixed by ordering role-then-start in one place
+   (`EngineState.begin_sub_game`), reached by both entry points.
+2. **The terminal win claim.** Our events "ride the next turn" — but a win claim *is* the end of
+   the sub-game, so no next turn exists. Their police waited out its turn timeout, and `timeout`
+   is in their `NO_AUDIT_RESULTS`: they skipped the audit entirely. Every even sub-game returned
+   `audit=no package received` with zero opponent records. The claim is now sent immediately on a
+   copy of our last turn.
+3. **The audit-wait window.** They negotiate the next sub-game instantly and wait only ~60 s for
+   our agreement; our audit wait (360 s) sat directly in front of our re-handshake, so any delay
+   blew their window — `Opponent never sent its agreement`. Bounded to 20 s whenever
+   `handshake_per_sub_game` is on.
+
+**Lesson for any new opponent: warm up with the full six, not two.** Defects 2 and 3 only appear
+at a sub-game boundary that a short warm-up never reaches, and each one alone voids a match.
+
 Verified live on 2026-07-30 against the unmodified reference peer with `--games 2`: sub-game 1
 played us as police (their thief survived 35), sub-game 2 logged
 `playing as thief (alternating)` and ran to a capture. Both sub-games completed — the same

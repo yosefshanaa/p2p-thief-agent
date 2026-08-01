@@ -33,13 +33,31 @@ def write_declaration(rt: Any, theirs: dict[str, Any]) -> None:
     artifacts.write_declaration(rt.out_dir, rt.game_id, decl)
 
 
+#: A reference-derived peer negotiates the next sub-game the instant it finishes
+#: the last one, and waits only ~60 s for our agreement. Our own audit wait sits
+#: directly in front of that re-handshake, so a generous one does not merely
+#: delay us - it blows their window and costs the whole next sub-game
+#: ("Opponent never sent its agreement", measured live 2026-08-01). When we are
+#: re-handshaking per sub-game, waiting longer than this can only lose ground:
+#: their audit is already sent by then or it is not coming.
+REHANDSHAKE_AUDIT_WAIT = 20.0
+
+
+def _audit_wait(rt: Any) -> float:
+    """How long to wait for their audit before moving to the next sub-game."""
+    generous = rt.deadline.timeout_sec * 2
+    if rt.peer.handshake_per_sub_game:
+        return min(generous, REHANDSHAKE_AUDIT_WAIT)
+    return generous
+
+
 def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
     """Mutual audit, log artifact and score row for one finished sub-game."""
     engine = rt.engine
     their_view = {"verdict": "not received", "violations": []}
     with contextlib.suppress(DeadlineExpiredError):
         their_view = rt.deadline.call(rt.link.audit, audit_bridge.audit_package(engine))
-    got = rt.service.wait_for_audit(n, rt.deadline.timeout_sec * 2)
+    got = rt.service.wait_for_audit(n, _audit_wait(rt))
     my_verdict = rt.service.audit_verdicts.get(
         n, {"verdict": "no package received", "violations": []})
     opp_records = rt.service.audit_packages.get(n, {}).get("records", [])
