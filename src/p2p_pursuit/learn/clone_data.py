@@ -39,7 +39,19 @@ class Sample:
 
 
 def _move_of(raw: Any) -> str | None:
-    text = str(raw or "").upper().removeprefix("MOVE:").strip()
+    """Their move notation, or None if this record is not a move.
+
+    ``HOLD:-`` is the reference peer's STAY, and getting it wrong is not a
+    rounding error: measured on a real warm-up it is **23 of 35 records in a
+    single sub-game**. Dropping them silently discards two thirds of the data
+    *and* biases what is left - the surviving sample contained no STAY at all,
+    so a clone fitted on it would have learned an opponent that never holds
+    position, when in fact this one sat on one cell for 23 consecutive turns.
+    """
+    text = str(raw or "").upper().strip()
+    if text.startswith("HOLD"):
+        return "STAY"
+    text = text.removeprefix("MOVE:").strip()
     return text if text in MOVES else None
 
 

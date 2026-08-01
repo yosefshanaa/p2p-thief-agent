@@ -25,8 +25,13 @@ def native(step, pos_before, pos_after, move, barrier=None):
 
 
 def reference(step, position, move, barriers="[]"):
-    """The reference peer's envelope: payload + nonce + commit, MOVE: prefix."""
-    return {"payload": {"step": step, "position": list(position), "move": f"MOVE:{move}",
+    """The reference peer's envelope: payload + nonce + commit.
+
+    Directions travel as ``MOVE:S``; a move that already carries its own verb
+    (``HOLD:-``, their STAY) is passed through untouched.
+    """
+    wire = move if ":" in move else f"MOVE:{move}"
+    return {"payload": {"step": step, "position": list(position), "move": wire,
                         "state": f"grid=7x7;self={list(position)};barriers={barriers}"},
             "nonce": "n", "commit": "c"}
 
@@ -61,6 +66,22 @@ def test_barriers_are_recovered_from_both_places():
                                 reference(2, (5, 3), "S", barriers="[[6, 6]]")]}
     walls = clone_data.samples_from_log(log)[0].barriers
     assert (2, 2) in walls and (6, 6) in walls
+
+
+def test_their_hold_notation_is_a_stay_not_a_dropped_record():
+    """`HOLD:-` is the reference peer's STAY. Measured on a real warm-up it was
+    23 of 35 records in one sub-game, and dropping it does more than lose data:
+    the surviving sample had no STAY in it at all, so a clone fitted on it would
+    have learned an opponent that never holds - while the real one sat on a
+    single cell for 23 consecutive turns.
+    """
+    log = {"perspective": "police",
+           "my_records": [native(1, (0, 0), (1, 0), "S"), native(2, (1, 0), (1, 1), "E"),
+                          native(3, (1, 1), (2, 1), "S")],
+           "opponent_records": [reference(1, (4, 3), "S"), reference(2, (5, 3), "HOLD:-"),
+                                reference(3, (5, 3), "HOLD:-"), reference(4, (5, 3), "E")]}
+    samples = clone_data.samples_from_log(log)
+    assert [s.move for s in samples] == ["STAY", "STAY", "E"]
 
 
 def test_a_malformed_record_is_skipped_not_fatal():

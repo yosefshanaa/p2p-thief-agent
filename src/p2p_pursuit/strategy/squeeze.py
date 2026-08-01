@@ -49,12 +49,20 @@ def placeable(board: Board, own: Cell) -> list[Cell]:
 
 
 def squeeze_play(board: Board, own: Cell, evader: Cell, *, quota_left: int,
-                 reserve: int) -> Cell | None:
+                 reserve: int, claim_enclosure: bool = True) -> Cell | None:
     """Take one of the evader's exits, if that is worth a forfeited move.
 
     Returns the cell to bar. Never returns a placement that would cut us off
     from the evader - a wall we cannot cross converts a winning squeeze into a
     stalemate, which is the failure mode the book warns about by name.
+
+    ``claim_enclosure`` is that same warning applied to the *rules* rather than
+    the geometry. Sealing the last door only wins if the opponent agrees that an
+    enclosed thief is captured; against one that does not, it builds a pocket we
+    cannot enter either and hands them survival. Measured live 2026-08-01: we
+    barred (6,5) and (5,6), their thief sat in (6,6) for 27 turns, we finished
+    outside our own wall, and a capture became 5 points. So when the rule is not
+    agreed we stop one door short and take the last exit by standing on it.
     """
     if quota_left <= 0:
         return None
@@ -62,6 +70,8 @@ def squeeze_play(board: Board, own: Cell, evader: Cell, *, quota_left: int,
     # Enclosure is imminent: spend the reserve rather than hoard it.
     if not escape:
         return None
+    if not claim_enclosure and len(escape) <= 1:
+        return None  # the last door stays open: pin, do not seal
     endgame = len(escape) <= 1
     if quota_left <= reserve and not endgame:
         return None

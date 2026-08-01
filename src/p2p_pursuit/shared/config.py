@@ -110,6 +110,12 @@ class PeerConfig:
     #: rebuild their runtime per sub-game and renegotiate; a peer that
     #: handshakes once leaves them waiting until their timeout.
     handshake_per_sub_game: bool = False
+    #: Claim a capture when the opponent has no legal move left (book 3.4).
+    #: The rule is real, but an unmodified reference peer does not implement it:
+    #: it keeps playing, never sends its audit package, and the series desyncs
+    #: into role collisions. Measured live 2026-08-01 - see RUNBOOK 3b. So the
+    #: claim is a per-opponent negotiation item, exactly like the wire dialect.
+    claim_enclosure: bool = True
 
 
 def load_shared(path: Path) -> SharedConfig:
@@ -142,6 +148,7 @@ def load_peer(path: Path) -> PeerConfig:
         interop_dialect=interop.get("dialect", "native"),
         alternate_roles=bool(interop.get("alternate_roles", False)),
         handshake_per_sub_game=bool(interop.get("handshake_per_sub_game", False)),
+        claim_enclosure=bool(interop.get("claim_enclosure", True)),
     )
 
 

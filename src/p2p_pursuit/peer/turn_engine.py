@@ -37,7 +37,11 @@ class TurnEngine(EngineState):
         self.machine.transition(COMPUTING_MOVE)
         if self.role == THIEF and self.board.is_enclosed(self.own_pos):
             return {"event": self._captured_event("enclosed")}
-        if self.role == POLICE:
+        # Book 3.4 says an enclosed thief is captured, and it wins games - but
+        # only against an opponent that implements it. An unmodified reference
+        # peer keeps playing, never sends its audit package, and every later
+        # sub-game collides on roles. Negotiate it, then switch it on.
+        if self.role == POLICE and self.peer.claim_enclosure:
             trapped = self._enclosed_opponent()
             if trapped is not None:
                 return {"event": self._enclosure_claim(trapped)}

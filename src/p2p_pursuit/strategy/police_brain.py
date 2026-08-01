@@ -112,7 +112,8 @@ class PoliceBrain(BrainBase):
         if barrier is None and evading:
             barrier = squeeze_play(view.board, view.own_pos, quarry,
                                    quota_left=view.barrier_quota - view.barriers_used,
-                                   reserve=self.p.endgame_reserve)
+                                   reserve=self.p.endgame_reserve,
+                                   claim_enclosure=view.claim_enclosure)
         if barrier is not None:
             self._last_move = None
             return Decision(move="STAY", barrier=barrier)
