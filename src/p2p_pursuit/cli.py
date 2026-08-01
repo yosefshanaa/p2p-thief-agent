@@ -1,4 +1,4 @@
-"""Command-line entry points: peer | sim | replay | smoke | authorize.
+"""Command-line entry points: peer | sim | replay | smoke | learn | authorize.
 
 Thin argument-parsing shell: every operation is delegated to the PursuitSDK
 facade (guidelines ch. 4 - no business logic outside the SDK). stdout
@@ -158,6 +158,10 @@ def main(argv: list[str] | None = None) -> int:
     smoke = sub.add_parser("smoke", help="probe a peer's MCP endpoint")
     smoke.add_argument("url")
     smoke.set_defaults(fn=cmd_smoke)
+
+    from .learn.cli import add_parser as add_learn_parser
+
+    add_learn_parser(sub)
 
     auth = sub.add_parser("authorize", help="one-time Gmail OAuth consent (writes token.json)")
     auth.add_argument("--credentials", default="credentials.json")

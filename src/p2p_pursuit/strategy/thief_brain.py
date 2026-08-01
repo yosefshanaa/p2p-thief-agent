@@ -26,25 +26,20 @@ from ..domain.board import Cell, target_of
 from ..domain.brains_base import BrainBase, BrainView
 from ..domain.hints import region_of
 from ..domain.rules import Decision
+from .params import Doctrine, active
 from .pathing import bfs_distances, scent_centroid
 
-W_MOBILITY = 0.5
-W_MOBILITY2 = 0.25
-W_CENTROID = 0.4
-W_RISK = 3.0
-W_LEAD_RISK = 1.5
-W_TRAIL = 0.7   # weight on the trail-derived pursuer cell vs the diffuse posterior
-STAY_PENALTY = 1.2
-CORNER_PENALTY = 0.5
-JUKE_PENALTY = 0.6
-JUKE_RANGE = 3
+# The weights live in params.Doctrine so the offline search can address them;
+# `w_trail` is the weight on the trail-derived pursuer cell against the diffuse
+# posterior, and `thief_fresh_min` is the intensity below which the pursuer's
+# trail is too stale to testify. The band that marks a cell of our OWN trail as
+# stale enough to lie about is not searched: it is fixed by the decay schedule.
 STALE_LOW, STALE_HIGH = 0.25, 0.65
-FRESH_MIN = 0.7   # below this the pursuer's trail is too stale to testify
-LIE_CANDIDATES = 3
 
 
 class ThiefBrain(BrainBase):
-    def __init__(self) -> None:
+    def __init__(self, doctrine: Doctrine | None = None) -> None:
+        self.p = doctrine or active()
         self._last_move: str | None = None
         self._run_len = 0
         self._prev_peak: Cell | None = None
@@ -60,7 +55,7 @@ class ThiefBrain(BrainBase):
         centroid = scent_centroid(view.own_scent)
         peak = view.belief.argmax()
         projected = self._project(view, peak)
-        chased = self._pursuer_distance(view, peak) <= JUKE_RANGE
+        chased = self._pursuer_distance(view, peak) <= self.p.juke_range
 
         def score(move: str) -> float:
             pos = target_of(view.own_pos, move)
@@ -82,19 +77,20 @@ class ThiefBrain(BrainBase):
             # posterior this diffuse means fleeing a phantom, which is precisely
             # how a distance-maximising evader walks into a pursuer.
             if self._fresh is not None:
-                expected = W_TRAIL * dist.get(self._fresh, view.board.size * 2) \
-                    + (1.0 - W_TRAIL) * expected
-            s = expected - W_RISK * risk
+                expected = self.p.w_trail * dist.get(self._fresh, view.board.size * 2) \
+                    + (1.0 - self.p.w_trail) * expected
+            s = expected - self.p.w_risk * risk
             if projected is not None and dist.get(projected, 99) <= 2:
-                s -= W_LEAD_RISK  # he is heading here: do not be here when he arrives
-            s += W_MOBILITY * len(view.board.open_neighbors(pos))
-            s += W_MOBILITY2 * self._mobility2(view, pos)
+                s -= self.p.w_lead_risk  # he is heading here: do not be here when he arrives
+            s += self.p.w_mobility * len(view.board.open_neighbors(pos))
+            s += self.p.w_mobility2 * self._mobility2(view, pos)
             if centroid is not None:
-                s += W_CENTROID * (abs(pos[0] - centroid[0]) + abs(pos[1] - centroid[1]))
+                s += self.p.w_centroid * (abs(pos[0] - centroid[0])
+                                          + abs(pos[1] - centroid[1]))
             if move == "STAY":
-                s -= STAY_PENALTY  # re-emission concentrates our trail (never camp)
+                s -= self.p.stay_penalty  # re-emission concentrates our trail (never camp)
             if chased and move == self._last_move and self._run_len >= 2:
-                s -= JUKE_PENALTY  # juke under close pursuit: straight flight is lethal
+                s -= self.p.juke_penalty  # juke under close pursuit: straight flight is lethal
             # Corner discipline for the WHOLE game, scaled by how many barriers
             # the pursuer still holds. It used to switch off at half-time, which
             # invited edge-hugging in exactly the phase where a police with an
@@ -106,7 +102,7 @@ class ThiefBrain(BrainBase):
                 n = view.board.size
                 edges = (pos[0] in (0, n - 1)) + (pos[1] in (0, n - 1))
                 early = view.step <= view.survival_threshold // 2
-                s -= CORNER_PENALTY * edges * (1.0 if early else threat)
+                s -= self.p.corner_penalty * edges * (1.0 if early else threat)
             return s + view.rng.random() * 1e-3
 
         # "Never STAY twice" (STRATEGY.md) is now enforced, not merely penalised:
@@ -125,7 +121,7 @@ class ThiefBrain(BrainBase):
         """Freshest cell of the PURSUER's scent trail, turn over turn."""
         scent = view.opp_scent
         fresh = None
-        if max(max(row) for row in scent) >= FRESH_MIN:
+        if max(max(row) for row in scent) >= self.p.thief_fresh_min:
             fresh = max(((r, c) for r in range(view.board.size)
                          for c in range(view.board.size)),
                         key=lambda cell: scent[cell[0]][cell[1]])
@@ -178,7 +174,7 @@ class ThiefBrain(BrainBase):
         lie derivable from public data - and therefore an admission of where we
         are not. Randomising leaves them a distribution instead of an answer.
         """
-        if view.rng.random() < 0.15:
+        if view.rng.random() < self.p.thief_truth_rate:
             return region_of(view.own_pos, view.board.size), "truth"
         stale = [
             (r, c)
@@ -190,7 +186,7 @@ class ThiefBrain(BrainBase):
             own = view.own_pos
             ranked = sorted(stale, reverse=True,
                             key=lambda p: abs(p[0] - own[0]) + abs(p[1] - own[1]))
-            pool = ranked[:LIE_CANDIDATES]
+            pool = ranked[:self.p.lie_candidates]
             return region_of(pool[view.rng.randrange(len(pool))], view.board.size), "lie"
         from .police_brain import OPPOSITE
 

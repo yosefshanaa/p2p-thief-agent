@@ -209,6 +209,39 @@ cp -r results/<role>-<game_id> matches/ && git add matches && git commit -m "mat
 Evidence kit per match: live-GUI belief-heatmap screenshot, replay `Verified OK` screenshot
 (`uv run p2p-pursuit replay --log results/.../log_*_g01.json`), terminal output, Gmail id.
 
+### 4b. Learn from the match you just played — do this before the next one
+
+The sealed logs you just archived contain the opponent's **exact position and move at every
+step**: a finished match is a few hundred labelled decisions by a real team, which is the one
+thing a simulator built out of our own brains cannot invent. Turn it into a sparring partner and
+re-tune against a pool that now includes them:
+
+```bash
+uv run p2p-pursuit learn clone --match matches/<archived-dir> --name <team>
+uv run p2p-pursuit learn tune  --role police --generations 20 --seeds 40 --workers 12
+uv run p2p-pursuit learn tune  --role thief  --generations 20 --seeds 40 --workers 12
+uv run ruff check && uv run pytest --cov          # the doctrine is code; it ships like code
+git add config/doctrine.json config/opponents && git commit -m "learn: after <team>"
+```
+
+Three rules, none of them optional:
+
+1. **Never tune during a match.** A counted match plays the committed
+   `config/doctrine.json` and nothing else. The report pins each sub-game to a `github_commit`;
+   a peer that retunes itself between sub-games cannot be reproduced from that hash, and the
+   version that won sub-game 2 would not be the version that played sub-game 5.
+2. **The hold-out decides, and `tune` enforces it.** It writes the file only when a seed set
+   the search never saw improves. A gain on the training seeds is the optimizer reporting its own
+   noise. `--force` exists for experiments and has no place before a counted match.
+3. **Re-run the suite after writing the file.** `config/doctrine.json` changes how both brains
+   play; the v4/v5 doctrine regressions in `tests/unit/test_brains_v4.py` are what catch a tuned
+   vector that has quietly re-created a defect the doctrine already paid to fix.
+
+Cloning is honest by construction — the logs were mutually revealed by the protocol's own audit
+exchange, after the match was over — but state its limit when you write it up: the fitted policy
+uses *our* position, not their estimate of it, so it captures a team's revealed **style**
+(straight-line flight, centre-holding, wall-hugging, barrier-spending) and not their inference.
+
 ## 5. Gmail OAuth (one-time)
 
 ```bash

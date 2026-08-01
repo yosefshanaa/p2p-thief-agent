@@ -220,3 +220,131 @@ work on this project.**
    passes the gate at 8/10 and keeps +8.4pp. The bigger number was not shipped: a doctrine that
    only beats one opponent class is overfitted, and weakening the gate to admit it would have been
    moving the goalposts.
+
+## 8. v6 — offline policy search (`learn/`), and the sweep it caught out
+
+Everything above was tuned by hand, one coordinate at a time. That is a defensible way to work —
+each number in v4/v5 has a measurement behind it — but it has a specific blind spot, and v6 found
+it: **a one-dimensional sweep can only ever report the best value of one parameter given the
+current value of every other**. Where two parameters interact, the sweep reports a local verdict
+and calls it a general one.
+
+### The method
+
+`src/p2p_pursuit/learn/` runs the cross-entropy method over the doctrine vector
+(`strategy/params.py`, 23 fields — every constant either brain reads). It is policy search:
+sample policies, keep the elite quarter, refit the sampling distribution, repeat. Three details
+make it trustworthy on a noisy objective, and each has a test:
+
+- **Common random numbers** — every candidate in a generation is scored on the same seed set, so
+  comparing two candidates is not comparing two different sets of lucky games.
+- **Elitism** — the running mean is re-scored each generation and competes with its own children,
+  so one lucky elite set cannot walk the distribution downhill.
+- **A variance floor** — without it the distribution collapses into the first plausible basin
+  after three or four generations and merely *looks* converged.
+
+The objective is **league points per sub-game**, not capture rate. The table pays 20/5 as police
+and 5/10 as thief, so a doctrine can win the capture metric and lose the league.
+
+### The opponent pool is the actual contribution
+
+§7 ends by admitting that 90–98% in simulation coexisted with 0/5 on the wire, because the only
+evader in the simulation was our own thief. So candidates are scored against a *population*:
+`random`, `momentum` (straight-line runner), `greedy` (distance gradient), `hound` (trail
+chaser), `noisy` (gradient + ε), `barrier` (a police that spends its quota freely — the doctrine
+v4 measured its way *out* of), `holder` (an evader that preserves mobility instead of maximising
+distance, i.e. the one archetype that resists the squeeze), and `mirror` (ourselves).
+
+Each archetype declares **which roles it is genuinely distinct in**, and that is not bookkeeping.
+Measured: as a thief, `greedy`, `hound` and `barrier` play a byte-identical trajectory, and as a
+police, `greedy` and `holder` do. Listing them in both roles would have scored our police against
+the same greedy evader three times out of eight — tripling one behaviour's weight in the
+objective, which is the very over-fitting the pool exists to prevent.
+
+### Police result — and the negative result it overturns
+
+20 generations × 36 candidates × 40 training seeds, validated on hold-out seeds 9000–9039 that
+the search never saw:
+
+| Opponent (as thief) | v5 police | v6 police |
+|---|---|---|
+| `holder` (resists the squeeze) | 13.25 | **20.00** |
+| `random` | 18.13 | **20.00** |
+| `noisy` | 18.13 | **20.00** |
+| `momentum` | 15.13 | 15.13 |
+| `greedy` / `mirror` | 20.00 | 20.00 |
+| **mean points/sub-game** | **17.44** | **19.19** |
+| capture rate | 83% | **95%** |
+
+The interesting part is *where* it went. Two hand-measured verdicts were reversed together:
+
+- `belief_floor` **0.22 → 0.069** — v4 swept this alone and concluded "barriers are a tempo trap
+  on this board" (§7, negative result 4).
+- `gap_window` **4 → 2** — v5 swept this alone and measured 2 → **6%**, calling the window
+  knife-edge (§7).
+
+Neither reversal is valid on its own; *together* they are. A low barrier floor pays only if the
+police starts closing doors early, and early squeezing pays only if it is allowed to spend
+barriers freely. Each sweep held the other parameter at a value that made its own answer look
+obviously right. The pair was never on the same axis, so no one-dimensional sweep could have
+found it — and the biggest single gain is against `holder`, the archetype built specifically to
+beat a squeeze, which is where a barrier-active police should show up if it works at all.
+
+The remaining hole is `momentum`, unmoved at 15.13: a straight-line runner on an open board is
+the classic pursuit-evasion result — an equal-speed pursuer cannot close on it — and the tuner
+correctly declined to trade points elsewhere pretending otherwise.
+
+### Thief result — and the co-evolution round that was worth running
+
+The thief was searched the same way. Round 1 (against the *v5* police, 40 hold-out seeds):
+**9.04 → 9.50** points, survival 81% → 90%. But that measured the thief against a police that no
+longer existed, so round 2 re-ran it with `mirror` set to the newly tuned police: **5.25 → 9.75**
+against the current police — from caught 95% of the time to caught ~5%.
+
+That is the answer to §7's open item. The v4 anti-squeeze *term* measured zero effect at every
+weight, twice. The search found the answer was never a new term: it roughly **doubled the
+claim-radius risk weight** (`w_risk` 3.0 → 6.6, `w_lead_risk` 1.5 → 2.5) and *relaxed* the
+discipline penalties it had been fighting with (`stay_penalty` 1.2 → 0.05, `corner_penalty`
+0.5 → 0.24). Hand-tuning could not find it because it required moving four coupled weights at once
+in opposite directions.
+
+**The ladder was stopped at two rounds, deliberately.** A third would tune our thief against our
+own police and vice versa — improving a matchup with nobody in it but us, which is precisely the
+self-play failure mode this section opened by describing.
+
+### Combined result, and the honest caveats
+
+On validation seeds 11000–11079, unseen by both the search and its hold-out, against the full
+pool: **12.35 → 13.00 points/sub-game, capture 75.0% → 79.8%, survival 80.0% → 92.0%.**
+
+Two caveats belong with that number:
+
+- **`barrier` got slightly worse** (8.12 → 7.88): our thief is still caught ~40% by a police that
+  spends its quota freely, and every round traded a little of it away, because the objective is
+  the *mean* over opponents and the mean was better served elsewhere. A min-max objective would
+  choose differently. The league scores a mean, so the mean is right — but this is the known hole.
+- **`mirror` moves with the incumbent**, so scores are only comparable *within* a run, never
+  across rounds. The pool's other members are the fixed reference.
+
+### The optimiser found a real exploit — in our own deception policy
+
+Left free, the search set `lie_candidates` to **1**, which makes the thief's lie point at the
+single furthest stale cell of a scent field *we transmit ourselves* — reproducing exactly the
+decodable lie v4 had removed. It gained nothing measurable and risked everything.
+
+The cause is worth more than the fix: **an optimiser tunes only what its objective can punish.**
+Swapping the entire deception set between designed and searched values moves the result by 42–46
+captures out of 80 — inside the noise — because only one pool member reads hints at all, and even
+it never tries to *invert* a lie. So the deception fields are now listed in
+`params.UNSEARCHABLE` and pinned at their designed values, with a test asserting a tuned file
+naming them is ignored rather than obeyed. The honest long-term fix is a sparring partner that
+exploits deception, not a tighter bound.
+
+### What this still is not
+
+It is simulation. §7's caution stands in full: the pool is a set of archetypes we wrote, and a
+real team is not obliged to resemble any of them. That is exactly why `learn/clone_*` exists —
+after a counted match, the sealed logs give the opponent's true position and move at every step,
+and that team joins the pool as a fitted policy rather than a guess. **Until a counted match has
+been played, the number to trust is "better against six archetypes on unseen seeds", not
+"stronger in the league".**

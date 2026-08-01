@@ -42,17 +42,32 @@ def trail(cells: list[tuple[int, int]], value=0.9):
 
 
 # -- police -------------------------------------------------------------------
-def test_police_ambushes_the_peak_once_then_moves_off_it():
+def test_police_ambushes_the_peak_once_then_stops_idling_on_it():
     """21% of all police turns were idle STAY: standing on the argmax scored
-    distance 0, so nothing could beat it and the police froze for the game."""
+    distance 0, so nothing could beat it and the police froze for the game.
+
+    The pathology is *idling*, not the STAY token. A barrier placement forfeits
+    the move by rule, so a placement also reports ``move="STAY"`` - and a police
+    spending its turn to close a door is doing the opposite of freezing. The v6
+    doctrine places barriers here, which is what surfaced the distinction.
+    """
     brain = PoliceBrain()
     own = (3, 3)
     first = brain.decide(make_view("police", own, belief_at=own))
     second = brain.decide(make_view("police", own, belief_at=own, step=6))
     third = brain.decide(make_view("police", own, belief_at=own, step=7))
     assert first.move == "STAY", "one ambush turn on the peak is worth having"
-    assert second.move != "STAY", "a second consecutive camp is the pathology"
-    assert third.move != "STAY"
+    for turn, decision in (("second", second), ("third", third)):
+        assert not (decision.move == "STAY" and decision.barrier is None), \
+            f"a {turn} consecutive idle turn on the peak is the pathology"
+
+    # The original assertion, kept exactly, for the case where no placement is
+    # possible - then an idle STAY is the only way to score a STAY at all.
+    spent = PoliceBrain()
+    kwargs = {"belief_at": own, "barriers_used": 14}
+    assert spent.decide(make_view("police", own, **kwargs)).move == "STAY"
+    assert spent.decide(make_view("police", own, step=6, **kwargs)).move != "STAY"
+    assert spent.decide(make_view("police", own, step=7, **kwargs)).move != "STAY"
 
 
 def test_police_retargets_onto_the_cloud_not_across_the_board():

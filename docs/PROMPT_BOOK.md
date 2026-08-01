@@ -144,3 +144,31 @@ implementations, and that gap is invisible from either side alone.
   regressions.
 - **Golden numeric examples from the spec** (0.9→0.81) make disputes with a future opponent —
   or with your own refactor — decidable by a unit test.
+
+## v6 — "can we put reinforcement learning, so it gets better each game?"
+
+The question that produced `learn/`. The useful answer was mostly about *where* the learning can
+go, and the reasoning is worth keeping because the obvious reading is a trap:
+
+- **Not online.** The league is at most ten counted games, one per opponent, each sealed after
+  reporting. Ten terminal rewards against ten non-stationary opponents fits nothing, every sample
+  is irreversible, and a mid-league update breaks the correspondence between a sub-game and the
+  `github_commit` it is reported under.
+- **Not self-play alone.** We already had the receipt: 90–98% capture in simulation, 0/5 live,
+  because the simulation contained exactly one evader. An optimiser pointed at that would have
+  produced confident numbers for a policy that had learned our own thief.
+- **Offline, against a population, gated on hold-out seeds** — and then *frozen* and committed.
+- **The compounding part is the match logs.** The protocol's own audit exchange hands us the
+  opponent's exact position and move at every step, so a played match is a labelled dataset of a
+  real team. Cloning them into the pool is what makes "better every match" a mechanism rather
+  than a slogan.
+
+**What it caught.** The search immediately reversed *two* hand-measured negative results at once
+(`belief_floor` 0.22 → 0.069 and `gap_window` 4 → 2), which no one-dimensional sweep could have
+found: each earlier sweep had held the other parameter at a value that made its own conclusion
+look obviously right. The lesson generalises past this project — **a coordinate sweep reports a
+local verdict and it is easy to file it as a general one.**
+
+**What it did not do.** It left `momentum` (a straight-line runner) at exactly its old score,
+which is correct: an equal-speed pursuer cannot close on an evader fleeing in a straight line on
+open ground, and an optimiser that had "improved" there would have been fitting noise.
