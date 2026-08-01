@@ -10,7 +10,7 @@ family of opponents rather than a single fixed point.
 
 from __future__ import annotations
 
-from ..domain.board import target_of
+from ..domain.board import Cell, target_of
 from ..domain.brains_base import BrainBase, BrainView
 from ..domain.rules import Decision
 from ..strategy.pathing import bfs_distances
@@ -121,3 +121,36 @@ class Holder(BrainBase):
                     - (1.0 if move == "STAY" else 0.0) + view.rng.random() * 1e-3)
 
         return Decision(move=max(view.board.legal_moves(view.own_pos), key=score))
+
+
+class Camper(BrainBase):
+    """Runs for the nearest corner, then stops moving.
+
+    Not invented for variety - this is what the reference peer's thief actually
+    did in a live match: it reached (6,6) and sat there for 27 consecutive
+    turns while our police walled it in and never stepped on it. Measured
+    2026-08-01, six sub-games, zero captures.
+
+    It is the cheapest possible evader and it beat our best police, because a
+    pursuer that plays for enclosure against an opponent who does not honour
+    enclosure converts nothing. Nothing else in the pool behaves this way:
+    `holder` deliberately preserves mobility, which is the opposite instinct.
+    """
+
+    def __init__(self, settle_after: int = 8) -> None:
+        self.settle_after = settle_after
+        self._corner: Cell | None = None
+
+    def _pick_move(self, view: BrainView) -> Decision:
+        size = view.board.size
+        if self._corner is None:
+            corners = [(0, 0), (0, size - 1), (size - 1, 0), (size - 1, size - 1)]
+            here = view.own_pos
+            self._corner = min(corners,
+                               key=lambda c: abs(c[0] - here[0]) + abs(c[1] - here[1]))
+        if view.own_pos == self._corner:
+            return Decision(move="STAY")
+        dist = bfs_distances(view.board, self._corner)
+        return Decision(move=min(view.board.legal_moves(view.own_pos),
+                                 key=lambda m: (dist.get(target_of(view.own_pos, m), FAR),
+                                                view.rng.random())))

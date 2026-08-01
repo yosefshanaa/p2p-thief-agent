@@ -114,11 +114,45 @@ class PoliceBrain(BrainBase):
                                    quota_left=view.barrier_quota - view.barriers_used,
                                    reserve=self.p.endgame_reserve,
                                    claim_enclosure=view.claim_enclosure)
+        if barrier is not None and self._would_seal(view, barrier, quarry):
+            # Sealing the last exit only wins if the opponent agrees an enclosed
+            # thief is captured. Against one that does not, it builds a pocket we
+            # cannot enter either and hands them survival. `squeeze_play` already
+            # refuses - but the barrier can equally come from `_barrier_play`'s
+            # corner seal, which had no such guard. Measured live 2026-08-01: we
+            # barred (6,5) and (5,6), their thief sat in (6,6) for 23 turns, and
+            # our police finished outside its own wall. 5 points where 20 was on
+            # offer, in all six sub-games.
+            barrier = None
         if barrier is not None:
             self._last_move = None
             return Decision(move="STAY", barrier=barrier)
         target = squeeze_target(view.board, view.own_pos, quarry) if evading else None
         return self._pursue(view, target or self._intercept_target(view) or peak)
+
+    def _would_seal(self, view: BrainView, barrier: Cell, quarry: Cell) -> bool:
+        """Would this placement create a pocket nothing can leave - or enter?
+
+        Deliberately not asked about the *quarry*. The quarry is the freshest
+        scent cell, which lags by a turn, and the live failure happened while
+        their thief oscillated (6,6)<->(5,6): at the moment we barred (5,6) the
+        quarry estimate WAS (5,6), so a quarry-based test asked whether barring
+        a cell encloses that same cell, answered no, and let the seal through.
+
+        With the rule unagreed an enclosed cell has no upside whatsoever - we
+        cannot claim it and we cannot enter it - so the honest test is whether
+        the board gains any enclosed open cell at all. That is 49 cheap checks
+        and it cannot be fooled by a stale estimate.
+        """
+        if view.claim_enclosure:
+            return False
+        size = view.board.size
+        cells = [(r, c) for r in range(size) for c in range(size)]
+        before = {c for c in cells if view.board.is_open(c) and view.board.is_enclosed(c)}
+        trial = view.board.clone()
+        trial.add_barrier(tuple(barrier))
+        after = {c for c in cells if trial.is_open(c) and trial.is_enclosed(c)}
+        return bool(after - before)
 
     def _evading(self, view: BrainView, quarry: Cell) -> bool:
         """Has the gap stopped closing? Then distance alone will not finish this."""

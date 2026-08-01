@@ -269,3 +269,51 @@ def test_the_view_carries_the_negotiated_enclosure_rule():
     engine = TurnEngine("police", make_shared(), make_peer("police", claim_enclosure=False))
     assert engine._view().claim_enclosure is False
     assert make_view("police", (3, 3)).claim_enclosure is True, "default stays our doctrine"
+
+
+def test_no_barrier_source_may_complete_an_enclosure_we_cannot_claim():
+    """The exact live loss, 2026-08-01, reproduced.
+
+    Their thief sat in (6,6). We barred (6,5) and (5,6) - its only two exits -
+    and then could not reach it either, finishing outside our own wall. Six
+    sub-games, six survivals, 5 points each where 20 was on offer.
+
+    `squeeze_play` already refused to take the last door; the second barrier
+    came from `_barrier_play`'s corner seal, which had no such guard. The rule
+    belongs downstream of BOTH sources, so a third one cannot reintroduce it.
+    """
+    brain = PoliceBrain()
+    corner = (6, 6)
+    board = Board(SIZE, {(6, 5)})            # one exit left: (5,6)
+    view = make_view("police", (5, 5), belief_at=corner, barriers=[(6, 5)])
+    view = BrainView(**{**view.__dict__, "board": board, "claim_enclosure": False})
+    assert brain._would_seal(view, (5, 6), corner) is True, "that placement encloses"
+
+    agreed = BrainView(**{**view.__dict__, "claim_enclosure": True})
+    assert brain._would_seal(agreed, (5, 6), corner) is False, \
+        "with the rule agreed, enclosure is a capture and entirely the point"
+
+
+def test_the_guard_leaves_ordinary_barriers_alone():
+    """It must veto only the sealing placement, not barrier play in general -
+    the barrier doctrine is where most of our live captures come from."""
+    brain = PoliceBrain()
+    view = make_view("police", (3, 3), belief_at=(3, 4))
+    open_board = BrainView(**{**view.__dict__, "claim_enclosure": False})
+    assert brain._would_seal(open_board, (3, 4), (3, 4)) is False, \
+        "a cell with three exits left is not an enclosure"
+
+
+def test_the_seal_guard_survives_a_stale_quarry_estimate():
+    """The live failure, exactly. Their thief oscillated (6,6)<->(5,6), so at the
+    moment we barred (5,6) the quarry estimate WAS (5,6) - and a quarry-based
+    test asks whether barring a cell encloses that same cell, answers no, and
+    lets the seal through. The first attempt at this guard did precisely that
+    and the barriers still came out as [[6,5],[5,6]] against the live peer.
+    """
+    brain = PoliceBrain()
+    board = Board(SIZE, {(6, 5)})               # (6,6) already down to one exit
+    view = make_view("police", (5, 5), barriers=[(6, 5)])
+    view = BrainView(**{**view.__dict__, "board": board, "claim_enclosure": False})
+    # quarry lags onto the very cell we are about to bar - the stale estimate
+    assert brain._would_seal(view, (5, 6), quarry=(5, 6)) is True
