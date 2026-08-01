@@ -14,7 +14,7 @@ completion capped by the 15-word hint ≈ 25 output tokens.
 |---|---|---|---|---|
 | `template` (default) | in-process | **0** | **$0** | none — offline |
 | `ollama` | localhost:11434 | 0 API tokens | $0 (local compute) | none |
-| **`openai` (`gpt-5.4`) — configured default** | OpenAI API (or compatible gateway via `base_url`) | **≈ 29k total, measured** (70 tok/call × ≤420) | check the current rate for `gpt-5.4`; `gpt-5.4-nano` is the cheap swap | account RPM; bounded by a 10 s per-call timeout + template fallback |
+| **`openai` (`gpt-5.6-luna`) — configured default** | OpenAI API (or compatible gateway via `base_url`) | **≈ 29k total, measured** (70 tok/call × ≤420) | check the current rate for `gpt-5.6-luna`; `gpt-5.4-nano` is the cheap swap | account RPM; bounded by a 10 s per-call timeout + template fallback |
 | `claude_api` (Haiku 4.5) | Anthropic API | ≈ 25k in + 10.5k out | ≈ **$0.08** (at $1/M in, $5/M out) | account RPM; guarded by `step_deadline_seconds` + template fallback |
 | `claude_cli` | Claude Code subscription | ≈ 35k equivalent | subscription quota | CLI startup latency ⇒ highest stall risk; fallback covers |
 
@@ -38,7 +38,7 @@ Consumption is counted per call (`TurnEngine.tokens_used`), sealed into `result_
 and declared against the agreed cap in the step-0 declaration — an over-budget series is visible
 to the opponent and the grader by construction.
 
-## Measured latency — `openai` / `gpt-5.4` (2026-07-29, WSL)
+## Measured latency — `openai` / `gpt-5.4` (2026-07-29, WSL; `gpt-5.6-luna` is now the configured model)
 
 Latency, not price, is the binding constraint: a turn that misses its deadline is a
 **technical loss**, so banter cost is capped in time as well as tokens.
