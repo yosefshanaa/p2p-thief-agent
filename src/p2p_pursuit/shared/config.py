@@ -166,6 +166,17 @@ OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
 #: committed config to run a test invites shipping the edit by accident.
 EMAIL_MODE_VAR = "P2P_EMAIL_MODE"
 EMAIL_RECIPIENT_VAR = "P2P_EMAIL_RECIPIENT"
+#: The interop contract is negotiated per opponent, hours before a match, and a
+#: hosted peer cannot be rebuilt for each one. These four are exactly the terms
+#: RUNBOOK 3b says to settle with every team, so they belong in the environment
+#: beside the opponent's URL rather than in a committed file.
+DIALECT_VAR = "P2P_DIALECT"
+BOOL_VARS = {
+    "P2P_ALTERNATE_ROLES": "alternate_roles",
+    "P2P_HANDSHAKE_PER_SUB_GAME": "handshake_per_sub_game",
+    "P2P_CLAIM_ENCLOSURE": "claim_enclosure",
+}
+TRUE, FALSE = ("1", "true", "yes", "on"), ("0", "false", "no", "off")
 
 
 def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
@@ -185,6 +196,15 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     recipient = (os.environ.get(EMAIL_RECIPIENT_VAR) or "").strip()
     if recipient:
         patch["email_recipient"] = recipient
+    dialect = (os.environ.get(DIALECT_VAR) or "").strip().lower()
+    if dialect in ("native", "reference"):
+        patch["interop_dialect"] = dialect
+    for name, field_name in BOOL_VARS.items():
+        raw = (os.environ.get(name) or "").strip().lower()
+        if raw in TRUE:
+            patch[field_name] = True
+        elif raw in FALSE:
+            patch[field_name] = False
     return replace(peer, **patch) if patch else peer
 
 
