@@ -121,3 +121,38 @@ def test_the_environment_can_force_draft_email_for_a_hosted_rehearsal(monkeypatc
 
     monkeypatch.setenv("P2P_EMAIL_MODE", "nonsense")
     assert apply_env_overrides(peer).email_mode == "send", "junk must not disable reporting"
+
+
+def test_the_interop_contract_is_settable_per_opponent_without_a_rebuild(monkeypatch):
+    """Dialect, alternation, per-sub-game handshake and the enclosure rule are
+    negotiated with each team hours before a match. A hosted peer cannot be
+    rebuilt for every opponent, so they belong in the environment next to the
+    opponent's URL - not in a committed file.
+    """
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+
+    peer = load_peer(Path("config/police/game.toml"))
+    assert (peer.interop_dialect, peer.alternate_roles) == ("native", False)
+    assert peer.claim_enclosure is True, "our own doctrine is the default"
+
+    monkeypatch.setenv("P2P_DIALECT", "reference")
+    monkeypatch.setenv("P2P_ALTERNATE_ROLES", "true")
+    monkeypatch.setenv("P2P_HANDSHAKE_PER_SUB_GAME", "1")
+    monkeypatch.setenv("P2P_CLAIM_ENCLOSURE", "false")
+    tuned = apply_env_overrides(peer)
+    assert tuned.interop_dialect == "reference"
+    assert tuned.alternate_roles is True and tuned.handshake_per_sub_game is True
+    assert tuned.claim_enclosure is False
+
+
+def test_a_junk_dialect_is_ignored_rather_than_played(monkeypatch):
+    """A typo must not silently put us on a wire contract nobody speaks."""
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+
+    peer = load_peer(Path("config/police/game.toml"))
+    monkeypatch.setenv("P2P_DIALECT", "referrence")
+    assert apply_env_overrides(peer).interop_dialect == "native"
