@@ -103,6 +103,10 @@ class PeerConfig:
     email_mode: str = "draft"
     #: Wire + digest contract for this match: "native" or "reference" (RUNBOOK 3b).
     interop_dialect: str = "native"
+    #: Serve HTTP without requiring an MCP session handshake. Default ON: a
+    #: peer whose client posts tool calls without a session id otherwise gets
+    #: 400 and never reaches our engine (measured live, 2026-08-02).
+    stateless_http: bool = True
     #: Swap sides between sub-games (natural role on odd, opposite on even).
     #: Reference-derived peers do this; a fixed-role peer collides with them
     #: from sub-game 2. Negotiated per match, never assumed.
@@ -138,6 +142,7 @@ def load_peer(path: Path) -> PeerConfig:
         my_port=net.get("my_port", 8800),
         opponent_url=net.get("opponent_url", ""),
         turn_timeout_seconds=net.get("turn_timeout_seconds", 180),
+        stateless_http=bool(net.get("stateless_http", True)),
         strategy=dict(raw.get("strategy", {})),
         trash_talk_provider=talk.get("provider", "template"),
         trash_talk_every_n_steps=talk.get("every_n_steps", 1),
@@ -175,6 +180,7 @@ BOOL_VARS = {
     "P2P_ALTERNATE_ROLES": "alternate_roles",
     "P2P_HANDSHAKE_PER_SUB_GAME": "handshake_per_sub_game",
     "P2P_CLAIM_ENCLOSURE": "claim_enclosure",
+    "P2P_STATELESS_HTTP": "stateless_http",
 }
 TRUE, FALSE = ("1", "true", "yes", "on"), ("0", "false", "no", "off")
 
