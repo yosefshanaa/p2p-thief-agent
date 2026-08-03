@@ -108,7 +108,7 @@ counts are non-zero.
   described in `docs/PROMPT_BOOK.md` §8.
 - A full local 6-sub-game match takes ~4 minutes.
 - `ss -tln` does not reliably show the peer's port here. Probe with `curl` instead: a healthy MCP
-  endpoint answers a malformed POST with **406**, and a live tunnel with no origin gives **502**.
+  endpoint answers a bare GET with **405** when stateless (**406** when stateful), and a live tunnel with no origin gives **502**.
 
 ## Remaining work
 

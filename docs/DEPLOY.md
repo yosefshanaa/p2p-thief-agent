@@ -33,11 +33,28 @@ build time, so both come from the environment (`shared/config.apply_env_override
 ```bash
 docker build -t p2p-pursuit .
 docker run --rm -e ROLE=thief -e PORT=8081 -p 8081:8081 p2p-pursuit
-curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/mcp   # 406 = healthy MCP
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/mcp   # 405 = healthy MCP
 ```
 
-`406` is the success case: a FastMCP endpoint refuses a bare `GET`. Configure the platform's
-health check as a **TCP** probe, not HTTP, or it will read that 406 as a failure.
+**`405` is the success case.** The peer serves stateless HTTP (see below), so a bare `GET` has no
+stream to open and is refused with `405 Method Not Allowed`. A *stateful* server answers the same
+probe `406`; either code means the endpoint is alive and speaking MCP. Configure the platform's
+health check as a **TCP** probe, not HTTP, or it will read that as a failure.
+
+### Stateless HTTP - an interop decision, on by default
+
+A stateful streamable-HTTP server makes every caller complete an `initialize` handshake and echo
+`Mcp-Session-Id` on each later request. Our first real opponent's client posts tool calls without
+one: hundreds of `Created new transport ... -> 400 Bad Request`, three sub-games lost to 180 s
+turn timeouts, **not one move exchanged** (measured 2026-08-02).
+
+Nothing in either dialect needs the session - both are request/response tool calls, and the
+reference surface is explicitly fire-and-forget, with replies arriving as fresh calls into the
+*other* peer's server. No message is ever pushed server-to-client, which is the only thing
+statelessness costs. Accepting the superset of clients is free, and in a league where the
+opponent's transport is not ours to fix it is the difference between a match and a forfeit.
+
+Set `P2P_STATELESS_HTTP=false` (or `[network] stateless_http = false`) to go back to sessions.
 
 ## Deploy — Google Cloud Run
 

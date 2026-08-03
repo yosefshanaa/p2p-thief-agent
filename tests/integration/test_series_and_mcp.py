@@ -102,3 +102,40 @@ def test_mcp_http_roundtrip_full_sub_game():
     assert verdict["verdict"] == "Verified OK"
     status = links["police"].status(timeout=10)
     assert status["role"] == "thief" and "belief" in status
+
+
+def test_the_server_answers_a_caller_that_never_opened_a_session():
+    """The live forfeit, 2026-08-02. A stateful streamable-HTTP server demands
+    an `initialize` handshake and an `Mcp-Session-Id` on every later request.
+    Our first real opponent's client posted tool calls without one: hundreds of
+    `Created new transport ... -> 400 Bad Request`, three sub-games lost to
+    180 s turn timeouts, not a single move exchanged.
+
+    Neither dialect needs the session - both are request/response tool calls and
+    nothing is ever pushed server-to-client - so accepting the superset of
+    clients costs nothing and is the difference between a match and a forfeit.
+    """
+    import json
+    import time
+    import urllib.error
+    import urllib.request
+
+    from p2p_pursuit.infra.mcp_server import serve_in_thread
+    from p2p_pursuit.peer.service import PeerService
+    from p2p_pursuit.peer.turn_engine import TurnEngine
+    from tests.conftest import make_peer, make_shared
+
+    engine = TurnEngine("police", make_shared(), make_peer("police"), seed=5)
+    port = 8913
+    service = PeerService(engine, {"role": "police", "sub_game": 1})
+    serve_in_thread(service, host="127.0.0.1", port=port, stateless=True)
+    time.sleep(5)
+
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                       "params": {"name": "health_check", "arguments": {}}}).encode()
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{port}/mcp", data=body,
+        headers={"Content-Type": "application/json",
+                 "Accept": "application/json, text/event-stream"})
+    with urllib.request.urlopen(request, timeout=20) as response:
+        assert response.status == 200, "a session-less caller must still be served"

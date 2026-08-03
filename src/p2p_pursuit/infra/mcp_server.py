@@ -83,12 +83,30 @@ def build_server(service: PeerService, name: str = "p2p-pursuit-peer", bridge: A
 
 def serve_in_thread(service: PeerService, *, host: str, port: int,
                     name: str = "p2p-pursuit-peer",
-                    bridge: Any = None) -> threading.Thread:
-    """Run the FastMCP HTTP server on a daemon thread; returns once started."""
+                    bridge: Any = None, stateless: bool = True) -> threading.Thread:
+    """Run the FastMCP HTTP server on a daemon thread; returns once started.
+
+    ``stateless`` defaults ON, and that is an interop decision rather than a
+    performance one. A stateful streamable-HTTP server requires every caller to
+    complete an ``initialize`` handshake and echo the ``Mcp-Session-Id`` on each
+    later request; a peer whose client posts tool calls without one gets 400 and
+    never reaches our engine at all. Measured live 2026-08-02 against a real
+    opponent: hundreds of `Created new transport ... -> 400 Bad Request`, three
+    sub-games lost to 180 s turn timeouts, not one move exchanged.
+
+    Nothing in either dialect needs the session. Both are request/response tool
+    calls - the reference surface is explicitly fire-and-forget, with replies
+    arriving as fresh calls into the *other* peer's server - so no message is
+    ever pushed from server to client, which is the only thing statelessness
+    costs. Accepting the superset of clients is therefore free, and in a league
+    where the opponent's transport is not ours to fix, it is the difference
+    between a match and a forfeit.
+    """
     mcp = build_server(service, name, bridge)
 
     def run() -> None:
-        mcp.run(transport="http", host=host, port=port, show_banner=False)
+        mcp.run(transport="http", host=host, port=port, show_banner=False,
+                stateless_http=stateless)
 
     thread = threading.Thread(target=run, name=f"mcp-server-{port}", daemon=True)
     thread.start()

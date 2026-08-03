@@ -82,6 +82,7 @@ class PeerRuntime:
 
     def start_server(self) -> None:
         serve_in_thread(self.service, host="0.0.0.0", port=self.peer.my_port,
+                        stateless=self.peer.stateless_http,
                         name=f"p2p-pursuit-{self.role}", bridge=self.bridge)
         _log(f"[{self.role}] FastMCP server on 0.0.0.0:{self.peer.my_port}"
              f"{' (+reference dialect)' if self.bridge else ''}")
