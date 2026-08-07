@@ -156,3 +156,20 @@ def test_a_junk_dialect_is_ignored_rather_than_played(monkeypatch):
     peer = load_peer(Path("config/police/game.toml"))
     monkeypatch.setenv("P2P_DIALECT", "referrence")
     assert apply_env_overrides(peer).interop_dialect == "native"
+
+
+def test_a_negotiated_setting_can_be_adopted_without_editing_the_constitution(monkeypatch):
+    """`setting` only flavours hint landmarks, but a reference-derived peer
+    compares the agreed terms for exact equality and refuses on any mismatch.
+    Adopting an opponent's value must not mean editing the committed file and
+    risking that edit reaching a later match against someone else.
+    """
+    from pathlib import Path
+
+    from p2p_pursuit.shared.config import load_shared
+
+    assert load_shared(Path("config/police/game.json")).map_area == "New York"
+    monkeypatch.setenv("P2P_MAP_AREA", "Haifa")
+    adopted = load_shared(Path("config/police/game.json"))
+    assert adopted.map_area == "Haifa"
+    assert adopted.raw["world"]["map_area"] == "Haifa", "the digest is taken after the override"

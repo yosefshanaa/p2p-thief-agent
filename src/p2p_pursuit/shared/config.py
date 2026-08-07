@@ -123,8 +123,23 @@ class PeerConfig:
     claim_enclosure: bool = True
 
 
+#: A *negotiated* term the opponent may propose differently per match. `setting`
+#: only flavours the landmarks in trash-talk hints, but a reference-derived peer
+#: compares the agreed terms for exact equality and refuses to play on any
+#: mismatch - so adopting theirs must not mean editing the committed
+#: constitution and risking that edit reaching a later match.
+MAP_AREA_VAR = "P2P_MAP_AREA"
+
+
+def _shared_env_overrides(raw: dict[str, Any]) -> dict[str, Any]:
+    area = (os.environ.get(MAP_AREA_VAR) or "").strip()
+    if not area:
+        return raw
+    return {**raw, "world": {**raw.get("world", {}), "map_area": area}}
+
+
 def load_shared(path: Path) -> SharedConfig:
-    raw = json.loads(path.read_text(encoding="utf-8"))
+    raw = _shared_env_overrides(json.loads(path.read_text(encoding="utf-8")))
     return SharedConfig(raw=raw, sha256=digest(raw))
 
 
