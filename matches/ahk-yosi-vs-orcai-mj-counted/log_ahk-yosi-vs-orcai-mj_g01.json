@@ -1,0 +1,1291 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "5fc35738-cb80-0d2b-3f5c-44871f98f342",
+  "game_id": "ahk-yosi-vs-orcai-mj",
+  "sub_game": 1,
+  "perspective": "police",
+  "code_version": "1.00",
+  "config_sha256": "fef1fe3a229b0c7daece9f1e3ebe7a097a7207e6ac0628b6c67050595a6101be",
+  "commit_dialect": "reference",
+  "my_records": [
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 1,
+      "pos_before": [
+        0,
+        0
+      ],
+      "pos_after": [
+        1,
+        0
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in the southeast, while you stumble through New York chasing shadows.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "4d20ee8f6d80e5bf85da99f9f7f1cd1a"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 2,
+      "pos_before": [
+        1,
+        0
+      ],
+      "pos_after": [
+        1,
+        1
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Slipping quietly past the southeast, try to keep up.",
+      "scent": [
+        [
+          0.558,
+          0.378,
+          0.126,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.558,
+          0.18,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.558,
+          0.378,
+          0.126,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.18,
+          0.126,
+          0.036,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "cad47601f4eed73b45c64a48fdee0e33"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 3,
+      "pos_before": [
+        1,
+        1
+      ],
+      "pos_after": [
+        2,
+        1
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in the southeast, and you’re already too late to catch me.",
+      "scent": [
+        [
+          0.81,
+          0.81,
+          0.4914,
+          0.126,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.72,
+          0.18,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.4914,
+          0.126,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.288,
+          0.2934,
+          0.1584,
+          0.036,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "37f6d89b7380ed45e510e7a9af8559f6"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 4,
+      "pos_before": [
+        2,
+        1
+      ],
+      "pos_after": [
+        3,
+        1
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "You will find nothing but shadows near Brooklyn Bridge.",
+      "scent": [
+        [
+          0.81,
+          0.81,
+          0.5683,
+          0.1494,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.288,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.2934,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.6372,
+          0.81,
+          0.5206,
+          0.1584,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.126,
+          0.18,
+          0.126,
+          0.036,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "faec81a4241907cc5ae73a4240127f50"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 5,
+      "pos_before": [
+        3,
+        1
+      ],
+      "pos_after": [
+        3,
+        2
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "Heading toward the Hudson docks, catch me if you can.",
+      "scent": [
+        [
+          0.729,
+          0.729,
+          0.5115,
+          0.1345,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.2952,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.3901,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.3226,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.4914,
+          0.72,
+          0.4914,
+          0.1584,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.126,
+          0.18,
+          0.126,
+          0.036,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "021975b0f3f0711f61a163da8a374e5e"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 6,
+      "pos_before": [
+        3,
+        2
+      ],
+      "pos_after": [
+        3,
+        3
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m hiding in the east, and you’re wandering like you’ve never seen New York.",
+      "scent": [
+        [
+          0.6561,
+          0.6561,
+          0.4603,
+          0.1211,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.765,
+          0.81,
+          0.81,
+          0.3917,
+          0.036,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.7291,
+          0.126,
+          0.0,
+          0.0
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.18,
+          0.0,
+          0.0
+        ],
+        [
+          0.5683,
+          0.81,
+          0.81,
+          0.5206,
+          0.126,
+          0.0,
+          0.0
+        ],
+        [
+          0.1494,
+          0.288,
+          0.2934,
+          0.1584,
+          0.036,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "d8135e9edc87472c4177f0f78f08a8ba"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 7,
+      "pos_before": [
+        3,
+        3
+      ],
+      "pos_after": [
+        4,
+        3
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling Harlem - every exit is watched.",
+      "scent": [
+        [
+          0.5905,
+          0.5905,
+          0.4143,
+          0.109,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.6885,
+          0.765,
+          0.81,
+          0.5325,
+          0.1584,
+          0.036,
+          0.0
+        ],
+        [
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.4914,
+          0.126,
+          0.0
+        ],
+        [
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.72,
+          0.18,
+          0.0
+        ],
+        [
+          0.5115,
+          0.81,
+          0.81,
+          0.81,
+          0.4914,
+          0.126,
+          0.0
+        ],
+        [
+          0.1345,
+          0.2952,
+          0.3901,
+          0.3226,
+          0.1584,
+          0.036,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "c0279679efd1d6995f38cab729a0129a"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 8,
+      "pos_before": [
+        4,
+        3
+      ],
+      "pos_after": [
+        4,
+        4
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Closing in from the Bronx line, nowhere left to run.",
+      "scent": [
+        [
+          0.5315,
+          0.5315,
+          0.3729,
+          0.0981,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.6197,
+          0.6885,
+          0.729,
+          0.4793,
+          0.1426,
+          0.0324,
+          0.0
+        ],
+        [
+          0.6561,
+          0.765,
+          0.81,
+          0.81,
+          0.5683,
+          0.1494,
+          0.0
+        ],
+        [
+          0.6561,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.288,
+          0.0
+        ],
+        [
+          0.4603,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.2934,
+          0.0
+        ],
+        [
+          0.1211,
+          0.3917,
+          0.7291,
+          0.81,
+          0.5206,
+          0.1584,
+          0.0
+        ],
+        [
+          0.0,
+          0.036,
+          0.126,
+          0.18,
+          0.126,
+          0.036,
+          0.0
+        ]
+      ],
+      "nonce": "765575e3c78d40e24175fa866ed00b17"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 9,
+      "pos_before": [
+        4,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "I’m waiting in Midtown—try catching me before the city swallows you.",
+      "scent": [
+        [
+          0.4783,
+          0.4783,
+          0.3356,
+          0.0883,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5577,
+          0.6197,
+          0.6561,
+          0.4314,
+          0.1283,
+          0.0292,
+          0.0
+        ],
+        [
+          0.5905,
+          0.6885,
+          0.765,
+          0.81,
+          0.6915,
+          0.2605,
+          0.036
+        ],
+        [
+          0.5905,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.6372,
+          0.126
+        ],
+        [
+          0.4143,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.18
+        ],
+        [
+          0.109,
+          0.3525,
+          0.7822,
+          0.81,
+          0.81,
+          0.5206,
+          0.126
+        ],
+        [
+          0.0,
+          0.0324,
+          0.1494,
+          0.288,
+          0.2934,
+          0.1584,
+          0.036
+        ]
+      ],
+      "nonce": "2f17b1989f3277ba9e4ddc101d97335a"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 10,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "STAY",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "You will find nothing but shadows near Battery Park.",
+      "scent": [
+        [
+          0.4305,
+          0.4305,
+          0.302,
+          0.0795,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5019,
+          0.5577,
+          0.5905,
+          0.3883,
+          0.1155,
+          0.0263,
+          0.0
+        ],
+        [
+          0.5315,
+          0.6197,
+          0.6885,
+          0.729,
+          0.6224,
+          0.2345,
+          0.0324
+        ],
+        [
+          0.5315,
+          0.6561,
+          0.765,
+          0.81,
+          0.81,
+          0.6995,
+          0.1494
+        ],
+        [
+          0.3729,
+          0.6561,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.288
+        ],
+        [
+          0.0981,
+          0.3172,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.2934
+        ],
+        [
+          0.0,
+          0.0292,
+          0.2605,
+          0.6372,
+          0.81,
+          0.5206,
+          0.1584
+        ]
+      ],
+      "nonce": "74544dcb2f62a2bc1e2682126e5804ef"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 11,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "STAY",
+      "barrier": [
+        5,
+        4
+      ],
+      "intent": "lie",
+      "hint": "Closing in from the Bronx line, nowhere left to run.",
+      "scent": [
+        [
+          0.3875,
+          0.3875,
+          0.2718,
+          0.0716,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.4517,
+          0.5019,
+          0.5315,
+          0.3495,
+          0.104,
+          0.0237,
+          0.0
+        ],
+        [
+          0.4783,
+          0.5577,
+          0.6197,
+          0.6561,
+          0.5602,
+          0.211,
+          0.0292
+        ],
+        [
+          0.4783,
+          0.5905,
+          0.7245,
+          0.81,
+          0.81,
+          0.7556,
+          0.1705
+        ],
+        [
+          0.3356,
+          0.5905,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.3852
+        ],
+        [
+          0.0883,
+          0.2855,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4441
+        ],
+        [
+          0.0,
+          0.0263,
+          0.3605,
+          0.81,
+          0.81,
+          0.81,
+          0.2686
+        ]
+      ],
+      "nonce": "b11af9236d917bf8ca2b7be3687fc69a"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 1,
+      "step": 12,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "STAY",
+      "barrier": [
+        5,
+        5
+      ],
+      "intent": "lie",
+      "hint": "I’m prowling the northern streets—catch me if you can, detective.",
+      "scent": [
+        [
+          0.3488,
+          0.3488,
+          0.2446,
+          0.0644,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.4065,
+          0.4517,
+          0.4783,
+          0.3145,
+          0.0936,
+          0.0213,
+          0.0
+        ],
+        [
+          0.4305,
+          0.5019,
+          0.5577,
+          0.5905,
+          0.5042,
+          0.1899,
+          0.0263
+        ],
+        [
+          0.4305,
+          0.5315,
+          0.688,
+          0.81,
+          0.81,
+          0.806,
+          0.1895
+        ],
+        [
+          0.302,
+          0.5315,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4727
+        ],
+        [
+          0.0795,
+          0.257,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.5797
+        ],
+        [
+          0.0,
+          0.0237,
+          0.4504,
+          0.81,
+          0.81,
+          0.81,
+          0.3677
+        ]
+      ],
+      "nonce": "719223b842a833e1bff150411c258be4"
+    }
+  ],
+  "my_hashes": [
+    "349e490a9e0e7cb94a7b819c9d4e65809862550b2eece811c9f66310dbee7f58",
+    "e0f43f07aa2111081fa4d609c47c08edd399be6a78871ab3a29e695aaecfb69c",
+    "7e5c51e2cb7f529be36524edfd68852ed0ef986644407b5e71a9689eed65012a",
+    "96f013e5e4749eab5a92aa6b0bf64ae7108d135138b79940f033aeec930ca49c",
+    "6883399420c6d039b38c5bbba2716efda49fd9ddf6003848a11868beb316bb2c",
+    "47cceedf3215dfb977710758dda0419e54813abc942f75a9af5a25de372d1394",
+    "19de43324a74a7bba008b8aaa1471e0532de372e4e47c2901f783cd29cb715d1",
+    "a5d7defad030e4e102aecb62f6268f559bcb3ec76c06982e7e2765ea9ff04764",
+    "375ac9b696d3282b771ccc4aba7518b14cf7552b0ae0e1a08b0e0c5efd7daf40",
+    "e6b3bca9acf3525f3777b19df9737d5a9053b1d794f0f6713b89d7e9dc4c47c7",
+    "f085fd3715a3246966c3c2f01039da5a7438cc41a51ad972d40524691ec12bed",
+    "e14794f350ae52743c6e077f9df29aef6504c40f5e773fdaf43e2278f6bde0ea"
+  ],
+  "opponent_records": [
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 1,
+        "position": [
+          4,
+          3
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "No trail worth following tonight, officer"
+      },
+      "nonce": "9bfbb3e0c2543442c717444ff4b2353a",
+      "commit": "2d48933d41283587ef401e1c4d32200dcf213e650ec5771314646b00d320fb4c"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 2,
+        "position": [
+          5,
+          3
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "Keep guessing, the streets are all mine"
+      },
+      "nonce": "df10884e0cdcd866f8614ca018af1009",
+      "commit": "2d1b461f0a70b778d7070d638273acccce536ea17f6335f180106eed51fdf16a"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 3,
+        "position": [
+          5,
+          4
+        ],
+        "move": "MOVE:E",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "No trail worth following tonight, officer"
+      },
+      "nonce": "f12bf29f487112d92942ed7d0176395f",
+      "commit": "21bafb3c987e5d7bf7b7078ab7ee799d18546c99689a846c82db3f49e8f2060c"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 4,
+        "position": [
+          5,
+          5
+        ],
+        "move": "MOVE:E",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "You are colder than you think"
+      },
+      "nonce": "6d288453ebbcebd5b4d54be8ee4d823f",
+      "commit": "d0234cc62cb4a4f21c164bbfd7d6cc94e0182a98c34abc1bc4d43f437d01047a"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 5,
+        "position": [
+          4,
+          5
+        ],
+        "move": "MOVE:N",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "No trail worth following tonight, officer"
+      },
+      "nonce": "287b7338b733afd93927487ff2ff0acf",
+      "commit": "c963f219d857b209cd3bbcd73a539c8223b223d35f727c1e56ef76c3c962a409"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 6,
+        "position": [
+          5,
+          5
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "You are colder than you think"
+      },
+      "nonce": "3806f4450290cae34993cef2ed291cc8",
+      "commit": "e1d98efae961125cb5d586ac3b865b7b8e261b8fc46c560cf887a161c83d92fd"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 7,
+        "position": [
+          4,
+          5
+        ],
+        "move": "MOVE:N",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "You are colder than you think"
+      },
+      "nonce": "6e450eba54426d85b04f4b267631085c",
+      "commit": "7deb1b2b2a8fba0a9ce24b1f73f9e3008c7195794d734f2e37343212016a8f22"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 8,
+        "position": [
+          5,
+          5
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "You are colder than you think"
+      },
+      "nonce": "34b76286da88e5a2e1bb7d9e2a6f1a6d",
+      "commit": "d94012d5e0a4abb558ca5825ccf9bdc99c9c9f106750718a7dad59f93caa6d24"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 9,
+        "position": [
+          4,
+          5
+        ],
+        "move": "MOVE:N",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "Keep guessing, the streets are all mine"
+      },
+      "nonce": "141cb7d91ac24ab17d96e82d2b292869",
+      "commit": "d196c6b1d6c6b767ada605862819def2df82d484d99295cc1535273bdd62bd15"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 10,
+        "position": [
+          5,
+          5
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "You are colder than you think"
+      },
+      "nonce": "075adaa025d4bd925972d86ca83f3460",
+      "commit": "b5fa5dea6743192d5f3ff03a837ad05f7b795992c4600ff390dffda18209d8f0"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 11,
+        "position": [
+          4,
+          5
+        ],
+        "move": "MOVE:N",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "No trail worth following tonight, officer"
+      },
+      "nonce": "921cc1bb45607368bede4bd6bcd0d37b",
+      "commit": "44df7c9147d049e3541654cf18d50ff4ce010a27c677faaf45173f5c12ee5d41"
+    },
+    {
+      "payload": {
+        "kind": "step",
+        "role": "thief",
+        "sub_game": 1,
+        "step": 12,
+        "position": [
+          5,
+          5
+        ],
+        "move": "MOVE:S",
+        "barrier": null,
+        "intent": "neutral",
+        "hint": "No trail worth following tonight, officer"
+      },
+      "nonce": "1914af60db1167da806d42ca11e5cf4b",
+      "commit": "d708665be0c3d1a29d0e38f0551cb70bd52a88cb092c24d4ef15f78164f75118"
+    }
+  ],
+  "opponent_hashes": [
+    "2d48933d41283587ef401e1c4d32200dcf213e650ec5771314646b00d320fb4c",
+    "2d1b461f0a70b778d7070d638273acccce536ea17f6335f180106eed51fdf16a",
+    "21bafb3c987e5d7bf7b7078ab7ee799d18546c99689a846c82db3f49e8f2060c",
+    "d0234cc62cb4a4f21c164bbfd7d6cc94e0182a98c34abc1bc4d43f437d01047a",
+    "c963f219d857b209cd3bbcd73a539c8223b223d35f727c1e56ef76c3c962a409",
+    "e1d98efae961125cb5d586ac3b865b7b8e261b8fc46c560cf887a161c83d92fd",
+    "7deb1b2b2a8fba0a9ce24b1f73f9e3008c7195794d734f2e37343212016a8f22",
+    "d94012d5e0a4abb558ca5825ccf9bdc99c9c9f106750718a7dad59f93caa6d24",
+    "d196c6b1d6c6b767ada605862819def2df82d484d99295cc1535273bdd62bd15",
+    "b5fa5dea6743192d5f3ff03a837ad05f7b795992c4600ff390dffda18209d8f0",
+    "44df7c9147d049e3541654cf18d50ff4ce010a27c677faaf45173f5c12ee5d41",
+    "d708665be0c3d1a29d0e38f0551cb70bd52a88cb092c24d4ef15f78164f75118",
+    "d708665be0c3d1a29d0e38f0551cb70bd52a88cb092c24d4ef15f78164f75118"
+  ],
+  "result": {
+    "ending": "capture",
+    "winner": "police",
+    "cause": "claim confirmed at [5, 5] (unsealed answer)",
+    "my_steps": 12,
+    "opp_steps": 13
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "Verified OK",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    }
+  },
+  "tokens_used": 738
+}

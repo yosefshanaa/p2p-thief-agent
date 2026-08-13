@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from ..domain.crypto import digest
+from ..domain.scent import BOOK_V1, MODELS
 
 
 @dataclass(frozen=True)
@@ -93,6 +94,13 @@ class PeerConfig:
     my_port: int = 8800
     opponent_url: str = ""
     turn_timeout_seconds: int = 180
+    #: Wall-clock patience for the opening handshake and for each per-sub-game
+    #: re-handshake, on top of the short retry burst. An opponent whose peer
+    #: bounces behind a healthy tunnel takes every attempt down with it; these
+    #: turn that from a technical loss into a pause. Peer-local on purpose - the
+    #: constitution is hash-locked, so a knob there would break the handshake.
+    handshake_budget_sec: int = 180
+    rehandshake_budget_sec: int = 90
     strategy: dict[str, str] = field(default_factory=dict)
     trash_talk_provider: str = "template"
     trash_talk_every_n_steps: int = 1
@@ -121,21 +129,46 @@ class PeerConfig:
     #: into role collisions. Measured live 2026-08-01 - see RUNBOOK 3b. So the
     #: claim is a per-opponent negotiation item, exactly like the wire dialect.
     claim_enclosure: bool = True
+    #: Which pheromone physics both sides run: "book_v1" (our reading of book
+    #: ch. 4) or "registered_v3" (the inter-team registration - no rounding, no
+    #: dust floor, decay+emission in one pinned expression, field served after
+    #: the update). A shared model *name* is not a shared physics, so this is
+    #: negotiated per opponent and locked before the first move (rule #23).
+    scent_model: str = BOOK_V1
 
 
-#: A *negotiated* term the opponent may propose differently per match. `setting`
-#: only flavours the landmarks in trash-talk hints, but a reference-derived peer
-#: compares the agreed terms for exact equality and refuses to play on any
-#: mismatch - so adopting theirs must not mean editing the committed
-#: constitution and risking that edit reaching a later match.
+#: *Negotiated* terms an opponent may propose differently per match. A
+#: reference-derived peer compares the agreed terms for exact equality and
+#: refuses to play on any mismatch, so adopting theirs must not mean editing the
+#: committed constitution and risking that edit reaching a later match. Each
+#: entry is (env var) -> (section, key, caster); `P2P_MAP_AREA` is the original
+#: and keeps its name.
 MAP_AREA_VAR = "P2P_MAP_AREA"
+NEGOTIABLE_TERM_VARS: dict[str, tuple[str, str, Any]] = {
+    MAP_AREA_VAR: ("world", "map_area", str),
+    # Book rule: a hint is <=15 words. A peer proposing a larger cap is agreeing
+    # a ceiling, not an instruction - we still clip our own hints to the book.
+    "P2P_HINT_MAX_WORDS": ("world", "hint_max_words", int),
+    # Their SmellField's dust floor, which we had modelled as a validation floor
+    # under a different value; same physics, so it is theirs to name.
+    "P2P_MIN_CENTER_INTENSITY": ("pheromones", "pheromone_min_center_intensity", float),
+    # `top_left` vs `top-left`: spelling only, but exact equality does not care.
+    "P2P_AXIS_ORIGIN_CORNER": ("board_and_agents", "axis_origin_corner", str),
+}
 
 
 def _shared_env_overrides(raw: dict[str, Any]) -> dict[str, Any]:
-    area = (os.environ.get(MAP_AREA_VAR) or "").strip()
-    if not area:
-        return raw
-    return {**raw, "world": {**raw.get("world", {}), "map_area": area}}
+    """Overlay per-opponent negotiated terms without touching the committed file."""
+    for var, (section, key, cast) in NEGOTIABLE_TERM_VARS.items():
+        value = (os.environ.get(var) or "").strip()
+        if not value:
+            continue
+        try:
+            parsed = cast(value)
+        except ValueError:  # a malformed override must not silently mean "default"
+            raise ValueError(f"{var}={value!r} is not a valid {cast.__name__}") from None
+        raw = {**raw, section: {**raw.get(section, {}), key: parsed}}
+    return raw
 
 
 def load_shared(path: Path) -> SharedConfig:
@@ -157,6 +190,8 @@ def load_peer(path: Path) -> PeerConfig:
         my_port=net.get("my_port", 8800),
         opponent_url=net.get("opponent_url", ""),
         turn_timeout_seconds=net.get("turn_timeout_seconds", 180),
+        handshake_budget_sec=net.get("handshake_budget_sec", 180),
+        rehandshake_budget_sec=net.get("rehandshake_budget_sec", 90),
         stateless_http=bool(net.get("stateless_http", True)),
         strategy=dict(raw.get("strategy", {})),
         trash_talk_provider=talk.get("provider", "template"),
@@ -191,6 +226,8 @@ EMAIL_RECIPIENT_VAR = "P2P_EMAIL_RECIPIENT"
 #: RUNBOOK 3b says to settle with every team, so they belong in the environment
 #: beside the opponent's URL rather than in a committed file.
 DIALECT_VAR = "P2P_DIALECT"
+#: The pheromone physics itself is negotiable - see `PeerConfig.scent_model`.
+SCENT_MODEL_VAR = "P2P_SCENT_MODEL"
 BOOL_VARS = {
     "P2P_ALTERNATE_ROLES": "alternate_roles",
     "P2P_HANDSHAKE_PER_SUB_GAME": "handshake_per_sub_game",
@@ -220,6 +257,11 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     dialect = (os.environ.get(DIALECT_VAR) or "").strip().lower()
     if dialect in ("native", "reference"):
         patch["interop_dialect"] = dialect
+    model = (os.environ.get(SCENT_MODEL_VAR) or "").strip().lower()
+    if model:
+        if model not in MODELS:
+            raise ValueError(f"{SCENT_MODEL_VAR}={model!r} is not one of {MODELS}")
+        patch["scent_model"] = model
     for name, field_name in BOOL_VARS.items():
         raw = (os.environ.get(name) or "").strip().lower()
         if raw in TRUE:

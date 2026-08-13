@@ -105,9 +105,13 @@ def test_link_failure_is_clean_technical_loss(tmp_path):
 
 
 def test_opponent_silence_is_clean_technical_loss(tmp_path):
-    rt = PeerRuntime("thief", BASE / "config" / "thief", out_dir=tmp_path,
+    # The police is the SECOND mover, so at step 0 it is legitimately waiting for
+    # a thief that never moves - the real shape of opponent silence. This used to
+    # be staged on a thief by setting `next_mover`, but turn ownership is now
+    # derived from the step counts (a flag written from two threads deadlocked
+    # both peers against orcai-mj), and a thief at 0-0 is correctly on turn.
+    rt = PeerRuntime("police", BASE / "config" / "police", out_dir=tmp_path,
                      seed=1, num_games=1)
-    rt.engine.next_mover = "police"  # opponent's turn - and they never come
     rt.peer = replace(rt.peer, turn_timeout_seconds=1)
     rt.play_sub_game(1)
     assert rt.engine.end is not None

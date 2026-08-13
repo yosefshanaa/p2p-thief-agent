@@ -11,6 +11,12 @@ repos = { cop = "https://github.com/yosefshanaa/p2p-police-agent", thief = "http
 my_port = 8801                                # MY FastMCP server port (thief convention)
 opponent_url = "http://127.0.0.1:8802/mcp"    # the only thing I know about the opponent
 turn_timeout_seconds = 180
+# Wall-clock patience for the opening handshake and each per-sub-game
+# re-handshake, on top of the short retry burst. An opponent whose peer
+# bounces behind a healthy tunnel otherwise takes our peer down with it:
+# measured vs orcai-mj 2026-08-13, four technical losses, no real games.
+handshake_budget_sec = 180
+rehandshake_budget_sec = 90
 
 # [strategy]  -- optional: point at YOUR brain subclass (else the shipped brain runs)
 # thief_class = "p2p_pursuit.strategy.thief_brain:ThiefBrain"

@@ -1,0 +1,32 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "52d2d904-28d5-50f0-54d3-5842ad94f198",
+  "game_id": "ahk-yosi-vs-uoh-sqak",
+  "sub_game": 3,
+  "perspective": "thief",
+  "code_version": "1.00",
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "commit_dialect": "reference",
+  "my_records": [],
+  "my_hashes": [],
+  "opponent_records": [],
+  "opponent_hashes": [],
+  "result": {
+    "ending": "technical_loss",
+    "winner": "police",
+    "cause": "both peers claim role 'police'",
+    "my_steps": 0,
+    "opp_steps": 0
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "no package received",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    }
+  },
+  "tokens_used": 1916
+}

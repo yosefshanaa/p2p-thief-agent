@@ -11,11 +11,24 @@ from p2p_pursuit.peer.runtime import PeerRuntime
 BASE = Path(__file__).resolve().parent.parent.parent
 
 
+def _rename_group(rt, group_id: str) -> None:
+    """Point a runtime at a different team slug, handshake included."""
+    from dataclasses import replace
+
+    rt.peer = replace(rt.peer, group_id=group_id, group_name=group_id)
+    rt.service.my_handshake["group_id"] = group_id
+    rt.service.my_handshake["group_name"] = group_id
+
+
 def test_runtime_pair_full_series(tmp_path):
     police = PeerRuntime("police", BASE / "config" / "police", out_dir=tmp_path,
                          seed=1, num_games=2)
     thief = PeerRuntime("thief", BASE / "config" / "thief", out_dir=tmp_path,
                         seed=2, num_games=2)
+    # Both role configs ship OUR group id, so a self-play pairing would key every
+    # group-keyed field on one slug and collapse the two teams into one. Give the
+    # far side a distinct id, which is the only case a real league ever presents.
+    _rename_group(thief, "uoh-other")
     assert police.connect(DirectLink(thief.service))
     assert thief.connect(DirectLink(police.service))
 
@@ -35,6 +48,13 @@ def test_runtime_pair_full_series(tmp_path):
     p, t = results["police"], results["thief"]
     assert p["totals"] == t["totals"], "peers must agree on every score"
     assert p["series_winner"] == t["series_winner"]
+    # The reference family's cross-check, and the strongest one we have: two
+    # peers that agree byte-for-byte on the projection of the series. It is
+    # computed from opposite chairs - each side's own role, own scores, own
+    # group id first - so a matching digest means the disagreement space is
+    # empty, not merely that both sides ran the same code.
+    assert p["mutual_signature"] == t["mutual_signature"]
+    assert p["aggregate"] == t["aggregate"], "the signed aggregate must be symmetric"
     for res in (p, t):
         for row in res["sub_games"]:
             assert row["audit"] == "Verified OK"

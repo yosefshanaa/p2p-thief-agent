@@ -50,4 +50,5 @@ def run_audit(engine: TurnEngine, package: dict[str, Any]) -> tuple[str, list[st
         quota=engine.shared.max_barriers,
         barriers_before_step=_barriers_before_step(engine),
         dialect=engine.commit_dialect,
+        scent_model=engine.own_field.model,
     )

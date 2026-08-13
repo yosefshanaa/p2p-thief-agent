@@ -1,0 +1,119 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "52d2d904-28d5-50f0-54d3-5842ad94f198",
+  "game_id": "ahk-yosi-vs-uoh-sqak",
+  "sub_game": 2,
+  "perspective": "thief",
+  "code_version": "1.00",
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "commit_dialect": "reference",
+  "my_records": [
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 2,
+      "step": 1,
+      "pos_before": [
+        3,
+        3
+      ],
+      "pos_after": [
+        3,
+        4
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m haunting the northern streets—catch me if you can, slowpoke.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.04,
+          0.14,
+          0.2,
+          0.14,
+          0.04
+        ],
+        [
+          0.0,
+          0.0,
+          0.14,
+          0.42,
+          0.62,
+          0.42,
+          0.14
+        ],
+        [
+          0.0,
+          0.0,
+          0.2,
+          0.62,
+          0.9,
+          0.62,
+          0.2
+        ],
+        [
+          0.0,
+          0.0,
+          0.14,
+          0.42,
+          0.62,
+          0.42,
+          0.14
+        ],
+        [
+          0.0,
+          0.0,
+          0.04,
+          0.14,
+          0.2,
+          0.14,
+          0.04
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "e54b3fbef9ebb8ea4afa1246b6e4b015"
+    }
+  ],
+  "my_hashes": [
+    "26735adf7df7319afff46c472e38de50eb73e3ee0fe40f0276211134dc50f9b4"
+  ],
+  "opponent_records": [],
+  "opponent_hashes": [],
+  "result": {
+    "ending": "technical_loss",
+    "winner": "thief",
+    "cause": "turn timeout (180s)",
+    "my_steps": 1,
+    "opp_steps": 0
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "no package received",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    }
+  },
+  "tokens_used": 1916
+}

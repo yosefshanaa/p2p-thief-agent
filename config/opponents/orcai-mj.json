@@ -1,0 +1,31 @@
+{
+  "team": "orcai-mj",
+  "source": "/tmp/claude-1000/-mnt-c-Orch-final-Project/ff3c5eaf-8df4-45d5-9b04-c8bd448c9e07/scratchpad/orcai-all",
+  "samples": 138,
+  "agreement": {
+    "thief": 0.8182,
+    "police": 0.6806
+  },
+  "weights": {
+    "thief": {
+      "pursuer_dist": 2.2998973796631716,
+      "mobility": 0.5865851662610106,
+      "mobility2": 0.3208766435982957,
+      "edge": -0.14964650308067906,
+      "centre": -2.084106845882978,
+      "stay": -0.4502925134410267,
+      "straight": 0.8665109801988855,
+      "reverse": 2.000330124822299
+    },
+    "police": {
+      "pursuer_dist": -2.7646345968020247,
+      "mobility": -1.8055883513825473,
+      "mobility2": 0.2192037529194808,
+      "edge": -1.364876630249542,
+      "centre": -2.913094852501412,
+      "stay": 0.05336306042551975,
+      "straight": 0.9728802079467176,
+      "reverse": -1.351484809941546
+    }
+  }
+}

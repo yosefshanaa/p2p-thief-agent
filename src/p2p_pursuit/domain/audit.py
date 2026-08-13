@@ -14,7 +14,7 @@ from .board import MOVES, Board, Cell
 from .crypto import NATIVE, commit_digest, verify
 from .protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, KIND_STEP
 from .rules import Decision, validate
-from .scent import ScentField
+from .scent import BOOK_V1, ScentField
 
 VERIFIED_OK = "Verified OK"
 TAMPERED = "TAMPERED"
@@ -36,6 +36,7 @@ def audit_opponent(
     quota: int,
     barriers_before_step: Callable[[int], set[Cell]],
     dialect: str = NATIVE,
+    scent_model: str = BOOK_V1,
 ) -> tuple[str, list[str]]:
     """Re-verify the opponent's full revealed log against what we saw live.
 
@@ -47,7 +48,7 @@ def audit_opponent(
         return TAMPERED, [f"record count {len(entries)} != received hashes {len(live_hashes)}"]
 
     steps = [e for e in entries if e.get("kind") == KIND_STEP]
-    field = ScentField(grid_size)
+    field = ScentField(grid_size, model=scent_model)
     expected_pos = list(start_pos)
     barriers_placed = 0
 
@@ -92,10 +93,8 @@ def audit_opponent(
             expected_after = [pos_before[0] + dr, pos_before[1] + dc]
         if list(entry["pos_after"]) != expected_after:
             v.append(f"step {k}: pos_after {entry['pos_after']} inconsistent with move")
-        if entry["scent"] != field.snapshot():
+        if entry["scent"] != field.serve_for_step(tuple(entry["pos_after"])):
             v.append(f"step {k}: served scent field does not match recomputation")
-        field.emit(tuple(entry["pos_after"]))
-        field.decay()
         expected_pos = list(entry["pos_after"])
 
     pos_after_step = {e["step"]: tuple(e["pos_after"]) for e in steps}
