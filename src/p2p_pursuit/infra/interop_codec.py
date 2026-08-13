@@ -17,11 +17,14 @@ TypeError on their side: :func:`to_turn_message` emits exactly their fields.
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from typing import Any
 
 from ..domain.crypto import reference_commit, verify_reference_record
 from ..domain.rules import POLICE, THIEF
+
+log = logging.getLogger(__name__)
 
 Matrix = list[list[float]]
 
@@ -79,7 +82,8 @@ def grid_to_scent(grid: dict[str, Any], size: int) -> Matrix:
     return matrix
 
 
-def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any]) -> dict[str, Any]:
+def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any],
+                     counted_games_played: int = 0) -> dict[str, Any]:
     """Our group identity in the shape their declaration builder demands.
 
     Their ``group_block`` indexes ``mcp_servers``, ``llm_model`` and ``spec``
@@ -87,6 +91,13 @@ def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any]) -> dict[s
     game, which is exactly how the first warm-up ended. Their hardware block
     also reads different spec key names than ours, so those are mapped here
     rather than left to come out null in their declaration.
+
+    ``counted_games_played`` is *their* spelling of our truthful rule-#37
+    declaration, and the identity block is the only place it crosses this
+    dialect's wire. An opponent reads it straight into the counter it files for
+    us, so omitting it does not mean "unknown" on their side - it means they
+    invent a number on our behalf. Both spellings are sent: ours so a native
+    reader is unaffected, theirs so a reference reader is correct.
     """
     return {
         "group_id": peer.group_id,
@@ -95,9 +106,38 @@ def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any]) -> dict[s
         "repos": dict(peer.repos),
         "mcp_servers": {"cop": mcp_url, "thief": mcp_url},
         "llm_model": peer.llm_model or "template",
+        "counted_games_played": counted_games_played,
+        "prior_counted_games": counted_games_played,
         "spec": {**spec, "cpu_model": spec.get("machine", ""),
                  "gpu_type": spec.get("gpu", "none")},
     }
+
+
+def _log_agreement_gap(agreement: dict[str, Any], *, terms: dict[str, Any],
+                       signed: bool) -> None:
+    """Say exactly WHY an agreement failed, at the moment it fails.
+
+    Without this, a terms difference and a bad signature both surface later as
+    the same pair of downstream errors ("constitution mismatch" + "scent model
+    mismatch"), because the lock fields are simply absent - two messages naming
+    neither the field nor the real cause. A mismatch you cannot name costs a
+    turn timeout to diagnose; named, it costs a log line.
+    """
+    theirs = agreement.get("terms", {})
+    if theirs != terms:
+        keys = sorted(set(theirs) | set(terms))
+        diff = [f"{k}: ours={terms.get(k, '<absent>')!r} theirs={theirs.get(k, '<absent>')!r}"
+                for k in keys if theirs.get(k) != terms.get(k)]
+        log.warning("agreement TERMS differ from ours on %d field(s): %s",
+                    len(diff), "; ".join(diff))
+    if not signed:
+        log.warning("agreement SIGNATURE did not verify: their signature=%r over "
+                    "%d terms keys with nonce=%r",
+                    agreement.get("signature"), len(theirs), agreement.get("nonce"))
+    sub_game = agreement.get("sub_game_number")
+    if sub_game is not None:
+        log.info("agreement is for sub-game %s (identity %s)",
+                 sub_game, agreement.get("identity", {}).get("group_id"))
 
 
 def handshake_from_agreement(agreement: dict[str, Any], *, mine: dict[str, Any],
@@ -116,6 +156,7 @@ def handshake_from_agreement(agreement: dict[str, Any], *, mine: dict[str, Any],
     identity = agreement.get("identity", {})
     signed = reference_commit(agreement.get("terms", {}),
                               agreement.get("nonce", "")) == agreement.get("signature")
+    _log_agreement_gap(agreement, terms=terms, signed=signed)
     payload: dict[str, Any] = {
         "kind": "handshake",
         "role": THIEF if mine.get("role") == POLICE else POLICE,
@@ -128,10 +169,19 @@ def handshake_from_agreement(agreement: dict[str, Any], *, mine: dict[str, Any],
         "game_id": mine.get("game_id", ""),
         "game_uid": mine.get("game_uid", ""),
         "counted": mine.get("counted", False),
-        "prior_counted_games": identity.get("prior_counted_games", 0),
+        # Their spelling first: a reference peer sends only `counted_games_played`,
+        # so reading our own name alone silently files a 0 we invented for them.
+        "prior_counted_games": int(identity.get("counted_games_played",
+                                                identity.get("prior_counted_games", 0)) or 0),
         "dialect": "reference",
         "terms_match": agreement.get("terms") == terms,
         "signature_verified": signed,
+        "sub_game_number": agreement.get("sub_game_number"),
+        # Absence is not disagreement. An empty agreement makes every term look
+        # mismatched and the signature look forged, so the caller is told it
+        # received *nothing* rather than being handed 14 false differences and
+        # two misleading refusal messages (measured live, uoh-sqak 2026-08-10).
+        "agreement_empty": not agreement.get("terms") and not agreement.get("signature"),
     }
     if payload["terms_match"] and signed:
         payload["config_sha256"] = mine.get("config_sha256")

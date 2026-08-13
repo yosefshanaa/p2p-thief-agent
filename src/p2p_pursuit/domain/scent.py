@@ -15,6 +15,18 @@ CENTER_INTENSITY = 0.9
 DECAY_RATE = 0.10
 FIELD_SIZE = 5
 ROUND_DIGITS = 4
+DUST_FLOOR = 0.001
+
+#: Our reading of book ch. 4: the field is served *before* the step's own
+#: emission (so the freshest cell an opponent ever sees is 0.81), values are
+#: rounded to 4 dp and dust below 1e-3 snaps to zero.
+BOOK_V1 = "book_v1"
+#: The registered inter-team model (`multiplicative_book_v3`): decay and
+#: emission in ONE expression, **no rounding**, no dust floor, and the field
+#: served *after* the update - so the freshest cell reads 0.9. Negotiated per
+#: opponent, because it is a different physics and not merely a different name.
+REGISTERED_V3 = "registered_v3"
+MODELS = (BOOK_V1, REGISTERED_V3)
 
 # Book figure 4: radial falloff around the emitting agent (offsets -2..2).
 EMISSION_KERNEL: list[list[float]] = [
@@ -26,9 +38,25 @@ EMISSION_KERNEL: list[list[float]] = [
 ]
 
 
-def scent_model_document() -> dict:
+def scent_model_document(model: str = BOOK_V1) -> dict:
     """The emission+decay model with a numeric example - the pre-series lock payload
     (book rule #23: both teams hash-lock this before the first move)."""
+    if model == REGISTERED_V3:
+        return {
+            "model": "multiplicative_book_v3",
+            # The spelling is pinned, not the algebra: the two forms are
+            # algebraically equal and NOT equal in IEEE-754 doubles, and a model
+            # that rounds nothing propagates that last bit forever.
+            "formula": "tau(t+1) = clamp((1 - rho) * tau(t) + delta_tau, 0, 0.9)",
+            "evaluation_order": "(1 - rho) * tau + delta",
+            "rho": DECAY_RATE,
+            "center_intensity": CENTER_INTENSITY,
+            "kernel": EMISSION_KERNEL,
+            "numeric_example": {"tau": 0.05, "delta": 0.04, "result": 0.085},
+            "rounding_digits": None,
+            "dust_floor": None,
+            "serving": "each step serves the field AFTER that step's own update",
+        }
     return {
         "formula": "tau(t+1) = min(0.9, max(0, (1 - rho) * tau(t) + delta_tau))",
         "rho": DECAY_RATE,
@@ -46,10 +74,42 @@ class ScentField:
 
     size: int
     grid: list[list[float]] = field(default_factory=list)
+    model: str = BOOK_V1
 
     def __post_init__(self) -> None:
         if not self.grid:
             self.grid = [[0.0] * self.size for _ in range(self.size)]
+
+    def advance(self, center: Cell) -> None:
+        """Registered model: decay and emission in one pinned expression.
+
+        No rounding and no dust floor - the registration's own words are "with
+        NO rounding", and a floor would be another silent divergence.
+        """
+        half = FIELD_SIZE // 2
+        for r in range(self.size):
+            for c in range(self.size):
+                dr, dc = r - center[0], c - center[1]
+                delta = (EMISSION_KERNEL[dr + half][dc + half]
+                         if abs(dr) <= half and abs(dc) <= half else 0.0)
+                value = (1.0 - DECAY_RATE) * self.grid[r][c] + delta
+                self.grid[r][c] = min(CENTER_INTENSITY, max(0.0, value))
+
+    def serve_for_step(self, center: Cell) -> list[list[float]]:
+        """Apply one own-step and return the field that step must serve.
+
+        The *ordering* is the whole difference between the two models, and it
+        has to be stated once: the live engine and the audit replay both call
+        this, so a field we serve and a field the auditor recomputes cannot
+        drift apart without the drift being in this one method.
+        """
+        if self.model == REGISTERED_V3:
+            self.advance(center)
+            return self.snapshot()
+        served = self.snapshot()
+        self.emit(center)
+        self.decay()
+        return served
 
     def emit(self, center: Cell) -> None:
         """Deposit the radial kernel around ``center``, clamped to the focal cap."""

@@ -1,0 +1,1841 @@
+2026-08-13 22:26:56,411 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:26:56,484 p2p_pursuit.strategy.params INFO doctrine: tuned from config/doctrine-orcai-mj.json (21 of 23 fields differ from the defaults)
+[police] FastMCP server on 0.0.0.0:8802 (+reference dialect)
+[08/13/26 22:27:24] INFO     Starting MCP server                transport.py:361
+                             'p2p-pursuit-police' with                          
+                             transport 'http' (stateless) on                    
+                             http://0.0.0.0:8802/mcp                            
+INFO:     Started server process [209723]
+INFO:     Waiting for application startup.
+2026-08-13 22:27:25,569 mcp.server.streamable_http_manager INFO StreamableHTTP session manager started
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8802 (Press CTRL+C to quit)
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:26,475 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:26,534 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:26,536 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:26,572 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:26,647 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:26,717 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:26,909 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:27,086 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,107 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,138 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:27,205 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:27,225 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,289 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:27,292 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:27,292 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,355 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:27,356 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:27,356 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,437 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:27,439 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:27,456 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:27,661 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,689 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:27,805 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:27,845 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+[police] reference ids adopted: ahk-yosi-vs-orcai-mj / 5fc35738-cb80-0d2b-3f5c-44871f98f342
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:27,881 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:27,883 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:28,015 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:28,016 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:28,371 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:28,488 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:28,586 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:28,591 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:28,686 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:28,689 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:30,727 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:30,954 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:30,955 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:31,121 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:31,321 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:31,512 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:31,549 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:31,653 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:31,773 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:31,777 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:31,858 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:31,860 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:31,988 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:31,988 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:32,162 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:32,344 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:32,534 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:32,578 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:32,663 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:32,749 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:32,752 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:32,831 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:32,832 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:34,750 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:34,963 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:34,964 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:35,153 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:35,323 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:35,508 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:35,593 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:35,683 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:35,782 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:35,787 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:35,884 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:35,885 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:36,011 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:36,011 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:36,173 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:36,357 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:36,534 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:36,569 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:36,675 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:36,780 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:36,782 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:36,867 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:36,871 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:36,982 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:36,983 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:37,150 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:37,340 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:37,513 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:37,569 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:37,662 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:37,742 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:37,746 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:37,832 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:37,833 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:39,476 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:39,692 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:39,693 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:39,882 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:40,063 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:40,266 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:40,308 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:40,384 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:40,469 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:40,475 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:40,561 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:40,562 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:40,695 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:40,696 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:41,046 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:41,456 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:41,636 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:41,694 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:41,779 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:41,859 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:41,861 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:41,931 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:41,933 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:42,069 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:42,070 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:42,250 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:42,435 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:42,605 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:42,684 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:42,784 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:42,879 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:44,792 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:44,796 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:44,906 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:44,907 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:45,010 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:45,011 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:45,182 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:45,387 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:45,561 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:45,608 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:45,704 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:45,782 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:45,786 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:45,857 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:45,858 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:45,995 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:45,995 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:46,158 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:46,337 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:46,531 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:46,568 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:46,653 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:46,735 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:46,741 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:46,822 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:46,823 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:46,940 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:46,940 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:47,137 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:47,315 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:47,484 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:47,540 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:47,619 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:47,701 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:47,707 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:47,797 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:47,799 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:49,679 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:49,946 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:49,947 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:50,202 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:50,419 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:50,608 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:50,671 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:50,764 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:50,862 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:50,865 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:50,944 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:50,945 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:51,173 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:51,174 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:51,340 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:51,358 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:51,430 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:51,517 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:51,549 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:51,580 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:51,664 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:51,666 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:51,726 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+[police] sub-game 1: capture winner=police (claim confirmed at [5, 5] (unsealed answer)) audit=Verified OK
+[police] sub-game 2: playing as thief (alternating)
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:52,008 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:52,090 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:52,170 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:52,172 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:52,178 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:52,178 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:52,287 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:52,288 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:52,361 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:52,531 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:52,714 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:54,723 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:54,932 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:54,933 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:55,106 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:55,522 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:55,727 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:55,774 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:55,871 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:55,960 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:55,963 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:56,039 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:56,041 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:56,176 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:56,177 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:56,362 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:56,639 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:56,839 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:56,912 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:57,033 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:57,140 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:57,144 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:57,236 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:57,238 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:27:58,808 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:27:59,026 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:59,026 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:27:59,192 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:27:59,399 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:27:59,590 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:59,651 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:27:59,758 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:59,856 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:27:59,864 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:27:59,960 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:27:59,962 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:00,133 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:00,134 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:00,320 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:00,508 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:00,683 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:00,726 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:00,828 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:00,916 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:00,922 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:01,033 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:01,036 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:01,127 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:01,127 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:01,328 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:01,516 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:01,689 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:01,736 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:01,844 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:01,922 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:01,926 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:02,008 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:02,009 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:03,609 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:03,831 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:03,831 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:04,027 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:04,225 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:04,425 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:04,505 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:04,589 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:04,676 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:04,679 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:04,761 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:04,762 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:04,879 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:04,879 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:05,079 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:05,254 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:05,488 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:05,494 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:05,565 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:05,650 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:05,654 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:05,734 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:05,735 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:06,123 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:06,123 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:06,292 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:06,465 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:06,638 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:06,701 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:06,790 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:06,875 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:06,880 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:06,961 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:06,963 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:08,654 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:08,888 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:08,888 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:09,062 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:09,232 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:09,417 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:09,590 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:09,674 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:09,760 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:09,764 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:09,847 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:09,849 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:09,952 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:09,953 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:10,124 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:10,330 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:10,545 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:10,556 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:10,665 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:10,755 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:10,757 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:10,852 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:10,853 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:10,982 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:10,983 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:11,170 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:11,356 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:11,542 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:11,597 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:11,694 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:11,781 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:11,787 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:11,893 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:11,894 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:13,364 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:13,610 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:13,611 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:13,780 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:13,958 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:14,134 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:14,194 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:14,296 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:14,376 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:14,380 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:14,509 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:14,510 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:14,597 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:14,598 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:14,775 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:14,949 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:15,177 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:15,251 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:15,342 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:15,344 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:15,351 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:15,426 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:15,427 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:15,604 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:15,604 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:15,807 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:15,977 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:16,173 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:16,205 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:16,309 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:16,401 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:16,404 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:16,504 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:16,505 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:18,406 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:18,624 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:18,624 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:18,810 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:18,979 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:19,161 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:19,209 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:19,295 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:19,377 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:19,382 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:19,467 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:19,468 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:19,589 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:19,590 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:19,786 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:19,963 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:20,170 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:20,192 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:20,274 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:20,353 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:20,356 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:20,428 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:20,429 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:20,561 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:20,562 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:20,753 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:20,937 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:21,106 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:21,163 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:21,243 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:21,320 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:21,325 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:21,404 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:21,412 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:21,688 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:21,689 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:21,884 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:22,077 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:22,291 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:23,737 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:23,844 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:23,934 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:23,936 mcp.server.streamable_http INFO Terminating session: None
+[police] sub-game 2: capture winner=police (barrier onto (6, 5)) audit=Verified OK
+[police] sub-game 3: playing as police (alternating)
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:24,053 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:24,054 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:24,219 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:24,219 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:24,405 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:24,432 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:24,535 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:24,594 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:24,623 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:24,627 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:24,711 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:24,712 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:24,763 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:25,070 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:25,158 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:25,244 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:25,248 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:25,343 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:25,344 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:27,439 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:27,806 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:27,806 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:27,988 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:28,194 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:28,402 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:28,442 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:28,522 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:28,600 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:28,613 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:28,703 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:28,720 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:28,959 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:28,959 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:29,146 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:29,342 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:29,546 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:29,587 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:29,693 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:29,781 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:29,796 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:29,882 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:29,886 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:31,424 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:31,674 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:31,674 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:31,850 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:32,029 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:32,202 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:32,249 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:32,354 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:32,453 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:32,457 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:32,571 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:32,572 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:32,684 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:32,684 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:32,869 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:33,069 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:33,246 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:33,284 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:33,363 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:33,443 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:33,447 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:33,545 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:33,546 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:33,685 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:33,685 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:33,856 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:34,020 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:34,197 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:34,240 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:34,322 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:34,395 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:34,398 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:34,492 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:34,496 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:36,498 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:36,723 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:36,724 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:36,890 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:37,145 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:37,326 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:37,376 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:37,470 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:37,545 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:37,549 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:37,625 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:37,627 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:37,776 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:37,777 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:37,961 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:38,145 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:38,345 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:38,372 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:38,461 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:38,560 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:38,567 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:38,675 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:38,677 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:38,792 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:38,792 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:38,963 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:39,142 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:39,363 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:40,383 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:40,461 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:40,548 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:40,557 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:40,632 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:40,633 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:42,230 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:42,466 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:42,466 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:42,677 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:42,850 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:43,029 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:43,076 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:43,186 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:43,284 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:43,287 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:43,385 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:43,386 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:43,501 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:43,502 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:43,674 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:43,878 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:44,062 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:44,095 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:44,190 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:44,266 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:44,269 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:44,390 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:44,392 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:44,512 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:44,512 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:44,691 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:44,885 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:45,092 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:45,114 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:45,209 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:45,281 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:45,286 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:45,386 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:45,387 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:47,188 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:47,396 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:47,397 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:47,571 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:47,757 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:47,963 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:47,987 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:48,075 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:48,159 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:48,162 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:48,244 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:48,247 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:48,474 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:48,476 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:48,574 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:48,646 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:48,652 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:48,737 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:48,739 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:48,824 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:48,826 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:48,827 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:49,039 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:49,141 mcp.server.streamable_http INFO Terminating session: None
+[police] sub-game 3: capture winner=police (claim confirmed at [5, 5] (unsealed answer)) audit=Verified OK
+[police] sub-game 4: playing as thief (alternating)
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:49,245 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:49,333 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:49,336 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:49,419 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:49,420 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:49,681 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:49,682 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:49,860 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:50,068 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:50,242 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:52,341 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:52,563 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:52,564 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:52,737 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:52,934 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:53,104 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:53,160 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:53,241 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:53,327 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:53,348 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:53,430 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:53,431 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:53,562 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:53,563 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:53,761 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:54,024 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:54,201 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:54,294 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:54,392 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:54,475 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:54,480 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:54,575 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:54,576 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:56,143 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:28:56,374 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:56,374 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:56,554 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:56,718 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:56,908 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:56,958 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:57,060 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:57,146 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:57,152 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:57,232 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:57,233 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:57,363 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:57,363 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:28:57,552 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:57,781 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:57,965 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:58,018 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:58,096 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:58,193 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:58,198 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:58,418 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:58,418 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:58,421 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:58,425 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:28:58,596 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:28:58,772 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:28:58,965 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:59,032 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:28:59,126 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:59,206 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:28:59,218 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:28:59,309 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:28:59,315 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:01,361 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:01,772 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:01,772 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:01,993 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:02,204 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:02,412 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:02,433 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:02,591 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:02,805 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:02,809 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:03,018 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:03,021 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:03,203 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:03,203 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:03,407 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:03,613 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:03,823 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:03,829 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:03,978 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:04,107 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:04,112 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:04,200 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:04,202 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:04,386 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:04,387 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:04,598 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:04,777 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:04,956 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:05,013 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:05,090 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:05,173 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:05,179 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:05,269 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:05,274 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:07,008 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:07,213 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:07,214 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:07,394 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:07,595 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:07,763 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:07,818 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:07,913 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:07,986 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:07,990 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:08,062 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:08,064 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:08,226 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:08,226 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:08,415 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:08,600 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:08,784 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:08,836 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:08,914 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:08,991 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:08,993 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:09,068 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:09,069 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:09,215 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:09,215 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:09,399 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:09,580 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:09,743 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:09,819 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:09,895 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:09,967 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:09,973 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:10,053 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:10,054 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:11,927 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:12,186 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:12,187 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:12,364 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:12,579 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:12,767 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:12,907 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:13,004 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:13,085 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:13,094 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:13,178 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:13,181 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:13,307 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:13,307 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:13,476 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:13,679 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:13,862 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:14,123 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:14,217 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:14,319 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:14,323 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:14,421 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:14,422 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:14,555 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:14,556 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:14,763 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:14,941 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:15,122 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:15,225 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:15,324 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:15,416 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:15,419 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:15,514 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:15,515 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:17,192 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:17,444 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:17,445 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:17,629 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:17,833 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:18,004 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:18,067 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:18,145 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:18,252 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:18,257 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:18,362 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:18,363 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:18,526 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:18,526 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:18,690 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:18,872 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:19,087 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:19,100 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:19,182 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:19,272 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:19,275 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:19,375 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:19,377 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:19,484 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:19,485 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:19,657 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:19,831 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:20,011 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:20,095 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:20,191 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:20,275 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:20,279 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:20,455 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:20,458 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:22,351 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:22,610 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:22,611 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:22,784 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:22,996 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:23,240 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:23,334 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:23,424 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:23,426 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:23,427 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:23,515 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:23,517 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:23,636 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:23,636 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:23,816 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:23,987 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:24,164 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:24,239 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:24,316 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:24,395 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:24,398 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:24,506 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:24,508 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:24,640 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:24,641 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:24,807 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:24,982 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:25,162 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:25,257 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:25,334 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:25,414 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:25,425 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:25,508 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:25,510 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:27,388 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:27,651 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:27,652 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:27,825 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:28,269 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:28,465 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:28,576 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:28,656 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:28,735 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:28,739 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:28,833 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:28,835 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:28,961 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:28,962 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:29,135 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:29,332 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:29,507 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:29,685 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:29,779 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:29,861 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:29,867 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:29,964 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:29,965 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:30,081 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:30,082 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:30,287 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:30,464 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:30,644 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:30,747 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:30,853 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:30,932 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:30,935 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:31,039 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:31,041 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:33,006 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:33,259 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:33,259 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:33,439 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:33,622 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:33,798 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:33,880 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:33,998 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:34,079 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:34,086 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:34,180 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:34,181 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:34,332 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:34,332 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:34,505 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:34,693 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:34,913 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:34,945 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:35,044 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:35,116 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:35,120 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:35,206 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:35,207 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:35,338 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:35,339 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:35,513 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:35,687 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:35,880 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:35,957 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:36,039 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:36,123 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:36,129 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:36,214 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:36,217 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:38,009 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:38,220 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:38,221 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:38,411 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:38,602 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:38,778 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:38,850 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:38,932 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:39,025 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:39,028 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:39,102 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:39,103 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:39,272 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:39,272 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:39,447 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:39,637 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:39,814 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:39,906 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:39,984 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:40,067 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:40,070 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:40,148 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:40,149 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:40,305 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:40,305 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:40,471 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:40,646 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:40,843 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:40,883 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:40,985 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:41,060 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:41,064 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:41,145 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:41,146 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:42,755 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:42,966 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:42,966 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:43,154 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:43,324 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:43,495 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:43,589 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:43,673 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:43,753 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:43,758 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:43,870 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:43,871 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:43,990 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:43,990 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:44,160 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:44,357 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:44,537 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:44,589 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:44,660 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:44,743 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:44,745 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:44,847 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:44,848 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:44,958 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:44,959 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:45,128 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:45,296 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:45,490 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:45,519 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:45,603 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:45,687 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:45,690 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:45,766 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:45,767 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:47,534 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:47,775 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:47,775 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:47,969 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:48,148 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:48,337 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:48,391 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:48,468 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:48,550 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:48,553 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:48,656 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:48,657 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:48,771 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:48,772 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:48,954 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:49,126 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:49,310 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:49,354 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:49,445 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:49,553 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:49,555 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:49,635 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:49,636 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:49,647 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:49,647 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:49,817 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:50,016 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:50,196 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:50,279 mcp.server.streamable_http INFO Terminating session: None
+[police] sub-game 4: capture winner=police (enclosed) audit=Verified OK
+[police] sub-game 5: playing as police (alternating)
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:50,361 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:50,467 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:50,469 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:50,576 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:50,576 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:50,591 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:50,592 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:50,783 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:50,972 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:51,182 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:51,216 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:51,302 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:51,386 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:51,389 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:51,466 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:51,467 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:53,313 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:53,525 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:53,525 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:53,701 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:53,890 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:54,127 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:54,143 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:54,234 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:54,316 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:54,319 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:54,400 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:54,403 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:54,568 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:54,569 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:54,746 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:54,922 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:55,095 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:55,170 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:55,255 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:55,342 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:55,345 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:55,455 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:55,456 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:57,762 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:29:57,998 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:57,999 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:58,180 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:58,384 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:58,572 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:58,616 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:58,706 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:58,789 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:58,793 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:58,908 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:58,910 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:29:59,018 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:59,019 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:29:59,206 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:29:59,385 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:29:59,558 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:59,630 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:29:59,708 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:59,787 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:29:59,790 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:29:59,897 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:29:59,898 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:00,011 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:00,012 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:00,227 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:00,408 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:00,612 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:00,653 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:00,732 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:00,816 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:00,820 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:00,901 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:00,903 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:02,678 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:30:02,940 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:02,941 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:03,180 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:03,374 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:03,567 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:03,631 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:03,713 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:03,787 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:03,789 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:03,874 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:03,874 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:04,030 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:04,031 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:04,243 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:04,460 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:04,703 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:04,722 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:04,808 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:04,900 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:04,903 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:05,029 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:05,030 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:05,187 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:05,187 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:05,410 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:05,678 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:05,897 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:05,956 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:06,048 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:06,169 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:06,171 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:06,298 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:06,302 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:07,950 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:30:08,164 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:08,166 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:08,343 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:08,533 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:08,740 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:08,790 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:08,873 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:08,959 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:08,961 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:09,041 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:09,042 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:09,176 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:09,176 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:09,363 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:09,565 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:09,750 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:09,804 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:09,888 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:09,975 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:09,982 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:10,106 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:10,107 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:10,201 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:10,201 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:30:10,394 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:30:10,576 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:30:10,766 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:10,835 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:30:10,923 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:11,004 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:30:11,008 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:30:11,095 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:30:11,096 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:30:12,756 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:30:13,056 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:18,346 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:23,584 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:28,811 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:29,145 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:34,505 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:39,823 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+2026-08-13 22:30:45,369 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 502 Bad Gateway"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:01,919 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:31:02,003 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:02,083 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:31:02,085 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:02,420 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:31:02,511 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:02,595 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:31:02,597 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:02,694 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:31:02,695 mcp.server.streamable_http INFO Terminating session: None
+[police] sub-game 5: technical_loss winner=police (no response: no response after 4 attempts: receive_turn failed against https://concept-habitat-why-fibre.trycloudflare.com/mcp: Server error '502 Bad Gateway' for url 'https://concept-habitat-why-fibre.trycloudflare.com/mcp'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) audit=no package received
+[police] sub-game 6: playing as thief (alternating)
+2026-08-13 22:31:05,951 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:05,951 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:31:06,128 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:31:06,309 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:06,652 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:06,674 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:31:06,758 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:06,839 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:31:08,406 httpx INFO HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-13 22:31:08,409 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:08,490 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:31:08,491 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:31:08,626 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:08,627 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:31:08,825 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:31:09,009 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:09,190 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:09,249 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:31:09,326 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:09,414 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:31:09,417 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:09,495 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:31:09,498 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:31:09,543 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:09,544 mcp.client.streamable_http INFO Negotiated protocol version: 2025-11-25
+2026-08-13 22:31:09,713 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 202 Accepted"
+2026-08-13 22:31:09,896 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+2026-08-13 22:31:10,076 httpx INFO HTTP Request: POST https://concept-habitat-why-fibre.trycloudflare.com/mcp "HTTP/1.1 200 OK"
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:10,130 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 202 Accepted
+2026-08-13 22:31:10,230 mcp.server.streamable_http INFO Terminating session: None
+[police] sub-game 6: technical_loss winner=thief (both peers claim role 'thief') audit=Verified OK
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:10,315 mcp.server.lowlevel.server INFO Processing request of type CallToolRequest
+2026-08-13 22:31:10,320 mcp.server.streamable_http INFO Terminating session: None
+INFO:     79.177.149.106:0 - "POST /mcp HTTP/1.1" 200 OK
+2026-08-13 22:31:10,418 mcp.server.lowlevel.server INFO Processing request of type ListToolsRequest
+2026-08-13 22:31:10,419 mcp.server.streamable_http INFO Terminating session: None
+2026-08-13 22:31:17,953 googleapiclient.discovery_cache INFO file_cache is only supported with oauth2client<4.0.0
+[email] {'delivered': True, 'receipt': {'id': '19ffc9b88015b70c', 'threadId': '19ffc9b88015b70c', 'labelIds': ['SENT']}, 'mode': 'send'}
+{
+  "report_type": "game_result",
+  "game_uid": "5fc35738-cb80-0d2b-3f5c-44871f98f342",
+  "game_id": "ahk-yosi-vs-orcai-mj",
+  "generated_at": "2026-08-13T19:31:10+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "orcai-mj",
+      "group_name": "Orcai-MJ",
+      "members": [
+        "325233633",
+        "211862024"
+      ],
+      "repos": {
+        "cop": "https://github.com/akariya-mohammed/orcai-mj-cop",
+        "thief": "https://github.com/akariya-mohammed/orcai-mj-thief"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj": 5
+      }
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "barrier onto (6, 5)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 17,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj": 20
+      }
+    },
+    {
+      "index": 3,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj": 5
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 33,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj": 20
+      }
+    },
+    {
+      "index": 5,
+      "ending": "technical_loss",
+      "winner": "police",
+      "cause": "no response: no response after 4 attempts: receive_turn failed against https://concept-habitat-why-fibre.trycloudflare.com/mcp: Server error '502 Bad Gateway' for url 'https://concept-habitat-why-fibre.trycloudflare.com/mcp'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502",
+      "cop_score": 0,
+      "thief_score": 0,
+      "moves_played": 12,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "no package received",
+      "opponent_audit": "not received",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "timeout",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 0,
+        "orcai-mj": 0
+      }
+    },
+    {
+      "index": 6,
+      "ending": "technical_loss",
+      "winner": "thief",
+      "cause": "both peers claim role 'thief'",
+      "cop_score": 0,
+      "thief_score": 0,
+      "moves_played": 1,
+      "github_commit": "f685f34c8850ef3db6ecfb8a6499eaad1ca26ac8",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "timeout",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 0,
+        "orcai-mj": 0
+      }
+    }
+  ],
+  "totals": {
+    "police": 80,
+    "thief": 20
+  },
+  "my_role": "police",
+  "my_total": 80,
+  "opponent_total": 20,
+  "series_winner": "police",
+  "tokens_used": 5187,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 50,
+      "orcai-mj": 50
+    },
+    "sub_games_won": {
+      "ahk-yosi": 4,
+      "orcai-mj": 2
+    },
+    "ties": 0,
+    "winner_group": null,
+    "series_tie": true
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-orcai-mj.json",
+    "configs": [
+      "config_ahk-yosi-vs-orcai-mj_g01.json",
+      "config_ahk-yosi-vs-orcai-mj_g02.json",
+      "config_ahk-yosi-vs-orcai-mj_g03.json",
+      "config_ahk-yosi-vs-orcai-mj_g04.json",
+      "config_ahk-yosi-vs-orcai-mj_g05.json",
+      "config_ahk-yosi-vs-orcai-mj_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-orcai-mj_g01.json",
+      "log_ahk-yosi-vs-orcai-mj_g02.json",
+      "log_ahk-yosi-vs-orcai-mj_g03.json",
+      "log_ahk-yosi-vs-orcai-mj_g04.json",
+      "log_ahk-yosi-vs-orcai-mj_g05.json",
+      "log_ahk-yosi-vs-orcai-mj_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "orcai-mj": {
+        "cop": "https://github.com/akariya-mohammed/orcai-mj-cop",
+        "thief": "https://github.com/akariya-mohammed/orcai-mj-thief"
+      }
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 1,
+    "orcai-mj": 1
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "orcai-mj": false
+  },
+  "mutual_signature": "ba4557a3d1da94fe7d8755b6227080b1279d86560fc810c4d97e5714c51d038f",
+  "result_sha256": "57bb67849421a171da238596820e9322b2314a7b7235b5093e55a449ec5346df"
+}

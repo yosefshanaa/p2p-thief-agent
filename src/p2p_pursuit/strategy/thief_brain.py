@@ -56,6 +56,14 @@ class ThiefBrain(BrainBase):
         peak = view.belief.argmax()
         projected = self._project(view, peak)
         chased = self._pursuer_distance(view, peak) <= self.p.juke_range
+        # One BFS from the pursuer per turn, shared by every candidate: the
+        # territory term needs *its* distances, not ours.
+        pursuer = self._fresh if self._fresh is not None else peak
+        opp_dist = bfs_distances(view.board, pursuer) if pursuer is not None else {}
+        unreachable = view.board.size * view.board.size
+        # A pocket is only a trap while the pursuer can still seal its mouth.
+        threat = max(0.0, (view.barrier_quota - len(view.board.barriers))
+                     / max(view.barrier_quota, 1))
 
         def score(move: str) -> float:
             pos = target_of(view.own_pos, move)
@@ -84,6 +92,15 @@ class ThiefBrain(BrainBase):
                 s -= self.p.w_lead_risk  # he is heading here: do not be here when he arrives
             s += self.p.w_mobility * len(view.board.open_neighbors(pos))
             s += self.p.w_mobility2 * self._mobility2(view, pos)
+            # Room we own, and the trap gradient when it collapses. Openness
+            # counts doors; this counts the space behind them that the pursuer
+            # cannot reach first - the difference between a corridor with two
+            # exits and a corridor with two exits the pursuer is standing in.
+            if opp_dist:
+                owned = self._territory(dist, opp_dist, unreachable)
+                s += self.p.w_territory * owned
+                if owned < self.p.trap_floor:
+                    s -= self.p.w_trap * (self.p.trap_floor - owned) * threat
             if centroid is not None:
                 s += self.p.w_centroid * (abs(pos[0] - centroid[0])
                                           + abs(pos[1] - centroid[1]))
@@ -95,9 +112,8 @@ class ThiefBrain(BrainBase):
             # the pursuer still holds. It used to switch off at half-time, which
             # invited edge-hugging in exactly the phase where a police with an
             # unspent quota can seal a pocket. Barriers are declared publicly,
-            # so the remaining quota is knowable rather than guessed.
-            spent = len(view.board.barriers)
-            threat = max(0.0, (view.barrier_quota - spent) / max(view.barrier_quota, 1))
+            # so the remaining quota is knowable rather than guessed. `threat` is
+            # computed once per turn above, shared with the trap term.
             if view.step <= view.survival_threshold // 2 or threat > 0.0:
                 n = view.board.size
                 edges = (pos[0] in (0, n - 1)) + (pos[1] in (0, n - 1))
@@ -159,6 +175,19 @@ class ThiefBrain(BrainBase):
         while the police was walled off - and juking costs escape speed.
         """
         return bfs_distances(view.board, view.own_pos).get(peak, view.board.size * 2)
+
+    @staticmethod
+    def _territory(mine: dict[Cell, int], theirs: dict[Cell, int],
+                   unreachable: int) -> int:
+        """Cells we reach strictly sooner than the pursuer (a Voronoi split).
+
+        Ties go to the pursuer: arriving together is arriving into it. Cells it
+        cannot reach at all are ours by default, which is what makes a sealed
+        pocket read as *small* rather than safe - the pocket's own cells stay
+        ours, and everything beyond the mouth stops being.
+        """
+        return sum(1 for cell, d in mine.items()
+                   if d < theirs.get(cell, unreachable))
 
     def _mobility2(self, view: BrainView, pos: Cell) -> float:
         """Two-ply openness: are this cell's exits themselves well-connected?"""

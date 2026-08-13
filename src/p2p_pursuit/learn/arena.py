@@ -18,12 +18,15 @@ from ..domain.rules import POLICE, THIEF
 from ..domain.scoring import CAPTURE, SURVIVAL
 from ..peer.local_match import play_sub_game
 from ..peer.turn_engine import TurnEngine
-from ..shared.config import PeerConfig, SharedConfig, load_shared
+from ..shared.config import PeerConfig, SharedConfig, apply_env_overrides, load_shared
 from ..strategy.params import Doctrine
 from .population import Member, ours
 
 SHARED_PATH = Path("config/police/game.json")
-QUIET = PeerConfig(raw={}, group_name="lab", group_id="lab")
+#: The lab must play the same physics the match will. A doctrine is only tuned
+#: against the scent model it was searched under, so a hardcoded lab config
+#: silently optimises for the wrong game whenever a model is negotiated.
+QUIET = apply_env_overrides(PeerConfig(raw={}, group_name="lab", group_id="lab"))
 
 
 @lru_cache(maxsize=1)

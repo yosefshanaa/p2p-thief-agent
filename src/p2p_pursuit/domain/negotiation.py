@@ -12,13 +12,15 @@ from typing import Any
 from ..shared.config import PeerConfig, SharedConfig
 from ..shared.version import CODE_VERSION
 from .crypto import digest
-from .scent import scent_model_document
+from .scent import BOOK_V1, scent_model_document
 
 BINDING_SUB_GAMES = 6
 
 
-def scent_model_sha256() -> str:
-    return digest(scent_model_document())
+def scent_model_sha256(model: str = BOOK_V1) -> str:
+    """Rule #23 lock. Keyed on the model, so two peers running different physics
+    under the same name refuse to start instead of disagreeing in silence."""
+    return digest(scent_model_document(model))
 
 
 def handshake_payload(shared: SharedConfig, peer: PeerConfig, *, role: str,
@@ -33,7 +35,7 @@ def handshake_payload(shared: SharedConfig, peer: PeerConfig, *, role: str,
         "repos": peer.repos,
         "code_version": CODE_VERSION,
         "config_sha256": shared.sha256,
-        "scent_model_sha256": scent_model_sha256(),
+        "scent_model_sha256": scent_model_sha256(peer.scent_model),
         "first_mover": shared.first_mover,
         "game_id": game_id,
         "game_uid": game_uid,

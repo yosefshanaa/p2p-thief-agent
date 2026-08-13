@@ -1,0 +1,228 @@
+{
+  "report_type": "game_result",
+  "game_uid": "5fc35738-cb80-0d2b-3f5c-44871f98f342",
+  "game_id": "ahk-yosi-vs-orcai-mj",
+  "generated_at": "2026-08-12T16:37:20+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "orcai-mj",
+      "group_name": "Orcai-MJ",
+      "members": [],
+      "repos": {}
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj": 20
+      }
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj": 5
+      }
+    },
+    {
+      "index": 3,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj": 20
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj": 5
+      }
+    },
+    {
+      "index": 5,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj": 20
+      }
+    },
+    {
+      "index": 6,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj": 5
+      }
+    }
+  ],
+  "totals": {
+    "police": 120,
+    "thief": 30
+  },
+  "my_role": "thief",
+  "my_total": 30,
+  "opponent_total": 120,
+  "series_winner": "police",
+  "tokens_used": 5407,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 75,
+      "orcai-mj": 75
+    },
+    "sub_games_won": {
+      "ahk-yosi": 3,
+      "orcai-mj": 3
+    },
+    "ties": 0,
+    "winner_group": null,
+    "series_tie": true
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-orcai-mj.json",
+    "configs": [
+      "config_ahk-yosi-vs-orcai-mj_g01.json",
+      "config_ahk-yosi-vs-orcai-mj_g02.json",
+      "config_ahk-yosi-vs-orcai-mj_g03.json",
+      "config_ahk-yosi-vs-orcai-mj_g04.json",
+      "config_ahk-yosi-vs-orcai-mj_g05.json",
+      "config_ahk-yosi-vs-orcai-mj_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-orcai-mj_g01.json",
+      "log_ahk-yosi-vs-orcai-mj_g02.json",
+      "log_ahk-yosi-vs-orcai-mj_g03.json",
+      "log_ahk-yosi-vs-orcai-mj_g04.json",
+      "log_ahk-yosi-vs-orcai-mj_g05.json",
+      "log_ahk-yosi-vs-orcai-mj_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "orcai-mj": {}
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 0,
+    "orcai-mj": 0
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "orcai-mj": false
+  },
+  "mutual_signature": "558325f7ab41390329251e3cb9a5442157f8601c18b1203afcba60e0f43b22a4",
+  "result_sha256": "7f4419e3215ca64576abdd52e5d9f9458243e1580093a96125c93fd4477c16d8"
+}

@@ -5,10 +5,11 @@ from __future__ import annotations
 import contextlib
 from typing import Any
 
-from ..domain import declarations, negotiation
+from ..domain import declarations, game_ids, negotiation
+from ..domain.crypto import digest
 from ..domain.scoring import TECHNICAL_LOSS
 from ..infra.email_sender import send_report
-from ..report import artifacts, results
+from ..report import artifacts, mutual_signature, results
 from ..shared import sysinfo
 from ..shared.gatekeeper import Gatekeeper
 from . import audit_bridge, log_manager
@@ -27,7 +28,7 @@ def write_declaration(rt: Any, theirs: dict[str, Any]) -> None:
         game_uid=rt.game_uid, game_id=rt.game_id,
         game_number=rt.service.my_handshake["prior_counted_games"] + 1,
         config_sha256=rt.shared.sha256,
-        scent_model_sha256=negotiation.scent_model_sha256(),
+        scent_model_sha256=negotiation.scent_model_sha256(rt.peer.scent_model),
         token_cap=rt.shared.network.get("token_budget_per_series", 200000),
         me=me, opponent=opp)
     artifacts.write_declaration(rt.out_dir, rt.game_id, decl)
@@ -76,12 +77,22 @@ def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
     row = results.sub_game_row(
         index=n, ending=ending, winner=winner, cause=cause,
         police_score=p_score, thief_score=t_score,
-        moves_played=engine.my_steps if rt.role == "thief" else engine.opp_steps,
+        moves_played=engine.my_steps if engine.role == "thief" else engine.opp_steps,
         github_commit=sysinfo.git_commit(), audit_verdict=my_verdict["verdict"],
         opponent_audit=their_view["verdict"])
+    # The group-keyed projection a reference-family peer signs. Added to our own
+    # row rather than replacing it: their contract says a row may carry anything
+    # else, and our role-keyed fields are what our replay and audits read.
+    row.update(mutual_signature.signed_row_fields(
+        row, my_group=rt.peer.group_id or "us",
+        their_group=_their_group_id(rt), my_role=engine.role))
     log_fn(f"[{rt.role}] sub-game {n}: {ending} winner={winner} ({cause}) "
            f"audit={my_verdict['verdict']}")
     return row
+
+
+def _their_group_id(rt: Any) -> str:
+    return (rt.service.their_handshake or {}).get("group_id") or "opponent"
 
 
 def build_result(rt: Any) -> dict[str, Any]:
@@ -98,8 +109,56 @@ def build_result(rt: Any) -> dict[str, Any]:
         tie_score=rt.shared.scoring.get("tie_score", 2),
         tokens_used=rt.engine.tokens_used, github_commit=sysinfo.git_commit(),
         my_role=rt.role, mutual_agreement=results.agreement_reached(rt.sub_results))
+    _attach_mutual_block(rt, result, theirs)
     artifacts.write_result(rt.out_dir, rt.game_id, result)
     return result
+
+
+def _attach_mutual_block(rt: Any, result: dict[str, Any], theirs: dict[str, Any]) -> None:
+    """The group-keyed aggregate, the cross-team fields, and the shared digest.
+
+    Only `aggregate` and the per-row projection reach the signature; the rest
+    must be right but is deliberately outside it, so an honest difference in
+    clocks or token counts can never make two agreeing teams disagree.
+    """
+    my_gid = rt.peer.group_id or "us"
+    their_gid = _their_group_id(rt)
+    aggregate = mutual_signature.signed_aggregate(
+        rt.sub_results, my_group=my_gid, their_group=their_gid)
+    result["aggregate"] = aggregate
+    result["links"] = _artifact_links(rt, my_gid, their_gid, theirs)
+    # Truthful rule-#37 counters, each side's own number: ours from our config,
+    # theirs off the identity they signed. Never invented on the other's behalf.
+    result["games_played_including_this"] = {
+        my_gid: rt.prior_counted_games + (1 if rt.counted else 0),
+        their_gid: int(theirs.get("prior_counted_games") or 0) + (1 if rt.counted else 0),
+    }
+    # Book §9.2.2: the bonus rewards *winning* a first meeting, so a drawn
+    # series awards it to nobody - and a friendly awards it to nobody at all.
+    winner = aggregate["winner_group"]
+    result["diversity_reward_applied"] = {
+        group: bool(rt.counted and winner == group) for group in (my_gid, their_gid)}
+    result["mutual_signature"] = mutual_signature.mutual_signature(result)
+    # `build_result` sealed `result_sha256` over the body as it stood before
+    # these fields existed. Recompute it, or our own integrity hash fails
+    # against our own filed artifact - the same digest, over the same rule
+    # (everything except the key itself).
+    result.pop("result_sha256", None)
+    result["result_sha256"] = digest(result)
+
+
+def _artifact_links(rt: Any, my_gid: str, their_gid: str,
+                    theirs: dict[str, Any]) -> dict[str, Any]:
+    """Sibling filenames plus both teams' repos: a filed result must be
+    navigable from itself alone."""
+    played = [row["index"] for row in rt.sub_results]
+    return {
+        "declaration": game_ids.declaration_name(rt.game_id),
+        "configs": [game_ids.config_name(rt.game_id, n) for n in played],
+        "logs": [game_ids.log_name(rt.game_id, n) for n in played],
+        "github": {my_gid: dict(rt.peer.repos),
+                   their_gid: dict(theirs.get("repos") or {})},
+    }
 
 
 def email_report(rt: Any, result: dict[str, Any], transport: Any) -> dict[str, Any]:

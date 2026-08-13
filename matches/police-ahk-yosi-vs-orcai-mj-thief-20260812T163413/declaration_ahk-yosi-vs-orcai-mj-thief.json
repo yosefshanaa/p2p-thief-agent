@@ -1,0 +1,45 @@
+{
+  "report_type": "declaration",
+  "game_uid": "7290354e-ee3f-76eb-3b08-2a4a77e4c4fe",
+  "game_id": "ahk-yosi-vs-orcai-mj-thief",
+  "game_number": 1,
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "scent_model_sha256": "ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28",
+  "token_cap": 200000,
+  "started_at": "2026-08-12T16:34:48+00:00",
+  "ended_at": null,
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8802/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba"
+    },
+    "opponent": {
+      "group_id": "orcai-mj-thief",
+      "group_name": "Orcai-MJ",
+      "members": [],
+      "repos": {},
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "2cf1da7561c31f68e2336f60a44d3d77a7b63c70ae1e7a50e91a75858ee4ccc2"
+}

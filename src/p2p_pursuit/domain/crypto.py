@@ -34,6 +34,23 @@ def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def sha256_raw(data: bytes) -> bytes:
+    """Raw digest bytes - only the reference `game_uid`, which slices them."""
+    return hashlib.sha256(data).digest()
+
+
+def spaced_bytes(obj: Any) -> bytes:
+    """Serialize with json.dumps' DEFAULT separators (", " / ": "), keys sorted.
+
+    A second encoding in the same protocol, and deliberately so: the reference
+    family's *mutual result signature* is specified over `json.dumps` defaults
+    while its *commitments* use the compact form above. Feeding a signature the
+    compact bytes produces a wrong-but-plausible hex string, so the two spellings
+    are kept visibly distinct rather than parameterised behind one flag.
+    """
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False).encode("utf-8")
+
+
 def digest(obj: Any) -> str:
     """SHA-256 hex digest of the canonical form of ``obj``."""
     return sha256_hex(canonical_bytes(obj))

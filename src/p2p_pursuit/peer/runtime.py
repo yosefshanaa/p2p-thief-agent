@@ -11,11 +11,18 @@ from __future__ import annotations
 import json
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from ..domain import negotiation
-from ..domain.game_ids import make_game_id, new_game_uid
+from ..domain.crypto import REFERENCE
+from ..domain.game_ids import (
+    make_game_id,
+    new_game_uid,
+    reference_game_id,
+    reference_game_uid,
+)
 from ..infra.mcp_server import serve_in_thread, wait_until_up
 from ..shared.config import load_role
 from ..strategy.talk_llm import make_talk_provider
@@ -38,6 +45,7 @@ class PeerRuntime:
         # now, which differs on even sub-games when roles alternate.
         self.role = self.natural_role = role
         self.counted = counted
+        self.prior_counted_games = prior_counted_games
         self.shared, self.peer = load_role(config_dir)
         talk = make_talk_provider(self.peer.trash_talk_provider, self.peer.llm_model,
                                   self.peer.llm_step_deadline_seconds,
@@ -46,6 +54,9 @@ class PeerRuntime:
         self.num_games = num_games or self.shared.num_games
         self.game_uid = new_game_uid()
         self.game_id = make_game_id(self.peer.group_id or "us", "opponent")
+        self._out_root = out_dir
+        #: Distinguishes two runs against the same opponent; see `_adopt_reference_ids`.
+        self._run_stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
         self.out_dir = out_dir / f"{role}-{self.game_id}"
         handshake = negotiation.handshake_payload(
             self.shared, self.peer, role=role, game_id=self.game_id,
@@ -62,6 +73,9 @@ class PeerRuntime:
             max_retries=rate.get("max_retries", 3),
             backoff_sec=rate.get("retry_backoff_sec", 5),
             on_attempt=self.watchdog.beat)
+        #: Where this peer joins the series - 1 unless the opponent is already
+        #: further on; see `_join_at_their_index`.
+        self.start_index = 1
         self.sub_results: list[dict[str, Any]] = []
         self.link: Any = None
         self.bridge: Any = None
@@ -78,7 +92,8 @@ class PeerRuntime:
             terms=interop_terms(self.shared, num_games=self.num_games),
             identity=interop_identity(
                 self.peer, mcp_url=f"http://0.0.0.0:{self.peer.my_port}/mcp",
-                spec=sysinfo.collect()))
+                spec=sysinfo.collect(),
+                counted_games_played=self.prior_counted_games))
 
     def start_server(self) -> None:
         serve_in_thread(self.service, host="0.0.0.0", port=self.peer.my_port,
@@ -105,8 +120,22 @@ class PeerRuntime:
         if not wait_until_up(link):
             _log(f"[{self.role}] opponent never came up at {self.peer.opponent_url}")
             return False
-        theirs = self.deadline.call(link.handshake, self.service.my_handshake)
+        # Reachable is not the same as ready: their tunnel can answer a tool
+        # listing and their peer still be mid-restart when our handshake lands.
+        try:
+            theirs = self.deadline.call_within(
+                link.handshake, self.service.my_handshake,
+                budget_sec=self.peer.handshake_budget_sec,
+                on_retry=lambda err: _log(
+                    f"[{self.role}] handshake failed ({err}); retrying up to "
+                    f"{self.peer.handshake_budget_sec}s"))
+        except DeadlineExpiredError as exc:
+            _log(f"[{self.role}] opponent never completed a handshake within "
+                 f"{self.peer.handshake_budget_sec}s: {exc}")
+            return False
         self.service.their_handshake = theirs
+        self._adopt_reference_ids(theirs)
+        self._join_at_their_index(theirs)
         problems = negotiation.check_compatibility(
             self.service.my_handshake, theirs, num_games=self.num_games)
         if problems:
@@ -115,6 +144,63 @@ class PeerRuntime:
             return False
         runtime_reports.write_declaration(self, theirs)
         return True
+
+    def _join_at_their_index(self, theirs: dict[str, Any]) -> None:
+        """Start the series where the opponent already is, not where we assume.
+
+        Two peers that both advance on failure and both insist on their own index
+        cannot resynchronise by restarting: whoever restarts is behind again by
+        its own boot time, and the gap simply changes sign. Measured live against
+        uoh-sqak 2026-08-10 - their peer moved 1 -> 3 in the two minutes ours took
+        to come up, twice in a row.
+
+        So a peer joining a series joins it where the other side is. Only forward:
+        an index we have already settled is not replayable, and pulling the other
+        peer backwards is what deadlocked both of us earlier tonight.
+        """
+        declared = (theirs or {}).get("sub_game_number")
+        if not isinstance(declared, int) or declared <= self.start_index:
+            return
+        if declared > self.num_games:
+            _log(f"[{self.role}] opponent is on sub-game {declared}, past this "
+                 f"series' {self.num_games} - refusing to join a finished series")
+            return
+        _log(f"[{self.role}] opponent is on sub-game {declared}; joining there "
+             f"instead of {self.start_index} (they cannot replay what they settled)")
+        self.start_index = declared
+
+    def _adopt_reference_ids(self, theirs: dict[str, Any]) -> None:
+        """Re-derive the game ids the way a reference-family peer does.
+
+        Ours are minted in `__init__`, before the opponent's slug is known: the
+        id carries a timestamp and the placeholder "opponent", and the uid is
+        random. Both are fine for a native match, where each side files under its
+        own id - and impossible for a *mutual* signature, whose first key is
+        `game_id`. Theirs are derived from the agreed terms and the two slugs, so
+        both peers reach the same value without exchanging it.
+
+        Safe to rebind here: this runs after the handshake and before the first
+        artifact is written.
+        """
+        if self.peer.interop_dialect != REFERENCE:
+            return
+        from ..infra.interop_codec import interop_terms
+
+        their_gid = (theirs or {}).get("group_id") or "opponent"
+        my_gid = self.peer.group_id or "us"
+        terms = interop_terms(self.shared, num_games=self.num_games)
+        self.game_id = reference_game_id(my_gid, their_gid)
+        self.game_uid = reference_game_uid(terms, my_gid, their_gid)
+        # Their `game_id` is deterministic by design - the same two teams always
+        # derive the same string - so it cannot also name our output directory:
+        # a warm-up would overwrite the sealed logs of the counted match played
+        # against the same opponent, which are the one artifact we must be able
+        # to produce afterwards. Filenames keep the agreed id (Appendix F); only
+        # the containing directory is made unique.
+        self.out_dir = self._out_root / f"{self.role}-{self.game_id}-{self._run_stamp}"
+        self.service.my_handshake["game_id"] = self.game_id
+        self.service.my_handshake["game_uid"] = self.game_uid
+        _log(f"[{self.role}] reference ids adopted: {self.game_id} / {self.game_uid}")
 
     def _await_turn(self) -> bool:
         """Wait for the opponent's move, beating the watchdog in slices.
@@ -140,9 +226,13 @@ class PeerRuntime:
     def play_sub_game(self, n: int) -> None:
         from . import series_protocol
 
-        if not series_protocol.prepare_sub_game(self, n, _log):
-            return
+        # Role first (start_sub_game reads it), then reset onto this sub-game,
+        # and only then re-negotiate: a refusal must be recorded against clean
+        # state for THIS index, never against the previous sub-game's ending.
+        series_protocol.take_role(self, n, _log)
         self.service.ensure_sub_game(n)
+        if not series_protocol.rehandshake_if_needed(self, n, _log):
+            return
         engine = self.engine
         while engine.end is None:
             self.watchdog.beat()
@@ -176,7 +266,7 @@ class PeerRuntime:
     def run_series(self) -> dict[str, Any]:
         self.watchdog.start()
         try:
-            for n in range(1, self.num_games + 1):
+            for n in range(self.start_index, self.num_games + 1):
                 self.play_sub_game(n)
                 self.sub_results.append(runtime_reports.finish_sub_game(self, n, _log))
         finally:

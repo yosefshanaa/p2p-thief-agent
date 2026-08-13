@@ -1,0 +1,228 @@
+{
+  "report_type": "game_result",
+  "game_uid": "7290354e-ee3f-76eb-3b08-2a4a77e4c4fe",
+  "game_id": "ahk-yosi-vs-orcai-mj-thief",
+  "generated_at": "2026-08-12T16:37:53+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "orcai-mj-thief",
+      "group_name": "Orcai-MJ",
+      "members": [],
+      "repos": {}
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj-thief": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj-thief": 5
+      }
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj-thief": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj-thief",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj-thief": 20
+      }
+    },
+    {
+      "index": 3,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj-thief": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj-thief": 5
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "barrier onto (6, 6)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj-thief": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj-thief",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj-thief": 20
+      }
+    },
+    {
+      "index": 5,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "orcai-mj-thief": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "orcai-mj-thief": 5
+      }
+    },
+    {
+      "index": 6,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "barrier onto (6, 6)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 16,
+      "github_commit": "4b017112eb483324c5ef64d396faf9e982529cba",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "orcai-mj-thief": "police"
+      },
+      "result": "capture",
+      "winner_group": "orcai-mj-thief",
+      "score": {
+        "ahk-yosi": 5,
+        "orcai-mj-thief": 20
+      }
+    }
+  ],
+  "totals": {
+    "police": 120,
+    "thief": 30
+  },
+  "my_role": "police",
+  "my_total": 120,
+  "opponent_total": 30,
+  "series_winner": "police",
+  "tokens_used": 5306,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 75,
+      "orcai-mj-thief": 75
+    },
+    "sub_games_won": {
+      "ahk-yosi": 3,
+      "orcai-mj-thief": 3
+    },
+    "ties": 0,
+    "winner_group": null,
+    "series_tie": true
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-orcai-mj-thief.json",
+    "configs": [
+      "config_ahk-yosi-vs-orcai-mj-thief_g01.json",
+      "config_ahk-yosi-vs-orcai-mj-thief_g02.json",
+      "config_ahk-yosi-vs-orcai-mj-thief_g03.json",
+      "config_ahk-yosi-vs-orcai-mj-thief_g04.json",
+      "config_ahk-yosi-vs-orcai-mj-thief_g05.json",
+      "config_ahk-yosi-vs-orcai-mj-thief_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-orcai-mj-thief_g01.json",
+      "log_ahk-yosi-vs-orcai-mj-thief_g02.json",
+      "log_ahk-yosi-vs-orcai-mj-thief_g03.json",
+      "log_ahk-yosi-vs-orcai-mj-thief_g04.json",
+      "log_ahk-yosi-vs-orcai-mj-thief_g05.json",
+      "log_ahk-yosi-vs-orcai-mj-thief_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "orcai-mj-thief": {}
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 0,
+    "orcai-mj-thief": 0
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "orcai-mj-thief": false
+  },
+  "mutual_signature": "775c944d216c392a97e83807626c5a9250c1ca111a3b3e9f39d3f564aac51f0c",
+  "result_sha256": "d44f56adb0d7a558aaba5d03dc9c4f249d042a6a78cf4e647e9b3ccb1ce0be31"
+}

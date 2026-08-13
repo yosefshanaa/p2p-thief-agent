@@ -19,7 +19,8 @@ import queue
 from datetime import UTC, datetime
 from typing import Any
 
-from ..domain.protocol import KIND_CAPTURE_ANSWER
+from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT
+from ..domain.rules import THIEF
 from . import interop_codec as codec
 from .transport import LinkError
 
@@ -146,8 +147,12 @@ class ReferenceBridge:
         from ..domain.crypto import new_nonce, reference_commit
 
         nonce = new_nonce()
+        # `sub_game_number` rides outside `terms`, so it cannot disturb the
+        # signature - but without it a peer that has advanced past us looks
+        # identical to one in step, and the two series drift in silence.
         return {"terms": self.terms, "nonce": nonce,
                 "signature": reference_commit(self.terms, nonce),
+                "sub_game_number": self.service.engine.sub_game,
                 "identity": self.identity}
 
     def commit(self, msg: dict, timeout: float | None = None) -> dict:
@@ -176,15 +181,29 @@ class ReferenceBridge:
         came back `audit=no package received` with zero opponent records.
         """
         public = envelope.get("public", {})
-        if public.get("kind") == KIND_CAPTURE_ANSWER:
+        kind = public.get("kind")
+        engine = self.service.engine
+        if kind == KIND_CAPTURE_ANSWER:
+            # Answering a claim is not terminal, so it rides the next turn.
             self._owed_claim_response = {"claim": list(public["claim_cell"]),
                                          "caught": bool(public["answer"])}
+        elif kind == KIND_CAPTURED_EVENT and engine.role == THIEF:
+            # Book 46/47: a barrier on our own cell, or no legal move left. Only
+            # the thief can observe it, and in this dialect the thief *announces*
+            # it as a claim answer about its own cell - `win_claim` is reserved
+            # for survival, so sending one here reads as the wrong ending.
+            self._owed_claim_response = {"claim": list(engine.own_pos), "caught": True}
+            self._flush_terminal(timeout, hint="You got me.")
         else:
-            self._owed_win_claim = {"type": public.get("kind", "survival")}
-            self._flush_win_claim(timeout)
+            # Survival, or a police-side enclosure claim - which this dialect
+            # cannot express, so it stays on the win-claim path it has always
+            # used. Their vocabulary is "survival", not our internal kind name.
+            self._owed_win_claim = {
+                "type": "capture" if kind == KIND_CAPTURED_EVENT else "survival"}
+            self._flush_terminal(timeout)
         return {"ok": True}
 
-    def _flush_win_claim(self, timeout: float | None) -> None:
+    def _flush_terminal(self, timeout: float | None, *, hint: str | None = None) -> None:
         """Send the terminal claim on a copy of our last turn.
 
         Their protocol has no standalone end-of-game message - a win claim is a
@@ -194,12 +213,18 @@ class ReferenceBridge:
         turns they received, and their handler ends the game the moment it reads
         the claim, so the duplicated belief update never affects a decision.
         """
-        if self._last_turn is None or self._owed_win_claim is None:
+        if self._last_turn is None or (
+                self._owed_win_claim is None and self._owed_claim_response is None):
             return
         final = dict(self._last_turn)
-        final["win_claim"] = self._owed_win_claim
+        if self._owed_win_claim is not None:
+            final["win_claim"] = self._owed_win_claim
+        if self._owed_claim_response is not None:
+            final["claim_response"] = self._owed_claim_response
+        if hint is not None:
+            final["hint"] = hint
         final["timestamp"] = datetime.now(UTC).isoformat()
-        self._owed_win_claim = None
+        self._owed_win_claim = self._owed_claim_response = None
         # Best effort: the opponent may already have stopped listening, and a
         # failed courtesy message must never turn a won sub-game into an error.
         with contextlib.suppress(Exception):
@@ -213,8 +238,27 @@ class ReferenceBridge:
         what they made of our log - only that they received it.
         """
         end = self.service.engine.end
+        records = codec.reference_records(
+            [self._system_spec_record(), *package["records"]])
         self.link.submit_audit(
             {"sender": package["role"],
-             "records": codec.reference_records(package["records"]),
+             "records": records,
              "result_claim": end.ending if end else "unknown"}, timeout=timeout)
         return {"verdict": "not reported (reference dialect)", "violations": []}
+
+    def _system_spec_record(self) -> dict[str, Any]:
+        """The step-0 record naming the code that played this sub-game.
+
+        A reference peer reads `github_commit` out of our *revealed records* and
+        files it per sub-game; there is nowhere else in this dialect for it to
+        come from, so omitting the record does not leave their report blank -
+        it leaves it saying `unknown` about us. Sealed like any other record so
+        the claim is bound rather than asserted.
+        """
+        from ..domain.crypto import new_nonce
+        from ..shared import sysinfo
+
+        engine = self.service.engine
+        return {"kind": "system_spec", "type": "system_spec", "step": 0,
+                "role": engine.role, "sub_game": engine.sub_game,
+                "github_commit": sysinfo.git_commit(), "nonce": new_nonce()}

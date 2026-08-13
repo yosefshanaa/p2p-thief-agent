@@ -1,0 +1,51 @@
+{
+  "report_type": "declaration",
+  "game_uid": "52d2d904-28d5-50f0-54d3-5842ad94f198",
+  "game_id": "ahk-yosi-vs-uoh-sqak",
+  "game_number": 1,
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "scent_model_sha256": "0761ca169ee93a11cb19e6e28251074ab7223bdb157ec5123138d87aad651f6f",
+  "token_cap": 200000,
+  "started_at": "2026-08-09T21:22:19+00:00",
+  "ended_at": null,
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8802/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "53b3e0d371fba311ae255058df3988054208def7"
+    },
+    "opponent": {
+      "group_id": "uoh-sqak",
+      "group_name": "uoh-sqak",
+      "members": [
+        "Salah Qadah:323039974",
+        "Andalus Kalash:211435797"
+      ],
+      "repos": {
+        "cop": "https://github.com/salah-dev-stu/uoh-sqak-cop",
+        "thief": "https://github.com/salah-dev-stu/uoh-sqak-thief"
+      },
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "e9650a9a713b3e6414e55d5a65a7ad8972f46d96f4e3b8d19d0faa25a2f7c951"
+}

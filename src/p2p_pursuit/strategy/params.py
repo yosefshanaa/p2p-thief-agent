@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from dataclasses import asdict, dataclass, replace
 from functools import lru_cache
 from pathlib import Path
@@ -28,6 +29,17 @@ from pathlib import Path
 #: from is which doctrine it plays.
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PATH = REPO_ROOT / "config" / "doctrine.json"
+#: A doctrine is tuned against one *scent physics*. Negotiating a different model
+#: with an opponent therefore changes which tuned vector is correct, and playing
+#: the wrong one is silent: it does not fail, it just plays worse (measured
+#: 2026-08-09 - the v5 vector loses two thirds of its captures under
+#: `registered_v3`). So the path is deployment-time, beside the model itself.
+DOCTRINE_PATH_VAR = "P2P_DOCTRINE"
+
+
+def default_path() -> Path:
+    override = (os.environ.get(DOCTRINE_PATH_VAR) or "").strip()
+    return Path(override) if override else DEFAULT_PATH
 
 log = logging.getLogger(__name__)
 
@@ -50,6 +62,18 @@ class Doctrine:
     # -- thief: a weighted score over one-step candidates
     w_mobility: float = 0.5
     w_mobility2: float = 0.25
+    #: Cells we reach strictly before the pursuer does - the room we actually
+    #: own, not the exits we happen to touch. `w_mobility`/`w_mobility2` are
+    #: 1- and 2-ply openness, and both score a pocket as roomy right up to the
+    #: turn its mouth is sealed: measured vs orcai-mj, our thief died at (5,6)
+    #: or (6,6) in nine consecutive sub-games across two doctrines and three
+    #: seeds, always in a pocket whose only exits the pursuer already owned.
+    w_territory: float = 0.15
+    #: Below `trap_floor` owned cells we are in a pocket, and the penalty scales
+    #: with how far below - but only while the pursuer still holds the barrier
+    #: quota to seal it with, since an empty quota cannot close a mouth.
+    trap_floor: int = 10
+    w_trap: float = 1.2
     w_centroid: float = 0.4
     w_risk: float = 3.0
     w_lead_risk: float = 1.5
@@ -98,6 +122,9 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "claim_threshold": (0.03, 0.50, False),
     "w_mobility": (0.0, 2.0, False),
     "w_mobility2": (0.0, 1.5, False),
+    "w_territory": (0.0, 1.0, False),
+    "trap_floor": (0, 24, True),
+    "w_trap": (0.0, 6.0, False),
     "w_centroid": (0.0, 1.5, False),
     "w_risk": (0.0, 8.0, False),
     "w_lead_risk": (0.0, 5.0, False),
@@ -155,13 +182,14 @@ def save(doctrine: Doctrine, path: Path) -> None:
     path.write_text(json.dumps(asdict(doctrine), indent=2) + "\n", encoding="utf-8")
 
 
-@lru_cache(maxsize=1)
-def active(path: Path = DEFAULT_PATH) -> Doctrine:
+@lru_cache(maxsize=4)
+def active(path: Path | None = None) -> Doctrine:
     """The doctrine this process plays: the tuned file if present, else v5.
 
     Announced at load, because "which policy am I actually running" is not
     something a league match should have to infer from how it played.
     """
+    path = path or default_path()
     if not path.exists():
         log.info("doctrine: shipped defaults (no %s)", path)
         return Doctrine()
