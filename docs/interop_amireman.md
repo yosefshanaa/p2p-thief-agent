@@ -257,6 +257,34 @@ amireman police:  cc26a88a636351bc4fefd050b0aeea055b3f1cc1
 amireman thief:   2118c3d1e05019b359b9403d616fff87d6487c40
 ```
 
+**Updated before DEMO4** (received 2026-08-14, after their interop fixes):
+
+```
+amireman thief:   05f25f183e4e96566ff598744474764b73c18c32   <- new
+amireman police:  cc26a88a636351bc4fefd050b0aeea055b3f1cc1   <- "unchanged"
+```
+
+**What their peer has actually declared on the wire, per sub-game, is ONE commit for
+BOTH roles** - read out of `github_commit` in their own revealed records:
+
+| run | their role on 1/3/5 (thief) | their role on 2/4/6 (police) |
+|---|---|---|
+| DEMO1 | `2118c3d1e050` | *no audit package sent at all* |
+| DEMO2 | `bb0352613990` | `bb0352613990` (g04 no package) |
+
+So `cc26a88a…` has **never appeared on our wire, in either demo**, and in DEMO2 their
+police-role records declared the same commit as their thief-role records. Their
+"police SHA unchanged" is therefore either a publication convention over a single
+runtime, or two processes of which the police one has been declaring the other's
+commit. Ask before DEMO4 - see the reply in §4d.
+
+**We do not validate it in code.** `negotiation.check_compatibility` compares
+`config_sha256` and `scent_model_sha256` and nothing else; their commit is *recorded*
+(declaration, result rows, and their revealed step-0 record) but never compared against
+an expected value. "Use the new SHA for audit validation" is, on our side, a ledger
+entry - not an automated gate. Adding an optional expected-SHA warning is a one-flag
+change if we decide we want it before G011.
+
 Their §3 binds each side's commit inside the `identity` block (`git_commit_hash` ==
 `github_commit`), so these are what their peer should declare on the wire. Worth a glance at the
 first handshake: an identity whose commit does not match what they sent here means one side is
@@ -296,6 +324,137 @@ prove. Now `P2P_GAME_ID`, with the uid deliberately left underived-from-it.
 
 Rehearsed locally under the label: `game_id=AHK-DEMO1` and
 `uid=ab6022d2-716a-f5b3-556e-43f70ffa7b09` on both peers, digests equal, `confirmed: true`.
+
+## 4d. AHK-DEMO3: their audit of us failed, and it was ours
+
+Their report after DEMO3, per sub-game from their chair:
+
+| | live commits they received from us | of those, revealed | records in the package they filed |
+|---|---|---|---|
+| game 5 | 14 | **0** | — (first failure `binding_received_in_play`) |
+| game 6 | 35 | **0** | **15**, one binding to a *game 5* commit |
+
+Plus: "role labels appear inverted".
+
+### The cause — not hashing, bucketing
+
+Every record we sent reproduced its own commitment. `p2p-pursuit verify --dir` over the
+archived DEMO2 artifacts confirms it on all six sub-games, both directions:
+
+```
+g01 police  34 records /  34 sent  ours=OK   theirs=OK
+…
+g06 thief   70 records /  70 sent  ours=OK   theirs=OK
+[verify] our reveal binds: True; theirs: True (5 received)
+```
+
+What was wrong is the **index the package was filed under**. Our `submit_audit` envelope was
+`{sender, records, result_claim}` — it named no sub-game, so the only way to file it is *by when
+it arrives*, and the two peers do not cross a boundary together:
+
+- `finish_sub_game` sends our package, then **waits** up to `REHANDSHAKE_AUDIT_WAIT` (20 s) for
+  theirs before advancing. Theirs arrives while we are still on `n`, so we file it correctly —
+  which is why `mine_of_them` read `Verified OK` all series and hid the other direction entirely.
+- Their peer does not wait. It sends its package and moves to `n+1` immediately, and in the
+  capture sub-games it reaches the ending *first* (we learn of it from their `claim_response`).
+  Our package for `n` therefore lands in their `n+1` bucket, every time.
+
+Every symptom they reported falls out of that one off-by-one:
+
+- 0 of N bind — they are checking our sub-game `n` records against sub-game `n+1` commitments.
+- 15 records where 35 were expected — that is our **game 5** package (14 records + the step-0
+  system spec) filed as their game 6.
+- "one revealed game-6 commit matches a live commit from game 5" — all of them do.
+- **"role labels appear inverted"** — roles alternate, so a package read one index late is
+  always the opposite role. This is the tell that dates the defect exactly.
+
+### Six fixes
+
+| # | Defect | Fix |
+|---|---|---|
+| 1 | the envelope named no sub-game | `sub_game` **and** `sub_game_number` on the envelope; every sealed record mirrors both spellings, so it can also be bucketed by content |
+| 2 | the package was read off the running engine | frozen into `engine.audit_ledger` the instant the sub-game ends — `my_records` is emptied at the boundary, and an inbound turn can cross it before we do |
+| 3 | `audit_package` reported `engine.role` | the package carries the role **frozen at play time**; after a swap it was reporting the new role for the old sub-game's records |
+| 4 | `reference_records` **re-derived** every commit | the live commitment is revealed; recomputation is kept only as a comparison, so divergence is a loud error instead of a package that passes its own check and binds to nothing |
+| 5 | `_system_spec_record` minted a fresh nonce **per call** | sealed once per sub-game and cached; a retried `submit_audit` was revealing one claim under two commitments |
+| 6 | `_flush_terminal` replayed `_last_turn` across a boundary | refuses to replay a settled sub-game's commitment into a live one |
+
+We also stopped filing *their* reveal by arrival: `_declared_sub_game` reads the envelope, then
+the records, and only then falls back to our own index.
+
+### Verification
+
+- **Self-check before sending** (`interop_audit.verify_outgoing_reveal`), run inside
+  `bridge.audit` on every package and filed into the log artifact as `audit.my_reveal_binds`.
+- **Offline re-check** of any played match: `uv run p2p-pursuit verify --dir <match dir>`.
+- **Six-sub-game acceptance**, two real peers over real FastMCP HTTP, their full contract
+  (`reference` + alternate + per-sub-game handshake + `always_claim` + consensus), 2026-08-14:
+  6/6 `Verified OK` both sides, every package filed under its own index, roles alternating
+  correctly, `series consensus 36bba3ff65ae… match=True confirmed=True` on both peers, zero
+  warnings. 333 tests pass, Ruff clean.
+
+### What is still on their side
+
+Fix 1 only helps a receiver that **reads** one of the fields. If their `submit_audit` still files
+by arrival and ignores both the envelope keys and `sub_game_number` in the payloads, the
+off-by-one comes straight back — our records will be right and filed wrong again. This is the one
+item to confirm with them before DEMO4 rather than after.
+
+### Reply to send them (copy-paste)
+
+> **`ahk-yosi` → `amireman`.** Your diagnosis is right and the defect is ours. Thank you for
+> reporting it per sub-game with the counts — that is what made it findable.
+>
+> **It was not our hashing.** Every record we revealed does reproduce its own commitment; we
+> re-checked the archived DEMO2 artifacts offline and all six sub-games bind in both directions.
+> What was wrong is the **sub-game our package was filed under**.
+>
+> Our `submit_audit` envelope was `{sender, records, result_claim}` and **named no sub-game**, so
+> the only way to file it is by when it arrives — and we do not cross the boundary together. Our
+> peer sends its package and then waits up to 20 s for yours before advancing, so yours always
+> landed while we were still on `n` and we filed it correctly (which is why our side read
+> `Verified OK` all series and never showed us the other direction). Yours advances immediately,
+> and in the capture sub-games it reaches the ending first. Our sub-game `n` reveal therefore
+> landed in your `n+1` bucket, every time.
+>
+> That single off-by-one produces everything you measured: 0-of-N binding; the 15 records you got
+> for game 6 are our **game 5** package (14 records + our step-0 system-spec record); the game-5
+> commit you spotted is not the only one, they all are; and **the inverted role labels are the
+> tell** — roles alternate, so a package read one index late is always the opposite role.
+>
+> **What we changed:**
+> 1. The envelope now carries **`sub_game` and `sub_game_number`**, and every sealed record
+>    mirrors both spellings inside the payload — so you can bucket by envelope or by content.
+> 2. The package is **frozen the instant a sub-game ends**, not read off the running engine
+>    afterwards. Your first turn of `n+1` could reach us before we had taken it.
+> 3. The package carries the **role that played that sub-game**, not the role we hold now.
+> 4. We reveal the **commitment we actually sent**, instead of re-deriving it at audit time.
+>    Re-deriving is what let a broken package pass its own verification.
+> 5. Our step-0 system-spec record is **sealed once per sub-game**, not re-minted per call — a
+>    retried `submit_audit` was revealing one claim under two commitments.
+> 6. A terminal win claim can no longer ride a **previous** sub-game's turn message.
+>
+> We also stopped filing *your* reveal by arrival: we read your envelope, then your records'
+> `sub_game_number`, and only then fall back to our own index.
+>
+> **Verified locally, as you asked.** Before every `submit_audit` we now run your check against
+> our own package — for each commitment sent in play, a revealed record whose
+> `sha256(canonical(payload) + "|" + nonce)` reproduces it exactly, and nothing from another
+> sub-game — and file the result into our log artifact. It is also runnable offline over any
+> played match: `p2p-pursuit verify --dir <match dir>`. A full six-sub-game run under your
+> contract, two peers over real HTTP: 6/6 `Verified OK` both sides, every package filed under its
+> own index, consensus digests equal, `confirmed: true`.
+>
+> **One thing we cannot fix from our side.** The envelope only helps if your `submit_audit` reads
+> it. If it still files by arrival and ignores both the envelope keys and `sub_game_number` in the
+> payloads, the same off-by-one returns with our records correct and filed wrong again. Please
+> confirm which of the two you will bucket on. If extra envelope keys are a problem for your
+> handler, say so and we will drop them — the index is in every payload either way.
+>
+> **Next run:** `game_id = AHK-DEMO4` (your §13 makes a completed series immutable, so the label
+> has to change), same terms, `game_uid` unchanged at
+> `ab6022d2-716a-f5b3-556e-43f70ffa7b09`. We will send our runtime SHAs and tunnel URL
+> immediately before we start. Ready when you are.
 
 ## 5. Still open before anything counted
 

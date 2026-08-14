@@ -10,14 +10,45 @@ from ..domain.rules import POLICE
 from .turn_engine import TurnEngine
 
 
-def audit_package(engine: TurnEngine) -> dict[str, Any]:
-    """Everything the opponent needs to audit us: the full sealed log, nonces included."""
+def audit_package(engine: TurnEngine, sub_game: int | None = None) -> dict[str, Any]:
+    """Everything the opponent needs to audit us: the sealed log, nonces included.
+
+    Taken from the frozen ledger rather than off the running engine, and stamped
+    with the sub-game it belongs to. Both matter: the engine's `my_records` is
+    emptied at every boundary and refilled by the next sub-game, and a package
+    that does not name its own index can only be filed by *when it arrives* -
+    which is how a clean sub-game N reveal ends up audited against sub-game N+1.
+
+    ``hashes`` are the commitments we actually put on the wire, paired with the
+    records that produced them. Anything downstream reveals those bytes; it
+    never re-derives a commitment at audit time.
+    """
+    snapshot = engine.audit_snapshot(sub_game)
+    n = snapshot["sub_game"]
+    records, hashes = _only_sub_game(snapshot, n)
     return {
         "kind": "audit_package",
-        "role": engine.role,
-        "sub_game": engine.sub_game,
-        "records": engine.my_records,
+        "role": snapshot["role"],
+        "sub_game": n,
+        "sub_game_number": n,
+        "records": records,
+        "hashes": hashes,
     }
+
+
+def _only_sub_game(snapshot: dict[str, Any], n: int) -> tuple[list[dict], list[str]]:
+    """Drop anything that does not belong to sub-game ``n``, hashes in step.
+
+    The ledger is written per sub-game, so this should never remove anything;
+    it is here because "reveal only records belonging to that exact sub-game"
+    is a property worth enforcing rather than assuming.
+    """
+    records, hashes = [], []
+    for record, commit in zip(snapshot["records"], snapshot["hashes"], strict=False):
+        if record.get("sub_game", n) == n:
+            records.append(record)
+            hashes.append(commit)
+    return records, hashes
 
 
 def _barriers_before_step(engine: TurnEngine) -> Any:
@@ -42,7 +73,7 @@ def run_audit(engine: TurnEngine, package: dict[str, Any]) -> tuple[str, list[st
     opp_start = engine.shared.thief_start if engine.role == POLICE else engine.shared.cop_start
     return audit_opponent(
         entries=package["records"],
-        live_hashes=engine.opp_hashes,
+        live_hashes=engine.opponent_hashes_for(package.get("sub_game", engine.sub_game)),
         live_public=engine.opp_public,
         role=engine.other,
         start_pos=opp_start,

@@ -56,9 +56,13 @@ def _audit_wait(rt: Any) -> float:
 def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
     """Mutual audit, log artifact and score row for one finished sub-game."""
     engine = rt.engine
+    # Frozen at the moment sub-game n ended, and stamped with n. Both halves
+    # matter: the running engine's records are emptied at the boundary, and a
+    # package that does not name its index can only be filed by arrival time.
+    package = audit_bridge.audit_package(engine, n)
     their_view = {"verdict": "not received", "violations": []}
     with contextlib.suppress(DeadlineExpiredError):
-        their_view = rt.deadline.call(rt.link.audit, audit_bridge.audit_package(engine))
+        their_view = rt.deadline.call(rt.link.audit, package)
     got = rt.service.wait_for_audit(n, _audit_wait(rt))
     my_verdict = rt.service.audit_verdicts.get(
         n, {"verdict": "no package received", "violations": []})
@@ -70,9 +74,10 @@ def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
         ending, winner = TECHNICAL_LOSS, engine.role
         cause = f"opponent log {my_verdict['verdict']}"
     p_score, t_score = engine.score_table.score(ending)
-    audit_blob = {"mine_of_them": my_verdict, "theirs_of_us": their_view}
+    audit_blob = {"mine_of_them": my_verdict, "theirs_of_us": their_view,
+                  "my_reveal_binds": _reveal_self_check(rt, n)}
     log = log_manager.build_log(engine, opp_records, game_uid=rt.game_uid,
-                                game_id=rt.game_id, audit=audit_blob)
+                                game_id=rt.game_id, audit=audit_blob, package=package)
     log_manager.write_log(log, rt.out_dir)
     artifacts.write_config_copy(rt.out_dir, rt.game_id, n, rt.shared.raw, rt.game_uid)
     row = results.sub_game_row(
@@ -90,6 +95,20 @@ def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
     log_fn(f"[{rt.role}] sub-game {n}: {ending} winner={winner} ({cause}) "
            f"audit={my_verdict['verdict']}")
     return row
+
+
+def _reveal_self_check(rt: Any, n: int) -> dict[str, Any]:
+    """Our own verdict on our own reveal, filed next to theirs.
+
+    We ask the opponent to prove every commitment they sent is revealed; the
+    same claim about us belongs in our artifact, checked rather than asserted.
+    """
+    checks = getattr(rt.bridge, "reveal_self_checks", None)
+    if checks is None or n not in checks:
+        return {"verdict": "not applicable (native dialect)", "violations": []}
+    violations = checks[n]
+    return {"verdict": VERIFIED_OK if not violations else "BINDING FAILED",
+            "violations": violations}
 
 
 def _their_group_id(rt: Any) -> str:

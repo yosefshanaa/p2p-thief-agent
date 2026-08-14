@@ -20,6 +20,20 @@ KIND_SURVIVAL_CLAIM = "survival_claim"
 
 PRIVATE_FIELDS = ("pos_before", "pos_after", "move", "intent", "nonce")
 
+#: The reference family's spelling of ``sub_game``. Mirrored into every sealed
+#: record so a peer auditing us can bucket our reveal by *content* instead of by
+#: arrival time. Bucketing an audit package by when it lands is unsound - the
+#: two peers cross a sub-game boundary at different instants - and it is what
+#: made amireman file our sub-game N reveal against their sub-game N+1: 0 of N
+#: commitments bound, and under role alternation every role label read inverted.
+#: Sealed with the record, never added at audit time, so it is covered by the
+#: same commitment as everything else in the payload.
+SUB_GAME_KEY = "sub_game_number"
+
+
+def _sub_game_keys(sub_game: int) -> dict[str, int]:
+    return {"sub_game": sub_game, SUB_GAME_KEY: sub_game}
+
 
 def step_record(
     *,
@@ -38,7 +52,7 @@ def step_record(
     return {
         "kind": KIND_STEP,
         "role": role,
-        "sub_game": sub_game,
+        **_sub_game_keys(sub_game),
         "step": step,
         "pos_before": list(pos_before),
         "pos_after": list(pos_after),
@@ -57,7 +71,7 @@ def capture_answer_record(
     return {
         "kind": KIND_CAPTURE_ANSWER,
         "role": role,
-        "sub_game": sub_game,
+        **_sub_game_keys(sub_game),
         "at_step": at_step,
         "claim_cell": list(claim_cell),
         "answer": answer,
@@ -69,14 +83,29 @@ def captured_event_record(*, role: str, sub_game: int, at_step: int, cause: str)
     return {
         "kind": KIND_CAPTURED_EVENT,
         "role": role,
-        "sub_game": sub_game,
+        **_sub_game_keys(sub_game),
         "at_step": at_step,
         "cause": cause,
     }
 
 
 def survival_claim_record(*, role: str, sub_game: int, steps: int) -> dict[str, Any]:
-    return {"kind": KIND_SURVIVAL_CLAIM, "role": role, "sub_game": sub_game, "steps": steps}
+    return {"kind": KIND_SURVIVAL_CLAIM, "role": role,
+            **_sub_game_keys(sub_game), "steps": steps}
+
+
+def record_sub_game(record: dict[str, Any]) -> int | None:
+    """Which sub-game a sealed record (ours or a reference peer's) belongs to.
+
+    Reads both spellings, because this is the question an audit has to answer
+    about a record it did not write.
+    """
+    payload = record.get("payload") if isinstance(record.get("payload"), dict) else record
+    for key in ("sub_game", SUB_GAME_KEY):
+        value = payload.get(key)
+        if isinstance(value, int):
+            return value
+    return None
 
 
 def public_view(sealed: dict[str, Any], commit_hash: str) -> dict[str, Any]:

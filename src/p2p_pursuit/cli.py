@@ -106,6 +106,24 @@ def cmd_replay(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_verify(args: argparse.Namespace) -> int:
+    """Re-check a played match's sealed logs: does every commitment bind?"""
+    report = PursuitSDK().audit_binding(Path(args.dir))
+    for row in report["sub_games"]:
+        mine = "OK " if row["mine_binds"] else "FAIL"
+        theirs = ("OK " if row["theirs_binds"] else "FAIL") \
+            if row["their_reveal_received"] else "none"
+        _err(f"  g{row['sub_game']:02d} {row['role']:6s} "
+             f"{row['records']:3d} records / {row['commitments_sent']:3d} sent  "
+             f"ours={mine}  theirs={theirs}")
+        for violation in row["mine_violations"] + row["theirs_violations"]:
+            _err(f"        {violation}")
+    _err(f"[verify] our reveal binds: {report['mine_binds']}; "
+         f"theirs: {report['theirs_binds']} ({report['reveals_received']} received)")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["mine_binds"] and report["theirs_binds"] else 3
+
+
 def cmd_smoke(args: argparse.Namespace) -> int:
     probe = PursuitSDK().smoke(args.url)
     if probe["reachable"]:
@@ -154,6 +172,12 @@ def main(argv: list[str] | None = None) -> int:
     replay.add_argument("--log", required=True)
     replay.add_argument("--no-gui", action="store_true")
     replay.set_defaults(fn=cmd_replay)
+
+    verify = sub.add_parser(
+        "verify", help="re-check a played match: every commitment sent in play "
+                       "must be revealed as the same (payload, nonce)")
+    verify.add_argument("--dir", required=True, help="a match output directory")
+    verify.set_defaults(fn=cmd_verify)
 
     smoke = sub.add_parser("smoke", help="probe a peer's MCP endpoint")
     smoke.add_argument("url")

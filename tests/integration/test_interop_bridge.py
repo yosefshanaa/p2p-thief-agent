@@ -46,9 +46,19 @@ class _FakeEngine:
         self.opp_hashes: list[str] = []
         self.end = None
         self.technical: list[tuple] = []
+        self.commit_dialect = REFERENCE
+        self.audit_ledger: dict = {}
 
     def declare_technical(self, offender, reason):
         self.technical.append((offender, reason))
+
+    def opponent_hashes_for(self, n):
+        return list(self.opp_hashes) if n == self.sub_game else []
+
+    def audit_snapshot(self, n=None):
+        n = self.sub_game if n is None else n
+        return {"sub_game": n, "role": self.role, "records": [], "hashes": [],
+                "opp_hashes": []}
 
 
 class _FakeService:
@@ -190,12 +200,87 @@ def test_their_audit_is_verified_on_their_terms_and_filed_for_the_pipeline():
 
 def test_our_audit_package_is_resealed_into_their_envelope():
     bridge, service, peer = _bridge()
-    sealed, _ = seal({"kind": "step", "step": 1}, REFERENCE)
-    bridge.audit({"role": "police", "records": [sealed]})
-    sent = peer.audits[0]["records"][0]
+    sealed, commit = seal({"kind": "step", "step": 1}, REFERENCE)
+    bridge.audit({"role": "police", "records": [sealed], "hashes": [commit]})
+    # records[0] is the step-0 system spec; ours is what follows it.
+    sent = peer.audits[0]["records"][1]
     assert set(sent) == {"payload", "nonce", "commit"}
     assert "nonce" not in sent["payload"]
     assert reference_commit(sent["payload"], sent["nonce"]) == sent["commit"]
+
+
+def test_our_audit_envelope_names_the_sub_game_it_is_for():
+    """A package that names no index can only be filed by arrival time, and the
+    two peers do not cross a boundary together - which is how our sub-game 5
+    reveal was audited against amireman's sub-game 6."""
+    bridge, _, peer = _bridge()
+    sealed, commit = seal({"kind": "step", "step": 1, "sub_game": 5}, REFERENCE)
+    bridge.audit({"role": "thief", "sub_game": 5, "records": [sealed],
+                  "hashes": [commit]})
+    envelope = peer.audits[0]
+    assert envelope["sub_game"] == envelope["sub_game_number"] == 5
+
+
+def test_the_revealed_commit_is_the_live_one_not_a_fresh_derivation():
+    bridge, _, peer = _bridge()
+    sealed, commit = seal({"kind": "step", "step": 1, "sub_game": 1}, REFERENCE)
+    bridge.audit({"role": "police", "sub_game": 1, "records": [sealed],
+                  "hashes": [commit]})
+    revealed = peer.audits[0]["records"][-1]
+    assert revealed["commit"] == commit
+    assert reference_commit(revealed["payload"], revealed["nonce"]) == commit
+
+
+def test_the_step_0_system_spec_is_sealed_once_not_reminted_per_call():
+    """`submit_audit` is retried on a flaky link. A record resealed per attempt
+    reveals one claim under two commitments - a nonce generated at audit time."""
+    bridge, _, peer = _bridge()
+    package = {"role": "police", "sub_game": 1, "records": [], "hashes": []}
+    bridge.audit(package)
+    bridge.audit(package)
+    first, second = (audit["records"][0] for audit in peer.audits)
+    assert first["payload"]["type"] == "system_spec"
+    assert (first["nonce"], first["commit"]) == (second["nonce"], second["commit"])
+
+
+def test_a_reveal_that_does_not_bind_is_caught_before_it_is_sent():
+    """Both halves of the check the opponent asked us to run locally: a payload
+    that no longer hashes to its commitment, and a commitment with no record."""
+    bridge, _, _ = _bridge()
+    sealed, commit = seal({"kind": "step", "step": 1, "sub_game": 1}, REFERENCE)
+
+    bridge.audit({"role": "police", "sub_game": 1, "records": [sealed],
+                  "hashes": ["f" * 64]})
+    assert any("not to its own commitment" in v for v in bridge.reveal_self_checks[1])
+
+    bridge.audit({"role": "police", "sub_game": 2, "records": [sealed],
+                  "hashes": [commit, "e" * 64]})
+    assert any("sent in play and is not revealed" in v
+               for v in bridge.reveal_self_checks[2])
+
+
+def test_their_reveal_is_filed_by_the_sub_game_it_names_not_by_when_it_lands():
+    engine = _FakeEngine()
+    engine.sub_game = 6  # we have moved on; their package is for the one before
+    engine.audit_ledger[5] = {"sub_game": 5, "role": "thief", "records": [],
+                              "hashes": [], "opp_hashes": []}
+    bridge, service, _ = _bridge(service=_FakeService(engine))
+    bridge.on_submit_audit({"sender": "thief", "sub_game": 5, "records": []})
+    assert 5 in service.audit_packages and 6 not in service.audit_packages
+
+
+def test_their_reveal_is_filed_by_its_records_when_the_envelope_is_silent():
+    engine = _FakeEngine()
+    engine.sub_game = 6
+    engine.audit_ledger[5] = {"sub_game": 5, "role": "thief", "records": [],
+                              "hashes": [], "opp_hashes": []}
+    bridge, service, _ = _bridge(service=_FakeService(engine))
+    payload = {"step": 1, "position": [3, 3], "sub_game_number": 5}
+    nonce = "0" * 32
+    bridge.on_submit_audit({"sender": "thief", "records": [
+        {"payload": payload, "nonce": nonce,
+         "commit": reference_commit(payload, nonce)}]})
+    assert 5 in service.audit_packages
 
 
 def test_we_cannot_claim_their_verdict_of_us_in_this_dialect():

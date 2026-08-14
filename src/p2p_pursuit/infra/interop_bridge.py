@@ -20,7 +20,7 @@ import queue
 from datetime import UTC, datetime
 from typing import Any
 
-from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT
+from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, record_sub_game
 from ..domain.rules import THIEF
 from . import interop_codec as codec
 from .transport import LinkError
@@ -40,6 +40,14 @@ class ReferenceBridge:
         self._owed_claim_response: dict | None = None
         self._owed_win_claim: dict | None = None
         self._last_turn: dict | None = None
+        #: The sub-game `_last_turn` belongs to. A terminal claim is sent by
+        #: repeating the last turn, so a stale one would replay a *previous*
+        #: sub-game's commitment into this one's live stream.
+        self._last_turn_sub_game: int | None = None
+        #: Step-0 system-spec record per sub-game, sealed once (never at audit time).
+        self._system_specs: dict[int, tuple[dict[str, Any], str]] = {}
+        #: Per-sub-game result of auditing our own reveal before sending it.
+        self.reveal_self_checks: dict[int, list[str]] = {}
         #: Their series digest, once an envelope passes the §10.3 gate.
         self.peer_consensus_sha: str | None = None
 
@@ -90,11 +98,11 @@ class ReferenceBridge:
             self._accept_consensus(payload, peer_role=engine.other)
             return {"ok": True}
         records = payload.get("records", [])
+        n = self._declared_sub_game(payload, engine)
         verdict, violations = audit_reference_log(
-            records, engine.opp_hashes, grid_size=self.grid_size)
+            records, engine.opponent_hashes_for(n), grid_size=self.grid_size)
         cv = self.service.locked()
         with cv:
-            n = engine.sub_game
             self.service.audit_packages[n] = {
                 "kind": "audit_package", "role": payload.get("sender", engine.other),
                 "sub_game": n, "records": records}
@@ -106,6 +114,27 @@ class ReferenceBridge:
     def on_receive_control(self, message: dict) -> dict:
         """Advisory channel we do not act on; accepted so their peer is not stalled."""
         return {"ok": True}
+
+    def _declared_sub_game(self, payload: dict, engine: Any) -> int:
+        """Which sub-game an inbound reveal is *for* - asked, not assumed.
+
+        Filing by arrival is the bug we are fixing on our own side of the wire,
+        so we stop doing it here too. The envelope is authoritative if it says;
+        otherwise the records do, because ours and theirs both carry the index
+        in every payload. Only then does the index we happen to be on decide.
+        """
+        for key in ("sub_game", "sub_game_number"):
+            value = payload.get(key)
+            if isinstance(value, int) and value > 0:
+                return value
+        declared = {n for n in (record_sub_game(r) for r in payload.get("records", []))
+                    if n is not None}
+        if len(declared) == 1:
+            return declared.pop()
+        if len(declared) > 1:
+            log.warning("their reveal spans sub-games %s - filing it against ours (%s)",
+                        sorted(declared), engine.sub_game)
+        return engine.sub_game
 
     # -- series consensus (their §10.3) --------------------------------------
     def _accept_consensus(self, payload: dict, *, peer_role: str) -> None:
@@ -219,6 +248,7 @@ class ReferenceBridge:
         self._commit_hash = None
         self._owed_claim_response = self._owed_win_claim = None
         self._last_turn = message
+        self._last_turn_sub_game = self.service.engine.sub_game
         self.link.receive_turn(message, timeout=timeout)
         return {"ok": True, "events": []}
 
@@ -268,6 +298,19 @@ class ReferenceBridge:
         if self._last_turn is None or (
                 self._owed_win_claim is None and self._owed_claim_response is None):
             return
+        if self._last_turn_sub_game != self.service.engine.sub_game:
+            # The last turn we sent belongs to a finished sub-game. Repeating it
+            # now would put a previous sub-game's commitment into this one's live
+            # stream - a commitment this sub-game's reveal correctly does not
+            # contain, which reads to the opponent as a withheld record.
+            log.warning("terminal claim for sub-game %s has no turn of its own to "
+                        "ride (last turn was sub-game %s) - dropped rather than "
+                        "replaying a settled sub-game's commitment",
+                        self.service.engine.sub_game, self._last_turn_sub_game)
+            self._last_turn = None
+            self._last_turn_sub_game = None
+            self._owed_win_claim = self._owed_claim_response = None
+            return
         final = dict(self._last_turn)
         if self._owed_win_claim is not None:
             final["win_claim"] = self._owed_win_claim
@@ -288,17 +331,51 @@ class ReferenceBridge:
         Their ``submit_audit`` answers ``{"ok": True}``: a reference peer keeps
         its verdict of us to itself, so unlike a native match we cannot report
         what they made of our log - only that they received it.
+
+        The envelope **names its sub-game**. Without that the receiver has only
+        one way to file it - against whichever index it has reached by the time
+        the message lands - and the two peers do not cross a boundary at the
+        same instant. Ours waits up to 20 s for their package before advancing;
+        a peer that does not wait is already on n+1 when our sub-game n reveal
+        arrives, files it there, and finds that none of its n+1 commitments
+        bind and (under alternation) that every role label reads inverted.
+        Both spellings are sent, and every record carries the index too, so it
+        can be filed by content whichever key the reader looks for.
         """
+        n = package.get("sub_game", self.service.engine.sub_game)
         end = self.service.engine.end
+        spec, spec_hash = self._system_spec_record(n)
         records = codec.reference_records(
-            [self._system_spec_record(), *package["records"]])
+            [spec, *package["records"]], [spec_hash, *package.get("hashes", [])])
+        self._self_check(records, package, n)
         self.link.submit_audit(
             {"sender": package["role"],
+             "sub_game": n,
+             "sub_game_number": n,
              "records": records,
              "result_claim": end.ending if end else "unknown"}, timeout=timeout)
         return {"verdict": "not reported (reference dialect)", "violations": []}
 
-    def _system_spec_record(self) -> dict[str, Any]:
+    def _self_check(self, records: list[dict], package: dict, n: int) -> None:
+        """Audit our own package as they will, and say so before it goes out.
+
+        A reveal that does not bind is a technical loss whoever notices it, so
+        the only useful moment to find out is here - not from the opponent, a
+        sub-game later, with the series already spent.
+        """
+        from .interop_audit import verify_outgoing_reveal
+
+        violations = verify_outgoing_reveal(
+            records, package.get("hashes", []), sub_game=n, role=package["role"])
+        if violations:
+            log.error("sub-game %s: our own reveal FAILS its binding self-check "
+                      "(%d violations): %s", n, len(violations), "; ".join(violations[:5]))
+        else:
+            log.info("sub-game %s: reveal self-check OK - %d records bind %d live "
+                     "commitments", n, len(records), len(package.get("hashes", [])))
+        self.reveal_self_checks[n] = violations
+
+    def _system_spec_record(self, sub_game: int) -> tuple[dict[str, Any], str]:
         """The step-0 record naming the code that played this sub-game.
 
         A reference peer reads `github_commit` out of our *revealed records* and
@@ -306,11 +383,23 @@ class ReferenceBridge:
         come from, so omitting the record does not leave their report blank -
         it leaves it saying `unknown` about us. Sealed like any other record so
         the claim is bound rather than asserted.
+
+        Sealed **once per sub-game and cached**: this used to mint a fresh nonce
+        on every call, so a retried `submit_audit` revealed the same claim under
+        two different commitments. Nothing about an audit may be generated at
+        audit time.
         """
-        from ..domain.crypto import new_nonce
+        cached = self._system_specs.get(sub_game)
+        if cached is not None:
+            return cached
+        from ..domain.crypto import commit_digest, new_nonce
         from ..shared import sysinfo
 
         engine = self.service.engine
-        return {"kind": "system_spec", "type": "system_spec", "step": 0,
-                "role": engine.role, "sub_game": engine.sub_game,
-                "github_commit": sysinfo.git_commit(), "nonce": new_nonce()}
+        record = {"kind": "system_spec", "type": "system_spec", "step": 0,
+                  "role": engine.audit_snapshot(sub_game)["role"],
+                  "sub_game": sub_game, "sub_game_number": sub_game,
+                  "github_commit": sysinfo.git_commit(), "nonce": new_nonce()}
+        sealed = (record, commit_digest(record, engine.commit_dialect))
+        self._system_specs[sub_game] = sealed
+        return sealed

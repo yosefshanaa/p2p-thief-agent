@@ -23,6 +23,13 @@ from ..domain.board import MOVES, Cell
 from ..domain.rules import POLICE, THIEF
 
 BARRIERS_IN_STATE = re.compile(r"barriers=(\[.*?\])\s*(?:;|$)")
+#: Some reference-family peers put the position *inside* the state string
+#: (``"grid=7;self=[0, 1]"``) instead of a `pos_after`/`position` field. Without
+#: this, every one of their records is dropped for having no position and the
+#: whole match clones to nothing - measured on amireman 2026-08-14, where 244
+#: sealed opponent records yielded 0 decisions and the failure looked identical
+#: to "they sent no audit package".
+SELF_IN_STATE = re.compile(r"self=\[\s*(\d+)\s*,\s*(\d+)\s*\]")
 
 
 @dataclass(frozen=True)
@@ -67,17 +74,31 @@ def _barriers_of(payload: dict) -> list[Cell]:
         return []
 
 
+def _position_of(payload: dict) -> Cell | None:
+    """The mover's own cell, from a field or from the state string.
+
+    Three spellings in the wild and no way to know which a peer uses until its
+    log arrives, so all three are tried rather than one being assumed.
+    """
+    for key in ("pos_after", "position"):
+        value = payload.get(key)
+        if isinstance(value, list) and len(value) == 2:
+            return (int(value[0]), int(value[1]))
+    found = SELF_IN_STATE.search(str(payload.get("state", "")))
+    return (int(found.group(1)), int(found.group(2))) if found else None
+
+
 def _steps(records: list[dict]) -> list[dict]:
     """Normalise either dialect to {step, pos, move, barrier, barriers}."""
     out = []
     for record in records:
         payload = record.get("payload") if isinstance(record.get("payload"), dict) else record
         move = _move_of(payload.get("move"))
-        position = payload.get("pos_after") or payload.get("position")
-        if move is None or not isinstance(position, list) or len(position) != 2:
+        position = _position_of(payload)
+        if move is None or position is None:
             continue
         out.append({"step": int(payload.get("step", len(out) + 1)),
-                    "pos": tuple(position), "move": move,
+                    "pos": position, "move": move,
                     "barrier": payload.get("barrier"),
                     "barriers": _barriers_of(payload)})
     return sorted(out, key=lambda s: s["step"])

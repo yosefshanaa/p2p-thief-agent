@@ -1,0 +1,20 @@
+{
+  "team": "amireman-v1",
+  "source": "matches/amireman-demo1/police-AHK-DEMO1-20260814T010658",
+  "samples": 78,
+  "agreement": {
+    "thief": 0.6154
+  },
+  "weights": {
+    "thief": {
+      "pursuer_dist": -0.9625933620168756,
+      "mobility": -0.24734585716977975,
+      "mobility2": 3.483644322387798,
+      "edge": 1.4340386415192334,
+      "centre": -1.7488755337421575,
+      "stay": -2.996809819982368,
+      "straight": 0.364755932396732,
+      "reverse": -3.338684593525777
+    }
+  }
+}
