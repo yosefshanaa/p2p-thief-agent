@@ -171,6 +171,7 @@ class TurnEngine(EngineState):
         """Process the opponent's public reveal; may return forced events (capture)."""
         self._note_opp(self._pending_commit or pub.get("hash", ""), pub)
         self._pending_commit = None
+        self.opp_turn_times.append(pub.get("timestamp"))
         self.opp_steps += 1
         barrier = tuple(pub["barrier"]) if pub.get("barrier") else None
         self.history.append({"role": self.other, "step": self.opp_steps, "barrier": barrier})

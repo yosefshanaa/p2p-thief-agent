@@ -279,6 +279,22 @@ advertising one commit; two published repos with their own HEADs). One runtime c
 both roles on their side too, so the DEMO1 concern about an unpatched Police half is
 closed.
 
+**Superseded again after DEMO4** (received 2026-08-14, fourth message):
+
+```
+amireman UNIFIED runtime SHA:  9fc75f5832388bc62433c99d55dffa81db8b06b7
+                               (supersedes e1622992…)
+amireman police REPO SHA:      cc26a88a636351bc4fefd050b0aeea055b3f1cc1  (unchanged)
+```
+
+Their stated reason is a **final-consensus receive** fix. Worth recording that our
+own DEMO4 artifacts show the exchange succeeding *from our chair* -
+`consensus e515ef812eb2… peer=e515ef812eb2… match=True confirmed=True` - so we
+received and accepted theirs. Whatever they repaired was on their side of the same
+exchange, which means DEMO4's `confirmed` was very likely asymmetric: true for us,
+false for them. Worth one line at the G011 debrief to check both sides now report
+`confirmed: true`, since §10.4 is a per-side gate and only ours was ever proven.
+
 **They fixed the receive side.** They now bucket our incoming audit explicitly by
 `sub_game_number`, which is the half our own fix cannot supply (§4d, "what is still on
 their side"). Verified against our real code path 2026-08-14 - the envelope we emit is

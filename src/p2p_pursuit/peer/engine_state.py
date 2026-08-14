@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import random
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
 
 from ..domain import protocol
@@ -21,6 +22,10 @@ from ..domain.scoring import TECHNICAL_LOSS, ScoreTable
 from ..domain.trust import TrustModel
 from ..shared.config import PeerConfig, SharedConfig
 from .state_machine import GamePhaseMachine
+
+
+def _now() -> str:
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass
@@ -125,6 +130,8 @@ class EngineState:
         self.history: list[dict] = []  # interleaved {role, step, barrier} for audit timing
         self.hint_feed: list[dict] = []  # GUI: sent/received banter, local truth only
         self._pending_commit: str | None = None
+        self.started_at = _now()
+        self.opp_turn_times: list[str | None] = []
         self.machine.reset()
 
     @property
@@ -151,6 +158,17 @@ class EngineState:
             return self.my_steps == self.opp_steps
         return self.my_steps < self.opp_steps
 
+    def mark_started(self) -> None:
+        """Start this sub-game's clock at the moment play does.
+
+        `start_sub_game` runs from the constructor for sub-game 1, minutes
+        before the handshake, so sub-game 1 otherwise reports a start time
+        earlier than the declaration's. Guarded on nothing having been played,
+        so re-entering a sub-game already in progress cannot rewind its clock.
+        """
+        if not self.my_records and not self.opp_hashes:
+            self.started_at = _now()
+
     # -- the audit ledger ---------------------------------------------------
     def freeze_audit(self) -> dict[str, Any] | None:
         """Seal this sub-game's reveal into the ledger, once and for good.
@@ -162,17 +180,27 @@ class EngineState:
         overwrite a package we have already handed out.
         """
         n = getattr(self, "sub_game", 0)
-        records = getattr(self, "my_records", None)
-        if n <= 0 or not records or n in self.audit_ledger:
+        if n <= 0 or not hasattr(self, "my_records") or n in self.audit_ledger:
             return self.audit_ledger.get(n)
+        # Anything played counts, from either side: a sub-game where only the
+        # opponent moved still has their commitments and their clock to preserve,
+        # and gating on our own records alone loses both.
+        if not (self.my_records or self.opp_hashes or self.end is not None):
+            return None
         snapshot = {
             "sub_game": n,
             "role": self.role,
-            "records": copy.deepcopy(records),
+            "records": copy.deepcopy(self.my_records),
             "hashes": list(self.my_hashes),
             # What the opponent committed to *in play* here, so their reveal can
             # still be audited against the right sub-game when it arrives late.
             "opp_hashes": list(self.opp_hashes),
+            # Frozen with the records, and for the same reason: the log is
+            # written after the audit exchange, so reading the clock then would
+            # time the paperwork rather than the sub-game.
+            "started_at": self.started_at,
+            "ended_at": _now(),
+            "opp_turn_times": list(self.opp_turn_times),
         }
         self.audit_ledger[n] = snapshot
         return snapshot
@@ -195,7 +223,8 @@ class EngineState:
             self.freeze_audit()
         return self.audit_ledger.get(
             n, {"sub_game": n, "role": self.role, "records": [], "hashes": [],
-                "opp_hashes": []})
+                "opp_hashes": [], "started_at": self.started_at, "ended_at": None,
+                "opp_turn_times": []})
 
     def _record(self, sealed: dict, commit_hash: str) -> dict:
         self.my_records.append(sealed)

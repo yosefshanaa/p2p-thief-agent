@@ -32,7 +32,23 @@ def write_declaration(rt: Any, theirs: dict[str, Any]) -> None:
         scent_model_sha256=negotiation.scent_model_sha256(rt.peer.scent_model),
         token_cap=rt.shared.network.get("token_budget_per_series", 200000),
         me=me, opponent=opp)
+    rt.declaration = decl
     artifacts.write_declaration(rt.out_dir, rt.game_id, decl)
+
+
+def close_declaration(rt: Any) -> dict[str, Any] | None:
+    """Stamp the series' finish time onto the declaration and rewrite it.
+
+    Runs after the last sub-game and the consensus exchange, so `ended_at` is
+    the end of the match rather than the end of the reporting. Best effort: a
+    declaration that cannot be re-sealed must not discard a played series.
+    """
+    decl = getattr(rt, "declaration", None)
+    if not decl:
+        return None
+    rt.declaration = declarations.close_declaration(decl)
+    artifacts.write_declaration(rt.out_dir, rt.game_id, rt.declaration)
+    return rt.declaration
 
 
 #: A reference-derived peer negotiates the next sub-game the instant it finishes

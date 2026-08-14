@@ -51,3 +51,21 @@ def build_declaration(
     }
     body["declaration_sha256"] = digest(dict(body))
     return body
+
+
+def close_declaration(declaration: dict[str, Any],
+                      ended_at: str | None = None) -> dict[str, Any]:
+    """Stamp the finish time onto a declaration and re-seal it.
+
+    ``ended_at`` was a field the builder set to ``None`` and nothing ever wrote
+    back, so every filed declaration - the artifact the lecturer receives -
+    claimed a start and no end, and the only end time in the whole match lived
+    in a different file. The hash is recomputed over the same rule the builder
+    uses (everything except the key itself), or the re-stamped document would
+    fail its own integrity check.
+    """
+    body = {key: value for key, value in declaration.items()
+            if key != "declaration_sha256"}
+    body["ended_at"] = ended_at or datetime.now(UTC).isoformat(timespec="seconds")
+    body["declaration_sha256"] = digest(dict(body))
+    return body
