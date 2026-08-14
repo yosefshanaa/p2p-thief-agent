@@ -95,6 +95,41 @@ def test_signed_num_games_defaults_to_what_is_played() -> None:
     assert make_peer("police").signed_num_games is None
 
 
+# -- §3: a mutually agreed game_id label -------------------------------------
+def test_game_id_label_overrides_the_derived_id(monkeypatch) -> None:
+    monkeypatch.setenv("P2P_GAME_ID", "AHK-DEMO1")
+    assert apply_env_overrides(make_peer("police")).game_id_label == "AHK-DEMO1"
+
+
+def test_no_label_means_derive_it() -> None:
+    assert make_peer("police").game_id_label == ""
+
+
+def test_the_label_reaches_the_consensus_digest() -> None:
+    """Their §3: `game_id` is part of the consensus hash, so a label set on one
+    side only is a guaranteed mismatch at the end of a clean series."""
+    from p2p_pursuit.report.consensus import consensus_document, consensus_sha
+
+    rows = [{"index": 1, "ending": "survival",
+             "roles": {"ahk-yosi": "police", "amireman": "thief"},
+             "score": {"ahk-yosi": 5, "amireman": 10}, "winner_group": "amireman"}]
+    derived = consensus_sha(consensus_document(
+        game_id="ahk-yosi-vs-amireman", game_uid="u", rows=rows))
+    labelled = consensus_sha(consensus_document(
+        game_id="AHK-DEMO1", game_uid="u", rows=rows))
+    assert derived != labelled
+
+
+def test_the_uid_is_never_overridden_by_a_label() -> None:
+    """It is derived from the terms and both slugs - the one value that proves
+    the two peers signed the same document."""
+    from p2p_pursuit.domain.game_ids import reference_game_uid
+
+    terms = {"board_size": 7, "num_games": 6}
+    assert reference_game_uid(terms, "ahk-yosi", "amireman") == \
+        reference_game_uid(terms, "amireman", "ahk-yosi")
+
+
 # -- §10.3: the consensus envelope shares a tool with the audits -------------
 class _FakeService:
     """Just enough of PeerService for the bridge's audit path."""

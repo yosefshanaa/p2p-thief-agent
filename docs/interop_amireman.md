@@ -266,6 +266,37 @@ running something other than what it published.
 one peer on port 8802 serves both roles across the series and `mcp_servers` names the same URL
 for `cop` and `thief`. Quick-tunnel URLs rotate on restart, so this is re-shared at match time.
 
+## 4c. Settled 2026-08-14, and the demo they asked for
+
+**Answered by them:**
+- **Per-turn timeout = 180 s.** The `response_timeout_sec: 30` / `watchdog_timeout_sec: 60` in
+  their agreement JSON are local network/watchdog config and **not** part of the 14 signed terms.
+  Our committed `turn_timeout_seconds = 180` stands; no override needed.
+- **Scent serve order:** they accept our pre-emission serve (freshest cell **0.81**) as a local
+  implementation detail. The four signed scent terms and the `{"r,c": intensity}` wire shape are
+  unchanged, so `book_v1` stands.
+
+**They declined the §15 two-game smoke test** and asked to go straight to a **full six-game
+non-counted demo**:
+
+```
+game_id  = AHK-DEMO1          (mutually agreed label, NOT the derived id)
+game_uid = ab6022d2-716a-f5b3-556e-43f70ffa7b09   (never overridden)
+6 sub-games, NOT counted, no lecturer email
+amireman starts Thief; ahk-yosi starts Cop; full alternation, audits, final consensus
+```
+
+The counted match that follows will be **G011**.
+
+**This forced a fifth fix.** Their §3 allows a `game_id` label and warns it is part of the
+consensus hash — and we had no override at all (`grep P2P_GAME_ID src/` was empty). We would have
+computed `ahk-yosi-vs-amireman` against their `AHK-DEMO1` and produced a different digest at the
+final exchange: a cleanly-played six-game series failing at precisely the step the demo exists to
+prove. Now `P2P_GAME_ID`, with the uid deliberately left underived-from-it.
+
+Rehearsed locally under the label: `game_id=AHK-DEMO1` and
+`uid=ab6022d2-716a-f5b3-556e-43f70ffa7b09` on both peers, digests equal, `confirmed: true`.
+
 ## 5. Still open before anything counted
 
 - [ ] Their answers to the five questions above — **(1) the timeout contradiction is the blocking
