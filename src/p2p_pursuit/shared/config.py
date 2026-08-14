@@ -150,6 +150,12 @@ class PeerConfig:
     #: records - which is how a clean series turns into a technical loss on the
     #: opponent's side. Only enable against a peer whose contract specifies it.
     series_consensus: bool = False
+    #: A mutually agreed `game_id` label (e.g. "AHK-DEMO1") replacing the derived
+    #: "<lo>-vs-<hi>". Both teams must set the identical string: it is a top-level
+    #: key of the consensus object, so a label on one side only guarantees a
+    #: digest mismatch at the very end of a series that otherwise played cleanly.
+    #: Empty means "derive it", which is the right default for a counted match.
+    game_id_label: str = ""
     #: How long to wait for their consensus envelope. Their §10.3 calls the wait
     #: "short and bounded" - failing to receive it costs the confirmation, not
     #: the series, so this must never approach the per-turn deadline.
@@ -233,6 +239,7 @@ def load_peer(path: Path) -> PeerConfig:
         always_claim=bool(interop.get("always_claim", False)),
         signed_num_games=interop.get("signed_num_games"),
         series_consensus=bool(interop.get("series_consensus", False)),
+        game_id_label=str(interop.get("game_id_label", "")),
         consensus_wait_sec=int(interop.get("consensus_wait_sec", 60)),
     )
 
@@ -267,6 +274,8 @@ BOOL_VARS = {
 }
 #: Signed series length, when a short run must still sign the full one.
 SIGNED_NUM_GAMES_VAR = "P2P_SIGNED_NUM_GAMES"
+#: A mutually agreed `game_id` label, replacing the derived "<lo>-vs-<hi>".
+GAME_ID_LABEL_VAR = "P2P_GAME_ID"
 TRUE, FALSE = ("1", "true", "yes", "on"), ("0", "false", "no", "off")
 
 
@@ -295,6 +304,9 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
         if model not in MODELS:
             raise ValueError(f"{SCENT_MODEL_VAR}={model!r} is not one of {MODELS}")
         patch["scent_model"] = model
+    label = (os.environ.get(GAME_ID_LABEL_VAR) or "").strip()
+    if label:
+        patch["game_id_label"] = label
     signed = (os.environ.get(SIGNED_NUM_GAMES_VAR) or "").strip()
     if signed:
         if not signed.isdigit() or int(signed) < 1:
