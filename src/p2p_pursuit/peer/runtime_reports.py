@@ -6,10 +6,11 @@ import contextlib
 from typing import Any
 
 from ..domain import declarations, game_ids, negotiation
+from ..domain.audit import VERIFIED_OK
 from ..domain.crypto import digest
 from ..domain.scoring import TECHNICAL_LOSS
 from ..infra.email_sender import send_report
-from ..report import artifacts, mutual_signature, results
+from ..report import artifacts, consensus, mutual_signature, results
 from ..shared import sysinfo
 from ..shared.gatekeeper import Gatekeeper
 from . import audit_bridge, log_manager
@@ -95,6 +96,52 @@ def _their_group_id(rt: Any) -> str:
     return (rt.service.their_handshake or {}).get("group_id") or "opponent"
 
 
+def exchange_series_consensus(rt: Any, log_fn: Any) -> dict[str, Any]:
+    """Send our series digest, wait briefly for theirs, and record both.
+
+    Deliberately never raises. Agreement is *confirmed* by a received digest
+    equal to ours, but a series that played and audited cleanly is still a
+    played series: a tunnel that dies during this last round-trip must leave
+    ``confirmed: false`` in the artifact, not an exception that discards six
+    completed sub-games. Their §13 says the same from the other direction - a
+    failed consensus is never repaired by re-running part of the old series.
+    """
+    document = consensus.consensus_document(
+        game_id=rt.game_id, game_uid=rt.game_uid, rows=rt.sub_results)
+    mine = consensus.consensus_sha(document)
+    block: dict[str, Any] = {"document": document, "consensus_sha": mine,
+                             "peer_consensus_sha": None, "sha_match": False,
+                             "confirmed": False}
+    bridge = rt.bridge
+    if bridge is None:
+        return block
+    envelope = consensus.consensus_envelope(sender=rt.engine.role, sha=mine)
+    with contextlib.suppress(Exception):
+        rt.deadline.call(bridge.submit_consensus, envelope)
+    theirs = bridge.wait_for_consensus(rt.peer.consensus_wait_sec)
+    block["peer_consensus_sha"] = theirs
+    block["sha_match"] = bool(theirs) and theirs == mine
+    # Their §10.4: confirmed needs every peer log verified untampered, every
+    # sub-game's result mutually agreed, AND a received digest equal to ours. A
+    # local hash alone is never sufficient.
+    #
+    # Deliberately NOT `results.agreement_reached`, which additionally demands
+    # the opponent's verdict *of us* - a value this dialect structurally never
+    # returns (their `submit_audit` answers `{"ok": true}` and keeps its verdict
+    # private), so requiring it would pin `confirmed` to false against every
+    # reference peer, including one that agreed perfectly. Their clause (a) is
+    # each side's own verdict of the log it received, which is `row["audit"]`;
+    # clause (b) is subsumed by the digest, since the consensus object covers
+    # every row's result, roles, score and winner.
+    block["confirmed"] = bool(
+        block["sha_match"]
+        and all(row.get("audit") == VERIFIED_OK for row in rt.sub_results))
+    log_fn(f"[{rt.role}] series consensus {mine[:12]}… peer="
+           f"{(theirs or 'none')[:12]}… match={block['sha_match']} "
+           f"confirmed={block['confirmed']}")
+    return block
+
+
 def build_result(rt: Any) -> dict[str, Any]:
     police_total = sum(r["cop_score"] for r in rt.sub_results)
     thief_total = sum(r["thief_score"] for r in rt.sub_results)
@@ -139,6 +186,8 @@ def _attach_mutual_block(rt: Any, result: dict[str, Any], theirs: dict[str, Any]
     result["diversity_reward_applied"] = {
         group: bool(rt.counted and winner == group) for group in (my_gid, their_gid)}
     result["mutual_signature"] = mutual_signature.mutual_signature(result)
+    if getattr(rt, "series_consensus", None) is not None:
+        result["series_consensus"] = rt.series_consensus
     # `build_result` sealed `result_sha256` over the body as it stood before
     # these fields existed. Recompute it, or our own integrity hash fails
     # against our own filed artifact - the same digest, over the same rule

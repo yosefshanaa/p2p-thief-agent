@@ -52,6 +52,11 @@ class PeerRuntime:
                                   self.peer.llm_base_url)
         self.engine = TurnEngine(role, self.shared, self.peer, talk=talk, seed=seed)
         self.num_games = num_games or self.shared.num_games
+        #: What the *terms* say the series is, which `--games` must not move: a
+        #: short compatibility run plays fewer sub-games by mutual agreement and
+        #: still signs the agreed length. Signing the short count instead fails
+        #: the peer's terms comparison on the one run meant to prove they agree.
+        self.signed_num_games = self.peer.signed_num_games or self.num_games
         self.game_uid = new_game_uid()
         self.game_id = make_game_id(self.peer.group_id or "us", "opponent")
         self._out_root = out_dir
@@ -79,6 +84,10 @@ class PeerRuntime:
         self.sub_results: list[dict[str, Any]] = []
         self.link: Any = None
         self.bridge: Any = None
+        #: The §10.3 exchange's outcome, or None when the opponent's contract
+        #: does not specify one - absent from the result rather than a false
+        #: "unconfirmed" against every peer that never agreed to send a digest.
+        self.series_consensus: dict[str, Any] | None = None
 
     # -- lifecycle ----------------------------------------------------------
     def make_bridge(self, link: Any) -> Any:
@@ -89,7 +98,7 @@ class PeerRuntime:
 
         return ReferenceBridge(
             self.service, link, grid_size=self.shared.grid_size,
-            terms=interop_terms(self.shared, num_games=self.num_games),
+            terms=interop_terms(self.shared, num_games=self.signed_num_games),
             identity=interop_identity(
                 self.peer, mcp_url=f"http://0.0.0.0:{self.peer.my_port}/mcp",
                 spec=sysinfo.collect(),
@@ -188,7 +197,7 @@ class PeerRuntime:
 
         their_gid = (theirs or {}).get("group_id") or "opponent"
         my_gid = self.peer.group_id or "us"
-        terms = interop_terms(self.shared, num_games=self.num_games)
+        terms = interop_terms(self.shared, num_games=self.signed_num_games)
         self.game_id = reference_game_id(my_gid, their_gid)
         self.game_uid = reference_game_uid(terms, my_gid, their_gid)
         # Their `game_id` is deterministic by design - the same two teams always
@@ -269,6 +278,8 @@ class PeerRuntime:
             for n in range(self.start_index, self.num_games + 1):
                 self.play_sub_game(n)
                 self.sub_results.append(runtime_reports.finish_sub_game(self, n, _log))
+            if self.peer.series_consensus:
+                self.series_consensus = runtime_reports.exchange_series_consensus(self, _log)
         finally:
             self.watchdog.stop()
         return self.build_result()

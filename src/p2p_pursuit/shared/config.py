@@ -129,6 +129,31 @@ class PeerConfig:
     #: into role collisions. Measured live 2026-08-01 - see RUNBOOK 3b. So the
     #: claim is a per-opponent negotiation item, exactly like the wire dialect.
     claim_enclosure: bool = True
+    #: Declare the pursuer's own post-move cell on *every* police turn instead of
+    #: letting strategy decide. Our own dialect treats a claim as a disclosure and
+    #: spends it deliberately (`claim_threshold`), which is right when the claim is
+    #: optional. Some peers specify it as protocol rather than strategy - the cop's
+    #: cell, every turn, unsuppressable - and there a withheld claim does not buy
+    #: secrecy: the opponent tests co-location only against claims it receives, so
+    #: a silent turn spent standing on the thief is a capture forfeited. Negotiated
+    #: per opponent, like the dialect. See docs/interop_amireman.md.
+    always_claim: bool = False
+    #: The `num_games` written into the *signed* terms, when that must differ from
+    #: the number of sub-games actually looped. A short compatibility run plays
+    #: fewer sub-games by mutual agreement while still signing the full series
+    #: length; signing the short count instead fails the peer's terms comparison
+    #: on the very run meant to prove the terms agree. `None` signs what is played.
+    signed_num_games: int | None = None
+    #: Exchange an explicit end-of-series consensus digest after the last
+    #: sub-game (amireman §10.3). Off by default: it rides on ``submit_audit``,
+    #: and a peer that does not expect it there sees an audit package with no
+    #: records - which is how a clean series turns into a technical loss on the
+    #: opponent's side. Only enable against a peer whose contract specifies it.
+    series_consensus: bool = False
+    #: How long to wait for their consensus envelope. Their §10.3 calls the wait
+    #: "short and bounded" - failing to receive it costs the confirmation, not
+    #: the series, so this must never approach the per-turn deadline.
+    consensus_wait_sec: int = 60
     #: Which pheromone physics both sides run: "book_v1" (our reading of book
     #: ch. 4) or "registered_v3" (the inter-team registration - no rounding, no
     #: dust floor, decay+emission in one pinned expression, field served after
@@ -205,6 +230,10 @@ def load_peer(path: Path) -> PeerConfig:
         alternate_roles=bool(interop.get("alternate_roles", False)),
         handshake_per_sub_game=bool(interop.get("handshake_per_sub_game", False)),
         claim_enclosure=bool(interop.get("claim_enclosure", True)),
+        always_claim=bool(interop.get("always_claim", False)),
+        signed_num_games=interop.get("signed_num_games"),
+        series_consensus=bool(interop.get("series_consensus", False)),
+        consensus_wait_sec=int(interop.get("consensus_wait_sec", 60)),
     )
 
 
@@ -232,8 +261,12 @@ BOOL_VARS = {
     "P2P_ALTERNATE_ROLES": "alternate_roles",
     "P2P_HANDSHAKE_PER_SUB_GAME": "handshake_per_sub_game",
     "P2P_CLAIM_ENCLOSURE": "claim_enclosure",
+    "P2P_ALWAYS_CLAIM": "always_claim",
+    "P2P_SERIES_CONSENSUS": "series_consensus",
     "P2P_STATELESS_HTTP": "stateless_http",
 }
+#: Signed series length, when a short run must still sign the full one.
+SIGNED_NUM_GAMES_VAR = "P2P_SIGNED_NUM_GAMES"
 TRUE, FALSE = ("1", "true", "yes", "on"), ("0", "false", "no", "off")
 
 
@@ -262,6 +295,11 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
         if model not in MODELS:
             raise ValueError(f"{SCENT_MODEL_VAR}={model!r} is not one of {MODELS}")
         patch["scent_model"] = model
+    signed = (os.environ.get(SIGNED_NUM_GAMES_VAR) or "").strip()
+    if signed:
+        if not signed.isdigit() or int(signed) < 1:
+            raise ValueError(f"{SIGNED_NUM_GAMES_VAR}={signed!r} is not a positive integer")
+        patch["signed_num_games"] = int(signed)
     for name, field_name in BOOL_VARS.items():
         raw = (os.environ.get(name) or "").strip().lower()
         if raw in TRUE:

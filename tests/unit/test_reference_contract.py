@@ -155,3 +155,108 @@ def test_an_empty_agreement_reports_absence_not_disagreement() -> None:
         mine={"role": "police"}, terms=terms)
     assert real["agreement_empty"] is False
     assert real["terms_match"] and real["signature_verified"]
+
+
+# -- amireman: the series-consensus object (their §10-11) ---------------------
+# A third digest over the same finished series, and the one whose failure mode
+# is silence: a wrong encoding still produces 64 valid hex characters, so the
+# only way to know ours is right is to reproduce a document they published.
+
+APPENDIX_C_ROWS = [
+    (1, "survival", "thief", "police", 10, 5, "teamA"),
+    (2, "capture", "police", "thief", 20, 5, "teamA"),
+    (3, "survival", "thief", "police", 10, 5, "teamA"),
+    (4, "survival", "police", "thief", 5, 10, "teamB"),
+    (5, "capture", "thief", "police", 5, 20, "teamB"),
+    (6, "survival", "police", "thief", 5, 10, "teamB"),
+]
+
+
+def _our_rows() -> list[dict]:
+    """Our own sub-game row shape, as `finish_sub_game` leaves it."""
+    return [{"index": i, "ending": ending, "roles": {"teamA": ra, "teamB": rb},
+             "score": {"teamA": sa, "teamB": sb}, "winner_group": winner}
+            for i, ending, ra, rb, sa, sb, winner in APPENDIX_C_ROWS]
+
+
+def test_consensus_object_reproduces_their_appendix_c() -> None:
+    from p2p_pursuit.report.consensus import consensus_document
+
+    doc = consensus_document(game_id="EXAMPLE001", game_uid="u", rows=_our_rows())
+    assert list(doc) == ["game_id", "game_uid", "sub_games"]
+    assert doc["sub_games"][0] == {
+        "sub_game_number": 1, "result": "survival",
+        "roles": {"teamA": "thief", "teamB": "police"},
+        "score": {"teamA": 10, "teamB": 5}, "winner_group": "teamA"}
+    from p2p_pursuit.report.consensus import ROW_KEYS
+
+    assert all(set(row) == set(ROW_KEYS) for row in doc["sub_games"])
+
+
+def test_consensus_sha_uses_compact_separators_not_the_signature_encoding() -> None:
+    """The trap that makes this a separate module: the *mutual signature* over
+    the same series is spaced, this one is compact. Both are 64 hex."""
+    from p2p_pursuit.report.consensus import consensus_document, consensus_sha
+
+    doc = consensus_document(game_id="EXAMPLE001", game_uid="u", rows=_our_rows())
+    expected = hashlib.sha256(json.dumps(
+        doc, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+    assert consensus_sha(doc) == expected
+    assert consensus_sha(doc) != hashlib.sha256(spaced_bytes(doc)).hexdigest()
+
+
+def test_consensus_rows_are_sorted_by_sub_game_number() -> None:
+    from p2p_pursuit.report.consensus import consensus_document
+
+    shuffled = list(reversed(_our_rows()))
+    doc = consensus_document(game_id="g", game_uid="u", rows=shuffled)
+    assert [row["sub_game_number"] for row in doc["sub_games"]] == [1, 2, 3, 4, 5, 6]
+
+
+def test_technical_loss_survives_verbatim_unlike_the_mutual_signature() -> None:
+    """`mutual_signature` aliases it to "timeout" for a peer whose vocabulary
+    lacks it; this contract lists it, so aliasing here would file the wrong
+    result under a digest that still looks well-formed."""
+    from p2p_pursuit.report.consensus import consensus_row
+
+    row = {"index": 1, "ending": "technical_loss", "roles": {}, "score": {},
+           "winner_group": None}
+    assert consensus_row(row)["result"] == "technical_loss"
+    assert signed_row_fields(
+        {"index": 1, "ending": "technical_loss", "winner": "none",
+         "cop_score": 0, "thief_score": 0},
+        my_group="a", their_group="b", my_role="police")["result"] == "timeout"
+
+
+def test_unknown_result_raises_rather_than_being_coerced() -> None:
+    import pytest
+
+    from p2p_pursuit.report.consensus import consensus_row
+
+    with pytest.raises(ValueError, match="not one of"):
+        consensus_row({"index": 1, "ending": "abandoned", "roles": {}, "score": {},
+                       "winner_group": None})
+
+
+def test_consensus_envelope_shape_and_gate() -> None:
+    """Their §10.3 accepts a peer digest only on claim + sender role + no
+    records, and §9 ignores a `consensus_sha` that is not 64 lowercase hex."""
+    from p2p_pursuit.report.consensus import consensus_envelope, peer_consensus_sha
+
+    sha = "a" * 64
+    env = consensus_envelope(sender="thief", sha=sha)
+    assert env == {"sender": "thief", "records": [],
+                   "result_claim": "series_consensus", "consensus_sha": sha}
+    assert peer_consensus_sha(env, peer_role="thief") == sha
+
+    assert peer_consensus_sha(env, peer_role="police") is None
+    assert peer_consensus_sha({**env, "records": [{"a": 1}]}, peer_role="thief") is None
+    assert peer_consensus_sha({**env, "result_claim": "capture"}, peer_role="thief") is None
+    assert peer_consensus_sha({**env, "consensus_sha": "A" * 64}, peer_role="thief") is None
+    assert peer_consensus_sha({**env, "consensus_sha": "abc"}, peer_role="thief") is None
+
+
+def test_absent_digest_is_omitted_not_null() -> None:
+    from p2p_pursuit.report.consensus import consensus_envelope
+
+    assert "consensus_sha" not in consensus_envelope(sender="police", sha=None)
