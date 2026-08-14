@@ -232,6 +232,11 @@ def from_turn_message(message: dict[str, Any], *, sub_game: int,
         "hint": message.get("hint", ""),
         "scent": grid_to_scent(message.get("smell_grid") or {}, grid_size),
         "hash": commit_hash,
+        # Their clock, stamped by them on the turn itself. Outside their commit
+        # and therefore untrusted as evidence - but it is the only timing in the
+        # match sourced from the other side, so it is kept and filed as theirs
+        # rather than discarded.
+        "timestamp": message.get("timestamp"),
     }
     if message.get("capture_claim"):
         reveal["claim"] = {"cell": list(message["capture_claim"]), "at_step": step}

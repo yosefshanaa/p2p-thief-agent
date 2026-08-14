@@ -84,6 +84,9 @@ class PeerRuntime:
         self.sub_results: list[dict[str, Any]] = []
         self.link: Any = None
         self.bridge: Any = None
+        #: The step-0 declaration as filed, kept so its `ended_at` can be
+        #: stamped and the document re-sealed when the series finishes.
+        self.declaration: dict[str, Any] | None = None
         #: The §10.3 exchange's outcome, or None when the opponent's contract
         #: does not specify one - absent from the result rather than a false
         #: "unconfirmed" against every peer that never agreed to send a digest.
@@ -246,6 +249,10 @@ class PeerRuntime:
         # state for THIS index, never against the previous sub-game's ending.
         series_protocol.take_role(self, n, _log)
         self.service.ensure_sub_game(n)
+        # Clock starts here, before the per-sub-game re-handshake, so a sub-game
+        # is timed including its own negotiation rather than from whenever the
+        # engine object happened to be constructed.
+        self.engine.mark_started()
         if not series_protocol.rehandshake_if_needed(self, n, _log):
             return
         engine = self.engine
@@ -288,6 +295,10 @@ class PeerRuntime:
                 self.series_consensus = runtime_reports.exchange_series_consensus(self, _log)
         finally:
             self.watchdog.stop()
+            # After the last sub-game and the consensus exchange, so the filed
+            # declaration times the match rather than the paperwork - and inside
+            # `finally`, so a series cut short still records when it stopped.
+            runtime_reports.close_declaration(self)
         return self.build_result()
 
     def build_result(self) -> dict[str, Any]:

@@ -40,6 +40,14 @@ def build_log(engine: TurnEngine, opponent_records: list[dict[str, Any]],
         "code_version": CODE_VERSION,
         "config_sha256": engine.shared.sha256,
         "commit_dialect": engine.commit_dialect,
+        # This sub-game's own clock. `started_at`/`ended_at` are ours, taken when
+        # the sub-game opened and when it ended; `opponent_turn_timestamps` are
+        # theirs, stamped on each turn message, kept unmodified and named as
+        # theirs because they ride outside their commitment.
+        "started_at": frozen.get("started_at"),
+        "ended_at": frozen.get("ended_at"),
+        "opponent_turn_timestamps": frozen.get(
+            "opp_turn_times", engine.opp_turn_times),
         "my_records": frozen.get("records", engine.my_records),
         "my_hashes": frozen.get("hashes", engine.my_hashes),
         "opponent_records": opponent_records,

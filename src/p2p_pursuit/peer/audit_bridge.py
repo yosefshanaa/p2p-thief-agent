@@ -33,6 +33,12 @@ def audit_package(engine: TurnEngine, sub_game: int | None = None) -> dict[str, 
         "sub_game_number": n,
         "records": records,
         "hashes": hashes,
+        # This sub-game's clock, frozen with its records. The reference bridge
+        # builds its own envelope and does not forward these, so they reach the
+        # log artifact without changing what goes on that dialect's wire.
+        "started_at": snapshot.get("started_at"),
+        "ended_at": snapshot.get("ended_at"),
+        "opp_turn_times": snapshot.get("opp_turn_times", []),
     }
 
 
