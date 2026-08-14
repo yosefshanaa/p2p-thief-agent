@@ -1,0 +1,4150 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "ab6022d2-716a-f5b3-556e-43f70ffa7b09",
+  "game_id": "AHK-DEMO4",
+  "sub_game": 4,
+  "perspective": "thief",
+  "code_version": "1.00",
+  "config_sha256": "a33bb2214de38a4bac03b2b04f9c1601626efe06e4f3e18c1db7cdf8b2f29fe9",
+  "commit_dialect": "reference",
+  "my_records": [
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 1,
+      "pos_before": [
+        3,
+        3
+      ],
+      "pos_after": [
+        4,
+        3
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s northern heights—come find me if you can, slowpoke.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "64eef0f60cc6776121f5e9761612e4f9"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 1,
+      "claim_cell": [
+        0,
+        1
+      ],
+      "answer": false,
+      "nonce": "e44140482df298645330938599933e17"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 2,
+      "pos_before": [
+        4,
+        3
+      ],
+      "pos_after": [
+        4,
+        4
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling the west tower - every exit is watched.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.036,
+          0.126,
+          0.18,
+          0.126,
+          0.036,
+          0.0
+        ],
+        [
+          0.0,
+          0.126,
+          0.378,
+          0.558,
+          0.378,
+          0.126,
+          0.0
+        ],
+        [
+          0.0,
+          0.18,
+          0.558,
+          0.81,
+          0.558,
+          0.18,
+          0.0
+        ],
+        [
+          0.0,
+          0.126,
+          0.378,
+          0.558,
+          0.378,
+          0.126,
+          0.0
+        ],
+        [
+          0.0,
+          0.036,
+          0.126,
+          0.18,
+          0.126,
+          0.036,
+          0.0
+        ]
+      ],
+      "nonce": "f67bb05fece3526f8671c844eb47bead"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 2,
+      "claim_cell": [
+        1,
+        1
+      ],
+      "answer": false,
+      "nonce": "bd5eabfb9aab4ea690751c83cc38930a"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 3,
+      "pos_before": [
+        4,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s southwest, and you’re already chasing yesterday’s shadow.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0324,
+          0.1494,
+          0.288,
+          0.2934,
+          0.1584,
+          0.036
+        ],
+        [
+          0.0,
+          0.1134,
+          0.4662,
+          0.81,
+          0.81,
+          0.4914,
+          0.126
+        ],
+        [
+          0.0,
+          0.162,
+          0.6822,
+          0.81,
+          0.81,
+          0.72,
+          0.18
+        ],
+        [
+          0.0,
+          0.1134,
+          0.4662,
+          0.81,
+          0.81,
+          0.4914,
+          0.126
+        ],
+        [
+          0.0,
+          0.0324,
+          0.1494,
+          0.288,
+          0.2934,
+          0.1584,
+          0.036
+        ]
+      ],
+      "nonce": "bd1c57e561be36133c9578ce6b7af77e"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 3,
+      "claim_cell": [
+        1,
+        2
+      ],
+      "answer": false,
+      "nonce": "eeb34118ad94213290211beff3f8915d"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 4,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        5
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the north gate, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0292,
+          0.1345,
+          0.2592,
+          0.2641,
+          0.1426,
+          0.0324
+        ],
+        [
+          0.0,
+          0.1021,
+          0.4556,
+          0.81,
+          0.81,
+          0.5683,
+          0.1494
+        ],
+        [
+          0.0,
+          0.1458,
+          0.74,
+          0.81,
+          0.81,
+          0.81,
+          0.288
+        ],
+        [
+          0.0,
+          0.1021,
+          0.5996,
+          0.81,
+          0.81,
+          0.81,
+          0.2934
+        ],
+        [
+          0.0,
+          0.0292,
+          0.2605,
+          0.6372,
+          0.81,
+          0.5206,
+          0.1584
+        ]
+      ],
+      "nonce": "ff932b0d617089538861340fae5901ce"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 4,
+      "claim_cell": [
+        2,
+        2
+      ],
+      "answer": false,
+      "nonce": "af3fedc94f9a975b3f45cd2654669c09"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 5,
+      "pos_before": [
+        5,
+        5
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling the east - every exit is watched.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0263,
+          0.1211,
+          0.2333,
+          0.2377,
+          0.1283,
+          0.0292
+        ],
+        [
+          0.0,
+          0.0919,
+          0.41,
+          0.765,
+          0.81,
+          0.6915,
+          0.2605
+        ],
+        [
+          0.0,
+          0.1312,
+          0.666,
+          0.81,
+          0.81,
+          0.81,
+          0.6372
+        ],
+        [
+          0.0,
+          0.0919,
+          0.5396,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0263,
+          0.2345,
+          0.6995,
+          0.81,
+          0.81,
+          0.5206
+        ]
+      ],
+      "nonce": "4e94400c8b3ce0df3efa5db5c837df9a"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 5,
+      "claim_cell": [
+        2,
+        3
+      ],
+      "answer": false,
+      "nonce": "0dcfa7b28a397d8898a0a3a9e1e34ee8"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 6,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        5,
+        5
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in the west, and you’re already too late to catch me.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0237,
+          0.109,
+          0.21,
+          0.2139,
+          0.1155,
+          0.0263
+        ],
+        [
+          0.0,
+          0.0827,
+          0.369,
+          0.6885,
+          0.729,
+          0.6224,
+          0.2345
+        ],
+        [
+          0.0,
+          0.1181,
+          0.5994,
+          0.765,
+          0.81,
+          0.81,
+          0.6995
+        ],
+        [
+          0.0,
+          0.0827,
+          0.4856,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0237,
+          0.211,
+          0.8095,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "5de8981bd1e7deab43a5f39835991688"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 6,
+      "claim_cell": [
+        3,
+        3
+      ],
+      "answer": false,
+      "nonce": "33f7d0f54c40a1292c9df5fbbebd509b"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 7,
+      "pos_before": [
+        5,
+        5
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Slipping quietly past the west tower, try to keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0213,
+          0.0981,
+          0.189,
+          0.1925,
+          0.104,
+          0.0237
+        ],
+        [
+          0.0,
+          0.0744,
+          0.3321,
+          0.6557,
+          0.7821,
+          0.7402,
+          0.3371
+        ],
+        [
+          0.0,
+          0.1063,
+          0.5395,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0744,
+          0.437,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0213,
+          0.1899,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "e4f34ad9da5fd8a0c24505e7c9fd519e"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 7,
+      "claim_cell": [
+        4,
+        3
+      ],
+      "answer": false,
+      "nonce": "954b362ac36d653764ef46c7fc0482ad"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 8,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        6,
+        6
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Heading toward the west tower, catch me if you can.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0192,
+          0.0883,
+          0.1701,
+          0.1733,
+          0.0936,
+          0.0213
+        ],
+        [
+          0.0,
+          0.067,
+          0.2989,
+          0.5901,
+          0.7039,
+          0.6662,
+          0.3034
+        ],
+        [
+          0.0,
+          0.0957,
+          0.4855,
+          0.765,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.067,
+          0.3933,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0192,
+          0.1709,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "658a0ce3fd211b4512a6211dcb26544d"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 8,
+      "claim_cell": [
+        4,
+        4
+      ],
+      "answer": false,
+      "nonce": "16553a09bf31cf643cdeaeb67aa4e489"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 9,
+      "pos_before": [
+        6,
+        6
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m waiting in Haifa’s center—come find me if you’re brave enough.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0173,
+          0.0795,
+          0.1531,
+          0.156,
+          0.0842,
+          0.0192
+        ],
+        [
+          0.0,
+          0.0603,
+          0.269,
+          0.5311,
+          0.6335,
+          0.5996,
+          0.2731
+        ],
+        [
+          0.0,
+          0.0861,
+          0.437,
+          0.6885,
+          0.765,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0603,
+          0.354,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0173,
+          0.1538,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "b334c467be506d690ae7849051d7e36d"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 9,
+      "claim_cell": [
+        5,
+        4
+      ],
+      "answer": false,
+      "nonce": "d4aa0835b97f7ddf1daca0faec822673"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 10,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "STAY",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the west, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0156,
+          0.0716,
+          0.1378,
+          0.1404,
+          0.0758,
+          0.0173
+        ],
+        [
+          0.0,
+          0.0543,
+          0.2421,
+          0.478,
+          0.5701,
+          0.5396,
+          0.2458
+        ],
+        [
+          0.0,
+          0.0775,
+          0.3933,
+          0.6557,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0543,
+          0.3186,
+          0.7821,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0156,
+          0.1384,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "483201effa5ea4dab95c809b08a2e82a"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 10,
+      "claim_cell": [
+        5,
+        3
+      ],
+      "answer": false,
+      "nonce": "35489d78a9897bd47c6d815286685d5e"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 11,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        6,
+        6
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Holed up around the west for now, come and look.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.014,
+          0.0644,
+          0.124,
+          0.1264,
+          0.0682,
+          0.0156
+        ],
+        [
+          0.0,
+          0.0489,
+          0.2179,
+          0.4302,
+          0.5131,
+          0.4856,
+          0.2212
+        ],
+        [
+          0.0,
+          0.0698,
+          0.354,
+          0.6261,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0489,
+          0.2867,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.014,
+          0.1246,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "0e3f215b4e2c73e66998c6cf4bb9a643"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 11,
+      "claim_cell": [
+        5,
+        4
+      ],
+      "answer": false,
+      "nonce": "41e21ca029f9021ddab78865becd6297"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 12,
+      "pos_before": [
+        6,
+        6
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s center—catch me if your courage can keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0126,
+          0.058,
+          0.1116,
+          0.1138,
+          0.0614,
+          0.014
+        ],
+        [
+          0.0,
+          0.044,
+          0.1961,
+          0.3872,
+          0.4618,
+          0.437,
+          0.1991
+        ],
+        [
+          0.0,
+          0.0628,
+          0.3186,
+          0.5635,
+          0.765,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.044,
+          0.258,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0126,
+          0.1121,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "bb723ac1698a00838a8f36d97a56b103"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 12,
+      "claim_cell": [
+        5,
+        5
+      ],
+      "answer": false,
+      "nonce": "ca801339fb545cf27052e35f6b0c5556"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 13,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        5,
+        5
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling the west - every exit is watched.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0113,
+          0.0522,
+          0.1004,
+          0.1024,
+          0.0553,
+          0.0126
+        ],
+        [
+          0.0,
+          0.0396,
+          0.1765,
+          0.3485,
+          0.4156,
+          0.3933,
+          0.1792
+        ],
+        [
+          0.0,
+          0.0565,
+          0.2867,
+          0.5432,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0396,
+          0.2322,
+          0.7821,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0113,
+          0.1009,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "bac92f4dcaa047707e63e8377a7d743f"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 13,
+      "claim_cell": [
+        6,
+        5
+      ],
+      "answer": false,
+      "nonce": "060e97f06e6c1b0e7bf3e767517635b2"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 14,
+      "pos_before": [
+        5,
+        5
+      ],
+      "pos_after": [
+        4,
+        5
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the old market, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0102,
+          0.047,
+          0.0904,
+          0.0922,
+          0.0498,
+          0.0113
+        ],
+        [
+          0.0,
+          0.0356,
+          0.1588,
+          0.3497,
+          0.5,
+          0.534,
+          0.2873
+        ],
+        [
+          0.0,
+          0.0508,
+          0.258,
+          0.6149,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0356,
+          0.209,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0102,
+          0.0908,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "889f0207f2490f2a13762cb25f6accf7"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 14,
+      "claim_cell": [
+        5,
+        5
+      ],
+      "answer": false,
+      "nonce": "61fea535c9cbae5c7213f2997cac9ff0"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 15,
+      "pos_before": [
+        4,
+        5
+      ],
+      "pos_after": [
+        4,
+        4
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m waiting in Haifa’s center—come find me, if you can keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0092,
+          0.0423,
+          0.1174,
+          0.209,
+          0.2248,
+          0.1362
+        ],
+        [
+          0.0,
+          0.032,
+          0.1429,
+          0.4407,
+          0.81,
+          0.81,
+          0.6366
+        ],
+        [
+          0.0,
+          0.0457,
+          0.2322,
+          0.7334,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.032,
+          0.1881,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0092,
+          0.0817,
+          0.765,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "ba1ba1dacc194cf387e0e44f75c87fc3"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 15,
+      "claim_cell": [
+        4,
+        5
+      ],
+      "answer": false,
+      "nonce": "0fb82c31e837ccf3b5d93d1862a49c66"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 16,
+      "pos_before": [
+        4,
+        4
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Holed up around the southwest for now, come and look.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0083,
+          0.0741,
+          0.2317,
+          0.3681,
+          0.3283,
+          0.1586
+        ],
+        [
+          0.0,
+          0.0288,
+          0.2546,
+          0.7746,
+          0.81,
+          0.81,
+          0.6989
+        ],
+        [
+          0.0,
+          0.0411,
+          0.389,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0288,
+          0.2953,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0083,
+          0.1095,
+          0.81,
+          0.81,
+          0.81,
+          0.765
+        ]
+      ],
+      "nonce": "601493abc001494d5f77404952bc2ed7"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 16,
+      "claim_cell": [
+        3,
+        5
+      ],
+      "answer": false,
+      "nonce": "3103eeef62a1b3e2b9e2148588bc7818"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 17,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        3
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Slipping quietly past the north, try to keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0075,
+          0.0667,
+          0.2085,
+          0.3313,
+          0.2955,
+          0.1427
+        ],
+        [
+          0.0,
+          0.0259,
+          0.2651,
+          0.81,
+          0.81,
+          0.81,
+          0.665
+        ],
+        [
+          0.0,
+          0.037,
+          0.4761,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0259,
+          0.4458,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.0,
+          0.0075,
+          0.2245,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "9ea898fb7acd8c63518997fd9278520f"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 17,
+      "claim_cell": [
+        4,
+        5
+      ],
+      "answer": false,
+      "nonce": "c588155ebf6e957d41c9ab56747fca07"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 18,
+      "pos_before": [
+        5,
+        3
+      ],
+      "pos_after": [
+        5,
+        2
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s northeast—catch me if you can, slowpoke.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0067,
+          0.06,
+          0.1876,
+          0.2982,
+          0.266,
+          0.1284
+        ],
+        [
+          0.0,
+          0.0593,
+          0.3646,
+          0.81,
+          0.81,
+          0.765,
+          0.5985
+        ],
+        [
+          0.0,
+          0.1593,
+          0.8065,
+          0.81,
+          0.81,
+          0.81,
+          0.729
+        ],
+        [
+          0.0,
+          0.2033,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.729
+        ],
+        [
+          0.0,
+          0.1328,
+          0.58,
+          0.81,
+          0.81,
+          0.81,
+          0.729
+        ]
+      ],
+      "nonce": "e58bb5fa67a528b7193dae6b5bc72a3c"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 18,
+      "claim_cell": [
+        4,
+        4
+      ],
+      "answer": false,
+      "nonce": "7522a851f0966bd2cb61795634bc162a"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 19,
+      "pos_before": [
+        5,
+        2
+      ],
+      "pos_after": [
+        5,
+        1
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Slipping quietly past the west, try to keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.006,
+          0.054,
+          0.1688,
+          0.2684,
+          0.2394,
+          0.1156
+        ],
+        [
+          0.036,
+          0.1794,
+          0.5081,
+          0.81,
+          0.765,
+          0.6885,
+          0.5387
+        ],
+        [
+          0.126,
+          0.5214,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561
+        ],
+        [
+          0.18,
+          0.741,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561
+        ],
+        [
+          0.126,
+          0.4975,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561
+        ]
+      ],
+      "nonce": "784f4464257cf83fdf20072efa42914e"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 19,
+      "claim_cell": [
+        4,
+        3
+      ],
+      "answer": false,
+      "nonce": "ac87371cdb6d5223c5e4d0e21162f456"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 20,
+      "pos_before": [
+        5,
+        1
+      ],
+      "pos_after": [
+        6,
+        1
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Heading toward the east bridge, catch me if you can.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0054,
+          0.0486,
+          0.1519,
+          0.2416,
+          0.2155,
+          0.104
+        ],
+        [
+          0.1584,
+          0.3415,
+          0.5833,
+          0.765,
+          0.6885,
+          0.6197,
+          0.4848
+        ],
+        [
+          0.4914,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561,
+          0.5905
+        ],
+        [
+          0.72,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561,
+          0.5905
+        ],
+        [
+          0.4914,
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.6561,
+          0.5905
+        ]
+      ],
+      "nonce": "261d12abe03e3dd43f8cb40d425f8e21"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 20,
+      "claim_cell": [
+        4,
+        2
+      ],
+      "answer": false,
+      "nonce": "ec3be54ed2202323558af51242c06c79"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 21,
+      "pos_before": [
+        6,
+        1
+      ],
+      "pos_after": [
+        6,
+        0
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s east, and you’re already too slow to catch me.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0049,
+          0.0437,
+          0.1367,
+          0.2174,
+          0.194,
+          0.0936
+        ],
+        [
+          0.1426,
+          0.3074,
+          0.525,
+          0.6885,
+          0.6197,
+          0.5577,
+          0.4363
+        ],
+        [
+          0.5683,
+          0.81,
+          0.81,
+          0.765,
+          0.6561,
+          0.5905,
+          0.5315
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.6561,
+          0.5905,
+          0.5315
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.6561,
+          0.5905,
+          0.5315
+        ]
+      ],
+      "nonce": "cde3ac71ab2b52bb1e1ed61a626e0a66"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 21,
+      "claim_cell": [
+        5,
+        2
+      ],
+      "answer": false,
+      "nonce": "2af5e9db9507e0a1d76168d64e574f41"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 22,
+      "pos_before": [
+        6,
+        0
+      ],
+      "pos_after": [
+        6,
+        0
+      ],
+      "move": "STAY",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling the east bridge - every exit is watched.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0044,
+          0.0393,
+          0.123,
+          0.1957,
+          0.1746,
+          0.0842
+        ],
+        [
+          0.1283,
+          0.2767,
+          0.4725,
+          0.6197,
+          0.5577,
+          0.5019,
+          0.3927
+        ],
+        [
+          0.6915,
+          0.81,
+          0.765,
+          0.6885,
+          0.5905,
+          0.5315,
+          0.4783
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.5905,
+          0.5315,
+          0.4783
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.729,
+          0.5905,
+          0.5315,
+          0.4783
+        ]
+      ],
+      "nonce": "852f11dc37dee33892fbee2479b9bad4"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 22,
+      "claim_cell": [
+        5,
+        3
+      ],
+      "answer": false,
+      "nonce": "7dc1b187d1b403c083d26416b094e632"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 23,
+      "pos_before": [
+        6,
+        0
+      ],
+      "pos_after": [
+        6,
+        1
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "You will find nothing but shadows near the southwest.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.004,
+          0.0354,
+          0.1107,
+          0.1761,
+          0.1571,
+          0.0758
+        ],
+        [
+          0.1155,
+          0.249,
+          0.4252,
+          0.5577,
+          0.5019,
+          0.4517,
+          0.3534
+        ],
+        [
+          0.8024,
+          0.81,
+          0.7245,
+          0.6197,
+          0.5315,
+          0.4783,
+          0.4305
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.6561,
+          0.5315,
+          0.4783,
+          0.4305
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.6561,
+          0.5315,
+          0.4783,
+          0.4305
+        ]
+      ],
+      "nonce": "047362b6281215cb858cde291d2624f2"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 23,
+      "claim_cell": [
+        6,
+        3
+      ],
+      "answer": false,
+      "nonce": "0119d38bbe55400712d3c92ef5fc560f"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 24,
+      "pos_before": [
+        6,
+        1
+      ],
+      "pos_after": [
+        6,
+        1
+      ],
+      "move": "STAY",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s east, and you’re already too late to catch me.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0036,
+          0.0319,
+          0.0996,
+          0.1585,
+          0.1414,
+          0.0682
+        ],
+        [
+          0.104,
+          0.2241,
+          0.3827,
+          0.5019,
+          0.4517,
+          0.4065,
+          0.3181
+        ],
+        [
+          0.81,
+          0.81,
+          0.7781,
+          0.5937,
+          0.4783,
+          0.4305,
+          0.3875
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.7165,
+          0.4783,
+          0.4305,
+          0.3875
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.7705,
+          0.4783,
+          0.4305,
+          0.3875
+        ]
+      ],
+      "nonce": "56a626aa36730adbe53c79e1cd05a1cc"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 24,
+      "claim_cell": [
+        6,
+        2
+      ],
+      "answer": false,
+      "nonce": "8cdb86bbf8f003f100b0de4817c2d8d3"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 25,
+      "pos_before": [
+        6,
+        1
+      ],
+      "pos_after": [
+        6,
+        2
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the east bridge, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0032,
+          0.0287,
+          0.0896,
+          0.1426,
+          0.1273,
+          0.0614
+        ],
+        [
+          0.0936,
+          0.2017,
+          0.3444,
+          0.4517,
+          0.4065,
+          0.3659,
+          0.2863
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.5703,
+          0.4305,
+          0.3875,
+          0.3488
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.7709,
+          0.4305,
+          0.3875,
+          0.3488
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4305,
+          0.3875,
+          0.3488
+        ]
+      ],
+      "nonce": "a769008f5d628b7da0e5c3233c1ce6eb"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 25,
+      "claim_cell": [
+        5,
+        2
+      ],
+      "answer": false,
+      "nonce": "619b7439de654a7dde69de13c607f220"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 26,
+      "pos_before": [
+        6,
+        2
+      ],
+      "pos_after": [
+        5,
+        2
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the east bridge, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0029,
+          0.0258,
+          0.0806,
+          0.1283,
+          0.1146,
+          0.0553
+        ],
+        [
+          0.0842,
+          0.1815,
+          0.31,
+          0.4065,
+          0.3659,
+          0.3293,
+          0.2577
+        ],
+        [
+          0.765,
+          0.81,
+          0.81,
+          0.6393,
+          0.4234,
+          0.3488,
+          0.3139
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.5135,
+          0.3488,
+          0.3139
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.5675,
+          0.3488,
+          0.3139
+        ]
+      ],
+      "nonce": "f064326a1920152511901aeb6ef17ac8"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 26,
+      "claim_cell": [
+        5,
+        1
+      ],
+      "answer": false,
+      "nonce": "fad0260cf7fd6028f688d1e93381914e"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 27,
+      "pos_before": [
+        5,
+        2
+      ],
+      "pos_after": [
+        5,
+        3
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s east, and you’re already too late to catch me.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0026,
+          0.0232,
+          0.0725,
+          0.1155,
+          0.1031,
+          0.0498
+        ],
+        [
+          0.1118,
+          0.2893,
+          0.459,
+          0.4919,
+          0.3653,
+          0.2964,
+          0.2319
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.5071,
+          0.3139,
+          0.2825
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.6421,
+          0.3139,
+          0.2825
+        ],
+        [
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.6368,
+          0.3139,
+          0.2825
+        ]
+      ],
+      "nonce": "09bc98fd05a1134134a7d216aaf81c3c"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 27,
+      "claim_cell": [
+        4,
+        1
+      ],
+      "answer": false,
+      "nonce": "b2665123d238675ae1c8862d97564056"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 28,
+      "pos_before": [
+        5,
+        3
+      ],
+      "pos_after": [
+        5,
+        4
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "You will find nothing but shadows near the south docks.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0023,
+          0.0209,
+          0.0653,
+          0.104,
+          0.0928,
+          0.0448
+        ],
+        [
+          0.1006,
+          0.2964,
+          0.5391,
+          0.6227,
+          0.4548,
+          0.3028,
+          0.2087
+        ],
+        [
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4085,
+          0.2542
+        ],
+        [
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4625,
+          0.2542
+        ],
+        [
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4085,
+          0.2542
+        ]
+      ],
+      "nonce": "6106a5476895e189643a633a5597f1c9"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 28,
+      "claim_cell": [
+        4,
+        2
+      ],
+      "answer": false,
+      "nonce": "3155a89a70a488105621d8e66fe137f2"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 29,
+      "pos_before": [
+        5,
+        4
+      ],
+      "pos_after": [
+        5,
+        5
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Closing in from the east bridge, nowhere left to run.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0021,
+          0.0188,
+          0.0588,
+          0.0936,
+          0.0835,
+          0.0403
+        ],
+        [
+          0.0905,
+          0.2668,
+          0.5212,
+          0.6864,
+          0.5893,
+          0.3985,
+          0.2238
+        ],
+        [
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.7457,
+          0.3548
+        ],
+        [
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81,
+          0.4088
+        ],
+        [
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.7457,
+          0.3548
+        ]
+      ],
+      "nonce": "7b942a5b1ca70e60e752eba1a13d0e58"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 29,
+      "claim_cell": [
+        4,
+        3
+      ],
+      "answer": false,
+      "nonce": "2ea0310c4367c7681e642628ee562003"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 30,
+      "pos_before": [
+        5,
+        5
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "You’ll never catch me—I’m lurking in Haifa’s southwest, where your chase goes to die.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0019,
+          0.0169,
+          0.0529,
+          0.0842,
+          0.0752,
+          0.0363
+        ],
+        [
+          0.0814,
+          0.2401,
+          0.4691,
+          0.6538,
+          0.6564,
+          0.5387,
+          0.3274
+        ],
+        [
+          0.5905,
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.6973
+        ],
+        [
+          0.5905,
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.5905,
+          0.6561,
+          0.729,
+          0.81,
+          0.81,
+          0.81,
+          0.6973
+        ]
+      ],
+      "nonce": "5ca5e3b1e40f98a04b6038d0b7937212"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 30,
+      "claim_cell": [
+        4,
+        4
+      ],
+      "answer": false,
+      "nonce": "324a8748f3792dbc31889c6752fa3ef6"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 31,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        6,
+        6
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "The trail goes cold by the west, officer.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0017,
+          0.0152,
+          0.0476,
+          0.0758,
+          0.0677,
+          0.0327
+        ],
+        [
+          0.0733,
+          0.2161,
+          0.4222,
+          0.5884,
+          0.5908,
+          0.4848,
+          0.2947
+        ],
+        [
+          0.5315,
+          0.5905,
+          0.6561,
+          0.765,
+          0.81,
+          0.81,
+          0.7536
+        ],
+        [
+          0.5315,
+          0.5905,
+          0.6561,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.5315,
+          0.5905,
+          0.6561,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "5ff317d72409561e36187895b918d7ca"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 31,
+      "claim_cell": [
+        5,
+        4
+      ],
+      "answer": false,
+      "nonce": "63723b1996e290ac78f643d024b80c70"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 32,
+      "pos_before": [
+        6,
+        6
+      ],
+      "pos_after": [
+        6,
+        5
+      ],
+      "move": "W",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Slipping quietly past the west tower, try to keep up.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0015,
+          0.0137,
+          0.0428,
+          0.0682,
+          0.0609,
+          0.0294
+        ],
+        [
+          0.066,
+          0.1945,
+          0.38,
+          0.5296,
+          0.5317,
+          0.4363,
+          0.2652
+        ],
+        [
+          0.4783,
+          0.5315,
+          0.5905,
+          0.6885,
+          0.765,
+          0.81,
+          0.81
+        ],
+        [
+          0.4783,
+          0.5315,
+          0.5905,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.4783,
+          0.5315,
+          0.5905,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "b0bd4dd920e90696f9a9cedcb977cec5"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 32,
+      "claim_cell": [
+        5,
+        3
+      ],
+      "answer": false,
+      "nonce": "969f1f27756e66d90c7fc024317f56f5"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 33,
+      "pos_before": [
+        6,
+        5
+      ],
+      "pos_after": [
+        6,
+        6
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m prowling Haifa’s west side—catch me if you can, slowpoke.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0014,
+          0.0123,
+          0.0385,
+          0.0614,
+          0.0548,
+          0.0265
+        ],
+        [
+          0.0594,
+          0.1751,
+          0.342,
+          0.4766,
+          0.4785,
+          0.3927,
+          0.2387
+        ],
+        [
+          0.4305,
+          0.4783,
+          0.5315,
+          0.6557,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.4305,
+          0.4783,
+          0.5315,
+          0.7821,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.4305,
+          0.4783,
+          0.5315,
+          0.81,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "7e3269756630ab6d620aa78181c8a631"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 33,
+      "claim_cell": [
+        6,
+        3
+      ],
+      "answer": false,
+      "nonce": "158aec1ef1856121120da0fd57e4973c"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 34,
+      "pos_before": [
+        6,
+        6
+      ],
+      "pos_after": [
+        5,
+        6
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Holed up around the west for now, come and look.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0013,
+          0.0111,
+          0.0347,
+          0.0553,
+          0.0493,
+          0.0238
+        ],
+        [
+          0.0535,
+          0.1576,
+          0.3078,
+          0.4289,
+          0.4306,
+          0.3534,
+          0.2148
+        ],
+        [
+          0.3875,
+          0.4305,
+          0.4783,
+          0.5901,
+          0.765,
+          0.81,
+          0.81
+        ],
+        [
+          0.3875,
+          0.4305,
+          0.4783,
+          0.7039,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.3875,
+          0.4305,
+          0.4783,
+          0.729,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "a3fa1eb0db16d9328aae788138c3567e"
+    },
+    {
+      "kind": "capture_answer",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "at_step": 34,
+      "claim_cell": [
+        6,
+        4
+      ],
+      "answer": false,
+      "nonce": "2055eaf942d12ac4376122c318ee5c38"
+    },
+    {
+      "kind": "step",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "step": 35,
+      "pos_before": [
+        5,
+        6
+      ],
+      "pos_after": [
+        4,
+        6
+      ],
+      "move": "N",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Patrolling the west - every exit is watched.",
+      "scent": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0012,
+          0.01,
+          0.0312,
+          0.0498,
+          0.0444,
+          0.0214
+        ],
+        [
+          0.0481,
+          0.1418,
+          0.277,
+          0.386,
+          0.4235,
+          0.4441,
+          0.3733
+        ],
+        [
+          0.3488,
+          0.3875,
+          0.4305,
+          0.5311,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.3488,
+          0.3875,
+          0.4305,
+          0.6335,
+          0.81,
+          0.81,
+          0.81
+        ],
+        [
+          0.3488,
+          0.3875,
+          0.4305,
+          0.6561,
+          0.81,
+          0.81,
+          0.81
+        ]
+      ],
+      "nonce": "02a7e7145d31d04394918a6c7429bed0"
+    },
+    {
+      "kind": "survival_claim",
+      "role": "thief",
+      "sub_game": 4,
+      "sub_game_number": 4,
+      "steps": 35,
+      "nonce": "707587fd076f7a753a65d0fff6c11cf9"
+    }
+  ],
+  "my_hashes": [
+    "4a9d5c4ef46796594576ddd07fa5d505d3051422f8f88a4adcd2fe5b6b5a3467",
+    "b9f22cbd3135f1e94226ef31618e1be69ca4659aec2b6bffe09fa6f2aac2ddc5",
+    "fed5955803675f059198ee623c087130780cf7378dfb6cf436bca94dca6c7354",
+    "33482ce4b64186c60403a56f8fa68b62d821b4ec641be2d0bc843f93c7e4be5c",
+    "c10f94a623c73d0554c42462044d1e5a9cef0692201586aa940d989c77bc3ada",
+    "c3f01df277f55de2ab892d7fe1a8aad707d0e15acfb5dd79a88fcca2d72cc263",
+    "5a6d867a3115f330d7741752db56344190a01538613bba7c4f2568564921b895",
+    "6a9b46c5313df4df6af46e31f0b69449d4f985799fe1bd38582e4adfcfe56683",
+    "e4d47e2f806e7ad8ba6c2d22c6b03fd5d9b1bb3572b59f714dd17f41e38537e8",
+    "25a67c6983d21fbbf22b74497698411132ea2c98af9f374132fbdc5e9ec2221a",
+    "9de95c1572de6219186828ad941793c0bcb514bdad8072b60e320c8d5d7d63c6",
+    "8a816ace7be4932f5e4373adcc32188592021c76eb7fc409f79c90fe3baa3469",
+    "3e2d7c7cff3013514784042ac7e87c55b3d75f501b95fc2931b2c36cfbb721df",
+    "4731ce899ce805c4cf980533ee9eda09942dbeecc295c575aa2663cebb48e564",
+    "1245b4fc88d9509bcb49eea566e4597390c6f72d0639232b21e2e0537fa5bc56",
+    "764e1f8bf7a4a4bb9f28ba10d17fd2d0ea1de94e191d9f0652abdc3b507f680a",
+    "e327a62ed7290fc5292ae9bc8c90a16d7c28f64cd7dea8b13abe57bb6b2b5d13",
+    "b1f8c18c8f6ba578a29e63aba14af3522eafe894d0f3139cfdcd8bc253683dac",
+    "dae7ac2203b22e9504590fc7d062ced31400da7e9a3fa31f2e0237fa7d30665b",
+    "b11098ff7e1f3a9defd3dad9e3f9807f86da8acc1fc35a9fe8f6639efad8550a",
+    "075c9fd6513fc1a860b180dc2b16051820f11faa80af2aa630ff606527e6f290",
+    "54442d5677fdf2f29b2c80c1681289ae31ecfd5ef6c047b26e63020c6f8536f2",
+    "047133b11ba0e8149b9a91f81d3027a81b597bd376af37ccc31bb05d9b47ebea",
+    "1d6c86ee909a3f1e84b0ff9f2db239ea97fedb705d82035b5c34f89ea2b3a42c",
+    "4c04d461a41da138a9138b52422157391b85479aa5877e769e966cf29d1f0028",
+    "6e73822d38eaa3606ca763c5c1dc9c43be42e5a65def67cbfb1447cb17f9ab28",
+    "82d3c1f7a65c772942c2158dcb5c079aafcd1353e7629ea2c2f3bf26b7ee4c59",
+    "9a2ed38d63cad312601085260df4e30a8297cc6988fcac18fd02741bb8de7633",
+    "a39bb823e6932f9d8bd440865d0598bfd5bf45acd35588965af2823ad385de6b",
+    "6ebce75985701808ab35cc07b23d562020808b26ba52ac137a8ac82f859eff5c",
+    "e0f6a2685cd991d4dc50cfdbcf3cc3685ac3f1f54e1226211a6e3e40aeed6a70",
+    "1c14ea70913d0b9b98c862bf176ec61ebce01f073475ba4740bfd9ba22e190c0",
+    "b50806801a80917f547795cd8d57a18bbd4f12459bd9296aa35c198fade526d1",
+    "ab6bcca506c354b4977b337481579d4f0e8405f77c2367493af348a3a6d5ae85",
+    "9ccaf4c37a950d5d70506e43d163547c6e9b79a56e6d6e954f8d2f3dc8001b8d",
+    "e67e0ffb0b868726756abe73f0b314021a98065a5fdf4f1315ba4339e8b212da",
+    "dc3b70043a804cff66b42c72c2c34dd07ae9d8d53d1e13949aa51287d9fdb6aa",
+    "762eeb54a0db5c42bb0012904747faca94d1d14b954cb7a0111042ab50b5ad48",
+    "3f4d722a414afa1a8f4acf53fec046cc1a5ce8e6bf3aef9b51f3385ce41e6ba6",
+    "1eb3742a143de8fe07d5e9f068ae34a8a5aa9e8ece84d629b6fc3397e14f59a4",
+    "f3ff53bb5e59951e2ddf7e70aa03a331967f5c9882b3b16bf8093e44dce9fe2f",
+    "bc8eb6966698dd24b589347affede7c3cb95a7d0c58d441364258f76b205cea0",
+    "afc8d6b82bc51394499b78f11438950235e90e219d103080541bd56540907459",
+    "cae2094d148efeec9f2edbb8589c0b48d5b8ed06bdccad6b53e34a58b2991450",
+    "02927e785360a4a0db11fa2e1a153e65a5c618343699db6b4e205b36c83f9a80",
+    "536d50f0218908691f2474f2d8de50bea7d3a791a17a7b3bed80403e850ceb80",
+    "49893c7cd376086d6859716c0980fdfe1bf6ce49971ae5fe13c24fd6ab998079",
+    "963989ed802b39be318d95f96edd5f7ffe98864772d0a7c4f8577bc3a4a3506c",
+    "ef80f30386f877269502ac414bbd952e5be31650b8cdf7a3ac794a3c40ca076f",
+    "636d990244ee825c29638e61dad6b6ba8fc2635b25cf10ad7d211531e1e6a174",
+    "787ec7e84e1d331554260b8a063701c883eea1e2e8321e8f4a1880b12c60c131",
+    "2abe36f27a3dd22d2123ebe2cc6d1da0a3dc9ef7af6cdf67e08a33b4299f199e",
+    "37c8d6c4d001a6f5c8e24ba7e34c19b9559353646446e97e32370ef67bfa8e8e",
+    "0b0e6de8003366b1b81c3e4ef100c67b56ac4f1e097fe82ba60505ed913cfe88",
+    "002b0e40770225891e14b17b4a4b4d8a396b79006cb25ef406a848526bc26b0f",
+    "b7648e70e367d7b8cec666164ceeffcbab350d8817161175591943cd54e76207",
+    "eecc8774ea6417a0728385fdde0221fa9d29cd54b3ac12a7a2644f982684fded",
+    "211982046085c8552af55d285ca773fdf8904b79ef57ec5bd81db1b27fde5621",
+    "4350f4020b9dbbbd609922f7e3e5b63fbd82e0e14bc102d2346b8285b4326882",
+    "dfb1ca324e74385b2852d84856a16f723bf4afea37825c3af32301132b7b2e7f",
+    "4e4efd89112cd27cb54c7bb00e9a00c6795dc1a8f5c6ebf0ea6d5aa5833c0c19",
+    "85af337f542115a78f70b01f57f68ad004c57bd0ed8e16f77ab306c8e973cb1d",
+    "9f57ad19f0beeb7c30943698126e44c7c719c89cba30c7f877d46ad6b28b4781",
+    "5e3cf1e377cabab838fcf807564dcc3bae48fc804ab4d6c50cadd34c5ce9c62a",
+    "63a3fe868923dbfd6c470f6c57bbfa611e860eacf1b22cc93a37a9d715cb43e9",
+    "831642054ffae5c4594cb588e03c97fe87b2872366aa44195e01ee0bda5e8328",
+    "03bb5ccb1f0a20d0b666ed97cfd5542fb964b4709dd3aeb904bc75dc57354549",
+    "8c63643026b246139a627b44831db4d486ccb4795e8050969d12549ed5913598",
+    "8967e0504f2fbec3fa44e1a1a954f9526733a5ac4ec014ed87b06036705b0d2b",
+    "e672649a29e20550763cb6a9351f39b05a02326183c5eb1a83d8aa25dfc467de"
+  ],
+  "opponent_records": [
+    {
+      "payload": {
+        "step": 0,
+        "type": "system_spec",
+        "spec": {
+          "os": "Linux-6.18.33.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+          "python": "3.13.14",
+          "cpu_type": "x86_64",
+          "cpu_cores": 8
+        },
+        "code_version": "0.1.0-day1",
+        "group_name": "amireman",
+        "sub_game_number": 4,
+        "github_commit": "e1622992b46e7366c7ca10650d3f82c560a9db21"
+      },
+      "nonce": "98910ffffc116a662f640cebabec3188",
+      "commit": "f14dbf77e4ac1058156db599f7a85ca1967dce512d480c4e3d6af2cef5b6617f",
+      "signature": "devtest:e561fecee5df96ca735d71706e528c3624fc3fb52458fa95ce11c362369c0d9c",
+      "signer": "amireman"
+    },
+    {
+      "payload": {
+        "step": 1,
+        "role": "police",
+        "state": "grid=7;self=[0, 1]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          0,
+          1
+        ]
+      },
+      "nonce": "3daca32f50734de13810937b3a02274d",
+      "commit": "bb899f0c13ba938fa45223d07dc31c673a0bdd8095ba20e7a9ace989246291c1"
+    },
+    {
+      "payload": {
+        "step": 2,
+        "role": "police",
+        "state": "grid=7;self=[1, 1]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          1,
+          1
+        ]
+      },
+      "nonce": "e3a503b16eaabd3013716f68bbec1d24",
+      "commit": "0f49bc558b2020006caec675b0e678ca611f95f020bc0870faca945517f144dc"
+    },
+    {
+      "payload": {
+        "step": 3,
+        "role": "police",
+        "state": "grid=7;self=[1, 2]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          1,
+          2
+        ]
+      },
+      "nonce": "aaeeccf99912e091d1323e68fb868819",
+      "commit": "7ddb81fa9f24d199ef173570c769687773066621a8ee2e11b7d8bd924a92e0e3"
+    },
+    {
+      "payload": {
+        "step": 4,
+        "role": "police",
+        "state": "grid=7;self=[2, 2]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          2,
+          2
+        ]
+      },
+      "nonce": "52212ed0cbe3a226b0d26eb5309d62db",
+      "commit": "4bcc69c9731ca8b6e14b4b8908fbf1e49bea9bdc71335f796eb41f328c9dcec8"
+    },
+    {
+      "payload": {
+        "step": 5,
+        "role": "police",
+        "state": "grid=7;self=[2, 3]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          2,
+          3
+        ]
+      },
+      "nonce": "adce93844931881dc28af89ba2d32753",
+      "commit": "fe33f252740a40b9ccbb21f0df9c3ce989bcf5c90e97653c1e93b41d205ef5d1"
+    },
+    {
+      "payload": {
+        "step": 6,
+        "role": "police",
+        "state": "grid=7;self=[3, 3]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          3,
+          3
+        ]
+      },
+      "nonce": "974c3ef51bd4d2011dd4bd1bd50c735e",
+      "commit": "96dfb82e27b097545e7ede78ff55626240b4390f8242b52c958131e23e336658"
+    },
+    {
+      "payload": {
+        "step": 7,
+        "role": "police",
+        "state": "grid=7;self=[4, 3]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          3
+        ]
+      },
+      "nonce": "22380b6c9b9a0465b62548571707fcbc",
+      "commit": "1dd46e71d511e957b494cb5f01f3faa46faa11db8e7f1aedb15b896f33e1b699"
+    },
+    {
+      "payload": {
+        "step": 8,
+        "role": "police",
+        "state": "grid=7;self=[4, 4]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          4
+        ]
+      },
+      "nonce": "3f44e7b6ed7fd5e477c3527ff948f8d3",
+      "commit": "4d834d255e182660c6d18ab0aa9f0e6f08cdd96481f669bf2f59fd2b8cfd1aac"
+    },
+    {
+      "payload": {
+        "step": 9,
+        "role": "police",
+        "state": "grid=7;self=[5, 4]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          4
+        ]
+      },
+      "nonce": "7224cb962f97c00669856b3dc50f4061",
+      "commit": "88953f43796a6fabd68f57151eea192afd08b1efdccee43fd74598574ec3a873"
+    },
+    {
+      "payload": {
+        "step": 10,
+        "role": "police",
+        "state": "grid=7;self=[5, 3]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          3
+        ]
+      },
+      "nonce": "a0c38539d8b5c1214e9d1f6af7388f0f",
+      "commit": "09225797fc7ea33aa4bb4479641554a3fef5ab353fdf40cf8f668f5cd2452f5e"
+    },
+    {
+      "payload": {
+        "step": 11,
+        "role": "police",
+        "state": "grid=7;self=[5, 4]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          4
+        ]
+      },
+      "nonce": "fafbaf7cdabe72522786652f6d459bdc",
+      "commit": "9f62388ad87c98d1cc56ae7449c1e4257249361c59660042b98b7e32eeb16575"
+    },
+    {
+      "payload": {
+        "step": 12,
+        "role": "police",
+        "state": "grid=7;self=[5, 5]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          5
+        ]
+      },
+      "nonce": "1334bb4c2a9f2ada9625d9c3d3f37e32",
+      "commit": "4319b3b86c83254fc2b6922c44c7fcdb75fa01401ea005ce112501cd2316a6cf"
+    },
+    {
+      "payload": {
+        "step": 13,
+        "role": "police",
+        "state": "grid=7;self=[6, 5]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          6,
+          5
+        ]
+      },
+      "nonce": "5bdad67da1482646599111739c1463e4",
+      "commit": "ab71726a03faa0193197b944043a2f81487044773d0a22b82bf6a0d62d5eab72"
+    },
+    {
+      "payload": {
+        "step": 14,
+        "role": "police",
+        "state": "grid=7;self=[5, 5]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          5
+        ]
+      },
+      "nonce": "5dab7fbcb086e5c51a56ba16ae82a9b8",
+      "commit": "7202c9a6049d66244c1c4fbfd961050d8e865c6389ae7f7ea0bc7b421fdf06fe"
+    },
+    {
+      "payload": {
+        "step": 15,
+        "role": "police",
+        "state": "grid=7;self=[4, 5]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          5
+        ]
+      },
+      "nonce": "64f4ada4f2816ced47f3bc41caed0467",
+      "commit": "dde7ee815591e179d699fb5420d99268268ce3ad06a93c3b368468157393e561"
+    },
+    {
+      "payload": {
+        "step": 16,
+        "role": "police",
+        "state": "grid=7;self=[3, 5]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          3,
+          5
+        ]
+      },
+      "nonce": "0777203d3f9ac7ffbd2f9b9be8bcb6df",
+      "commit": "240c6f6368709335fa2e66298aa2c4146c801e602f83205c5a4cb1d4106ba680"
+    },
+    {
+      "payload": {
+        "step": 17,
+        "role": "police",
+        "state": "grid=7;self=[4, 5]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          5
+        ]
+      },
+      "nonce": "4d008791153ab120b7f0619860817f59",
+      "commit": "700a31cb26ae82c3fee819f0a7c45ba605767db8098a91271f0f2442f3b35198"
+    },
+    {
+      "payload": {
+        "step": 18,
+        "role": "police",
+        "state": "grid=7;self=[4, 4]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          4
+        ]
+      },
+      "nonce": "0bb1b9e1c563f08e9962e108907ad4cc",
+      "commit": "43e8e0143d9c5903f9fa1e39b7bf72214af66639a72c26efd532660ddc9d5baa"
+    },
+    {
+      "payload": {
+        "step": 19,
+        "role": "police",
+        "state": "grid=7;self=[4, 3]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          3
+        ]
+      },
+      "nonce": "7aeba60eb36dcae50fd3bb09fe9da1c7",
+      "commit": "547561e7cfa5a4ce1c66e491d222b146942e5adc4fc79bf97546868ddd759649"
+    },
+    {
+      "payload": {
+        "step": 20,
+        "role": "police",
+        "state": "grid=7;self=[4, 2]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          2
+        ]
+      },
+      "nonce": "7b73ec609fb683ed816fbf0783ee1df1",
+      "commit": "d8646e66c1ba1dc8c5660d2248e1f64a1c41959c862d1e265bdc59644a4f995d"
+    },
+    {
+      "payload": {
+        "step": 21,
+        "role": "police",
+        "state": "grid=7;self=[5, 2]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          2
+        ]
+      },
+      "nonce": "00d3e7454579092534694be89f12d925",
+      "commit": "5543acf2182485b8e1cdb2dd47c39ee418bc6e26d160f82eed1fd630f0362976"
+    },
+    {
+      "payload": {
+        "step": 22,
+        "role": "police",
+        "state": "grid=7;self=[5, 3]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          3
+        ]
+      },
+      "nonce": "2fa11222c0174c0e67746d8b16c526a0",
+      "commit": "98ef0397f9a1d653fcf6aa95346a3c4507b8a8e1b61c9f216838143380dddca7"
+    },
+    {
+      "payload": {
+        "step": 23,
+        "role": "police",
+        "state": "grid=7;self=[6, 3]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          6,
+          3
+        ]
+      },
+      "nonce": "f74d62e0495dfc3017a102e5b87b6458",
+      "commit": "98d1aa3719f180ba73f6e1c64dcc142018da094c35b45bd9375e406242b6d8c5"
+    },
+    {
+      "payload": {
+        "step": 24,
+        "role": "police",
+        "state": "grid=7;self=[6, 2]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          6,
+          2
+        ]
+      },
+      "nonce": "b2ab4db537cf53cabc9a62b82e57d25c",
+      "commit": "22fc987e0f0a02209aed7895d08627b53c0cec74d70248dab2aa66a1807c6f12"
+    },
+    {
+      "payload": {
+        "step": 25,
+        "role": "police",
+        "state": "grid=7;self=[5, 2]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          2
+        ]
+      },
+      "nonce": "9d31386185fd54aa0f1cd254b32eec23",
+      "commit": "36e3da164ddbfcb3d75cf3432068ad2ddb54d77b3f659018191b241d4fc68803"
+    },
+    {
+      "payload": {
+        "step": 26,
+        "role": "police",
+        "state": "grid=7;self=[5, 1]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          1
+        ]
+      },
+      "nonce": "772788c3076bd36db4a273b62868c2b0",
+      "commit": "d950777c2ef22835e417bda282be26b04b6287eeb879137301a50fc1c4c1eded"
+    },
+    {
+      "payload": {
+        "step": 27,
+        "role": "police",
+        "state": "grid=7;self=[4, 1]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          1
+        ]
+      },
+      "nonce": "02cc2a7ad5fe264555d0f2aeab18d044",
+      "commit": "daf21932e0276b8c09f35d96eaf6a7398461ee9957813f48bf1740f963f22fec"
+    },
+    {
+      "payload": {
+        "step": 28,
+        "role": "police",
+        "state": "grid=7;self=[4, 2]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          2
+        ]
+      },
+      "nonce": "74cc78319d958e732bbf1ed5fadd7d30",
+      "commit": "d4c5172f2cfd2d588409a2a2e798d9e64b507281f8b025d5e2ed8f7f4ac84dc7"
+    },
+    {
+      "payload": {
+        "step": 29,
+        "role": "police",
+        "state": "grid=7;self=[4, 3]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          3
+        ]
+      },
+      "nonce": "705515fc69481efeb124256a64f9cfea",
+      "commit": "e194761c71a881805f8c7740a3df589b6254bbfbdecae2fb5afa646d43ca56e3"
+    },
+    {
+      "payload": {
+        "step": 30,
+        "role": "police",
+        "state": "grid=7;self=[4, 4]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          4,
+          4
+        ]
+      },
+      "nonce": "e0659e2272db3f62ffa9ff73bbe8969f",
+      "commit": "579bab2477e37abcdfe13e19df3bb1eb63760253b9abcca1768946967f90aef0"
+    },
+    {
+      "payload": {
+        "step": 31,
+        "role": "police",
+        "state": "grid=7;self=[5, 4]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          4
+        ]
+      },
+      "nonce": "2ce1c2dbb8f7977f87d8776abdcc320f",
+      "commit": "7abe5b9a21addb190fa000031c9da321357870a10a48b1760ce9b308f91ec8f1"
+    },
+    {
+      "payload": {
+        "step": 32,
+        "role": "police",
+        "state": "grid=7;self=[5, 3]",
+        "move": "MOVE:W",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          3
+        ]
+      },
+      "nonce": "4150a12d4d158545e3fe25b13ab25e5f",
+      "commit": "a3c912d59ab9b8291636d5110132f8e16c59025a0498db1010dc20e909088a93"
+    },
+    {
+      "payload": {
+        "step": 33,
+        "role": "police",
+        "state": "grid=7;self=[6, 3]",
+        "move": "MOVE:S",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          6,
+          3
+        ]
+      },
+      "nonce": "2c9af51215d826a755a6cebd26887a65",
+      "commit": "5b9d3813ddb6cb2cd5f9d663bddf313d310448b7f0d85dfd6a8b529f3917ecf7"
+    },
+    {
+      "payload": {
+        "step": 34,
+        "role": "police",
+        "state": "grid=7;self=[6, 4]",
+        "move": "MOVE:E",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          6,
+          4
+        ]
+      },
+      "nonce": "09777e330bbe548dd20b4578d1ee647f",
+      "commit": "873d13d4c5d313d3d071a8753802bc42f8afcd607487868cbb729cc59ddf885f"
+    },
+    {
+      "payload": {
+        "step": 35,
+        "role": "police",
+        "state": "grid=7;self=[5, 4]",
+        "move": "MOVE:N",
+        "intent": "truth",
+        "hint": "setting up a roadblock ahead",
+        "capture_claim": [
+          5,
+          4
+        ]
+      },
+      "nonce": "c4d02b3e29f7c4cc47174def25cc8892",
+      "commit": "77080a0ffcd71b2d6345e2345e889b9172a4be5d447e62d30a0aaf6cc8f9bbb2"
+    }
+  ],
+  "opponent_hashes": [
+    "bb899f0c13ba938fa45223d07dc31c673a0bdd8095ba20e7a9ace989246291c1",
+    "0f49bc558b2020006caec675b0e678ca611f95f020bc0870faca945517f144dc",
+    "7ddb81fa9f24d199ef173570c769687773066621a8ee2e11b7d8bd924a92e0e3",
+    "4bcc69c9731ca8b6e14b4b8908fbf1e49bea9bdc71335f796eb41f328c9dcec8",
+    "fe33f252740a40b9ccbb21f0df9c3ce989bcf5c90e97653c1e93b41d205ef5d1",
+    "96dfb82e27b097545e7ede78ff55626240b4390f8242b52c958131e23e336658",
+    "1dd46e71d511e957b494cb5f01f3faa46faa11db8e7f1aedb15b896f33e1b699",
+    "4d834d255e182660c6d18ab0aa9f0e6f08cdd96481f669bf2f59fd2b8cfd1aac",
+    "88953f43796a6fabd68f57151eea192afd08b1efdccee43fd74598574ec3a873",
+    "09225797fc7ea33aa4bb4479641554a3fef5ab353fdf40cf8f668f5cd2452f5e",
+    "9f62388ad87c98d1cc56ae7449c1e4257249361c59660042b98b7e32eeb16575",
+    "4319b3b86c83254fc2b6922c44c7fcdb75fa01401ea005ce112501cd2316a6cf",
+    "ab71726a03faa0193197b944043a2f81487044773d0a22b82bf6a0d62d5eab72",
+    "7202c9a6049d66244c1c4fbfd961050d8e865c6389ae7f7ea0bc7b421fdf06fe",
+    "dde7ee815591e179d699fb5420d99268268ce3ad06a93c3b368468157393e561",
+    "240c6f6368709335fa2e66298aa2c4146c801e602f83205c5a4cb1d4106ba680",
+    "700a31cb26ae82c3fee819f0a7c45ba605767db8098a91271f0f2442f3b35198",
+    "43e8e0143d9c5903f9fa1e39b7bf72214af66639a72c26efd532660ddc9d5baa",
+    "547561e7cfa5a4ce1c66e491d222b146942e5adc4fc79bf97546868ddd759649",
+    "d8646e66c1ba1dc8c5660d2248e1f64a1c41959c862d1e265bdc59644a4f995d",
+    "5543acf2182485b8e1cdb2dd47c39ee418bc6e26d160f82eed1fd630f0362976",
+    "98ef0397f9a1d653fcf6aa95346a3c4507b8a8e1b61c9f216838143380dddca7",
+    "98d1aa3719f180ba73f6e1c64dcc142018da094c35b45bd9375e406242b6d8c5",
+    "22fc987e0f0a02209aed7895d08627b53c0cec74d70248dab2aa66a1807c6f12",
+    "36e3da164ddbfcb3d75cf3432068ad2ddb54d77b3f659018191b241d4fc68803",
+    "d950777c2ef22835e417bda282be26b04b6287eeb879137301a50fc1c4c1eded",
+    "daf21932e0276b8c09f35d96eaf6a7398461ee9957813f48bf1740f963f22fec",
+    "d4c5172f2cfd2d588409a2a2e798d9e64b507281f8b025d5e2ed8f7f4ac84dc7",
+    "e194761c71a881805f8c7740a3df589b6254bbfbdecae2fb5afa646d43ca56e3",
+    "579bab2477e37abcdfe13e19df3bb1eb63760253b9abcca1768946967f90aef0",
+    "7abe5b9a21addb190fa000031c9da321357870a10a48b1760ce9b308f91ec8f1",
+    "a3c912d59ab9b8291636d5110132f8e16c59025a0498db1010dc20e909088a93",
+    "5b9d3813ddb6cb2cd5f9d663bddf313d310448b7f0d85dfd6a8b529f3917ecf7",
+    "873d13d4c5d313d3d071a8753802bc42f8afcd607487868cbb729cc59ddf885f",
+    "77080a0ffcd71b2d6345e2345e889b9172a4be5d447e62d30a0aaf6cc8f9bbb2"
+  ],
+  "result": {
+    "ending": "survival",
+    "winner": "thief",
+    "cause": "survived 35 steps",
+    "my_steps": 35,
+    "opp_steps": 35
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "Verified OK",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    },
+    "my_reveal_binds": {
+      "verdict": "Verified OK",
+      "violations": []
+    }
+  },
+  "tokens_used": 7440
+}

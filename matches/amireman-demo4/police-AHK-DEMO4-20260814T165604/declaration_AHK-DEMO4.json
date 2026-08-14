@@ -1,0 +1,51 @@
+{
+  "report_type": "declaration",
+  "game_uid": "ab6022d2-716a-f5b3-556e-43f70ffa7b09",
+  "game_id": "AHK-DEMO4",
+  "game_number": 1,
+  "config_sha256": "a33bb2214de38a4bac03b2b04f9c1601626efe06e4f3e18c1db7cdf8b2f29fe9",
+  "scent_model_sha256": "ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28",
+  "token_cap": 200000,
+  "started_at": "2026-08-14T16:56:38+00:00",
+  "ended_at": null,
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8802/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "a4ebb14e1e894882fb42151b4e312e44f42a3a21"
+    },
+    "opponent": {
+      "group_id": "amireman",
+      "group_name": "amireman",
+      "members": [
+        "Amir Fadila",
+        "Eman Sarhan"
+      ],
+      "repos": {
+        "cop": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Police",
+        "thief": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Thief"
+      },
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "b929522dc2fccb863b812e93604e364a10e57d473a815bec4d0b79fc79fd157c"
+}

@@ -1,0 +1,327 @@
+{
+  "report_type": "game_result",
+  "game_uid": "ab6022d2-716a-f5b3-556e-43f70ffa7b09",
+  "game_id": "AHK-DEMO5",
+  "generated_at": "2026-08-14T17:49:09+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "amireman",
+      "group_name": "amireman",
+      "members": [
+        "Amir Fadila",
+        "Eman Sarhan"
+      ],
+      "repos": {
+        "cop": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Police",
+        "thief": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Thief"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "amireman": "thief"
+      },
+      "result": "survival",
+      "winner_group": "amireman",
+      "score": {
+        "ahk-yosi": 5,
+        "amireman": 10
+      }
+    },
+    {
+      "index": 2,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "amireman": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "amireman": 5
+      }
+    },
+    {
+      "index": 3,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "amireman": "thief"
+      },
+      "result": "survival",
+      "winner_group": "amireman",
+      "score": {
+        "ahk-yosi": 5,
+        "amireman": 10
+      }
+    },
+    {
+      "index": 4,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "amireman": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "amireman": 5
+      }
+    },
+    {
+      "index": 5,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 15,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "amireman": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "amireman": 5
+      }
+    },
+    {
+      "index": 6,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "da8856acbd473d8e46d1f28f1d98dc6206a0b14d",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "amireman": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "amireman": 5
+      }
+    }
+  ],
+  "totals": {
+    "police": 45,
+    "thief": 55
+  },
+  "my_role": "police",
+  "my_total": 45,
+  "opponent_total": 55,
+  "series_winner": "thief",
+  "tokens_used": 9997,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 60,
+      "amireman": 40
+    },
+    "sub_games_won": {
+      "ahk-yosi": 4,
+      "amireman": 2
+    },
+    "ties": 0,
+    "winner_group": "ahk-yosi",
+    "series_tie": false
+  },
+  "links": {
+    "declaration": "declaration_AHK-DEMO5.json",
+    "configs": [
+      "config_AHK-DEMO5_g01.json",
+      "config_AHK-DEMO5_g02.json",
+      "config_AHK-DEMO5_g03.json",
+      "config_AHK-DEMO5_g04.json",
+      "config_AHK-DEMO5_g05.json",
+      "config_AHK-DEMO5_g06.json"
+    ],
+    "logs": [
+      "log_AHK-DEMO5_g01.json",
+      "log_AHK-DEMO5_g02.json",
+      "log_AHK-DEMO5_g03.json",
+      "log_AHK-DEMO5_g04.json",
+      "log_AHK-DEMO5_g05.json",
+      "log_AHK-DEMO5_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "amireman": {
+        "cop": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Police",
+        "thief": "https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Thief"
+      }
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 0,
+    "amireman": 0
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "amireman": false
+  },
+  "mutual_signature": "b15dbeaf52cbab294913fc64d5df64ec6669fe4bdc0bf1c84f8bea601695b09d",
+  "series_consensus": {
+    "document": {
+      "game_id": "AHK-DEMO5",
+      "game_uid": "ab6022d2-716a-f5b3-556e-43f70ffa7b09",
+      "sub_games": [
+        {
+          "sub_game_number": 1,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "police",
+            "amireman": "thief"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "amireman": 10
+          },
+          "winner_group": "amireman"
+        },
+        {
+          "sub_game_number": 2,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "thief",
+            "amireman": "police"
+          },
+          "score": {
+            "ahk-yosi": 10,
+            "amireman": 5
+          },
+          "winner_group": "ahk-yosi"
+        },
+        {
+          "sub_game_number": 3,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "police",
+            "amireman": "thief"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "amireman": 10
+          },
+          "winner_group": "amireman"
+        },
+        {
+          "sub_game_number": 4,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "thief",
+            "amireman": "police"
+          },
+          "score": {
+            "ahk-yosi": 10,
+            "amireman": 5
+          },
+          "winner_group": "ahk-yosi"
+        },
+        {
+          "sub_game_number": 5,
+          "result": "capture",
+          "roles": {
+            "ahk-yosi": "police",
+            "amireman": "thief"
+          },
+          "score": {
+            "ahk-yosi": 20,
+            "amireman": 5
+          },
+          "winner_group": "ahk-yosi"
+        },
+        {
+          "sub_game_number": 6,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "thief",
+            "amireman": "police"
+          },
+          "score": {
+            "ahk-yosi": 10,
+            "amireman": 5
+          },
+          "winner_group": "ahk-yosi"
+        }
+      ]
+    },
+    "consensus_sha": "8e64f32b8288cbec482427bfd314e050ea4d2e8f6329391532cb0e75506f9747",
+    "peer_consensus_sha": "8e64f32b8288cbec482427bfd314e050ea4d2e8f6329391532cb0e75506f9747",
+    "sha_match": true,
+    "confirmed": true
+  },
+  "result_sha256": "62926468a3ecfaa8c9542373b759eae7e2a253ede829b3a4859bc378a3fa0b2c"
+}
