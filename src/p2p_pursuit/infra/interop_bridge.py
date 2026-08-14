@@ -15,6 +15,7 @@ link surface it already uses:
 from __future__ import annotations
 
 import contextlib
+import logging
 import queue
 from datetime import UTC, datetime
 from typing import Any
@@ -23,6 +24,8 @@ from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT
 from ..domain.rules import THIEF
 from . import interop_codec as codec
 from .transport import LinkError
+
+log = logging.getLogger(__name__)
 
 
 class ReferenceBridge:
@@ -37,6 +40,8 @@ class ReferenceBridge:
         self._owed_claim_response: dict | None = None
         self._owed_win_claim: dict | None = None
         self._last_turn: dict | None = None
+        #: Their series digest, once an envelope passes the §10.3 gate.
+        self.peer_consensus_sha: str | None = None
 
     # -- inbound: their pushes into our server -------------------------------
     def on_negotiate(self, message: dict) -> dict:
@@ -71,10 +76,19 @@ class ReferenceBridge:
 
         It cannot go through ``service.audit_exchange`` - that runs our own
         physics audit, which cannot read their record shape.
+
+        The end-of-series consensus envelope arrives on this same tool and must
+        be taken off it first: it carries no records, so auditing it would file
+        an empty-log verdict over the *last sub-game's* real one and turn a
+        finished series into a technical loss.
         """
+        from ..report.consensus import CONSENSUS_CLAIM
         from .interop_audit import audit_reference_log
 
         engine = self.service.engine
+        if payload.get("result_claim") == CONSENSUS_CLAIM:
+            self._accept_consensus(payload, peer_role=engine.other)
+            return {"ok": True}
         records = payload.get("records", [])
         verdict, violations = audit_reference_log(
             records, engine.opp_hashes, grid_size=self.grid_size)
@@ -92,6 +106,44 @@ class ReferenceBridge:
     def on_receive_control(self, message: dict) -> dict:
         """Advisory channel we do not act on; accepted so their peer is not stalled."""
         return {"ok": True}
+
+    # -- series consensus (their §10.3) --------------------------------------
+    def _accept_consensus(self, payload: dict, *, peer_role: str) -> None:
+        """Store their digest if the envelope passes the gate they specify.
+
+        Strict first, on all three of claim / sender-role / empty records. If
+        only the role disagrees we take the digest anyway and say so: the role
+        is bookkeeping about *which side sent it*, already implied by the
+        connection, and a series that played cleanly should not fail to confirm
+        because two peers label the last sub-game's wire role differently.
+        """
+        from ..report.consensus import peer_consensus_sha
+
+        sha = peer_consensus_sha(payload, peer_role=peer_role)
+        if sha is None:
+            sha = peer_consensus_sha(payload)
+            if sha is not None:
+                log.warning("consensus envelope sender=%r, expected %r - digest accepted",
+                            payload.get("sender"), peer_role)
+        if sha is None:
+            log.warning("consensus envelope refused: %s",
+                        {k: payload.get(k) for k in ("sender", "records", "consensus_sha")})
+            return
+        cv = self.service.locked()
+        with cv:
+            self.peer_consensus_sha = sha
+            cv.notify_all()
+
+    def submit_consensus(self, envelope: dict, timeout: float | None = None) -> dict:
+        """Push our digest on the raw link - the bridge's own ``audit`` wraps
+        records, and this envelope is defined by carrying none."""
+        return self.link.submit_audit(envelope, timeout=timeout)
+
+    def wait_for_consensus(self, timeout: float) -> str | None:
+        cv = self.service.locked()
+        with cv:
+            cv.wait_for(lambda: self.peer_consensus_sha is not None, timeout)
+            return self.peer_consensus_sha
 
     def _owe(self, envelope: dict) -> None:
         """Queue an answer their protocol can only carry on our next turn."""

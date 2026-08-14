@@ -96,7 +96,8 @@ class TurnEngine(EngineState):
         commit = {"kind": "commit", "role": self.role, "sub_game": self.sub_game,
                   "step": self.my_steps, "hash": h}
         package: dict[str, Any] = {"commit": commit, "reveal": public}
-        if self.role == POLICE and self.brain.should_claim(view, self.own_pos):
+        if self.role == POLICE and (self.peer.always_claim
+                                    or self.brain.should_claim(view, self.own_pos)):
             # Claim rides inside the reveal: the answer returns atomically, no race.
             package["reveal"]["claim"] = {"cell": list(self.own_pos), "at_step": self.my_steps}
         if self.role == THIEF and self.my_steps >= self.shared.survival_threshold:
