@@ -493,6 +493,50 @@ item to confirm with them before DEMO4 rather than after.
 > `ab6022d2-716a-f5b3-556e-43f70ffa7b09`. We will send our runtime SHAs and tunnel URL
 > immediately before we start. Ready when you are.
 
+## 4e. G012 — the counted match, played 2026-08-14
+
+**Won 60–40, four sub-games to two.** Archived in
+`matches/amireman-g012-counted/police-G012-20260814T180101/`.
+
+```
+game_id / uid   G012 / ab6022d2-716a-f5b3-556e-43f70ffa7b09
+aggregate       ahk-yosi 60  amireman 40   sub-games 4-2   winner ahk-yosi
+consensus       ours be4bf49fe95531c9  peer be4bf49fe95531c9  match True  confirmed True
+declaration     18:01:29 -> 18:05:30 UTC, re-sealed and verifying
+result_sha256   311453eba9016f30…       github_commit da8856ac…
+their runtime   9fc75f5832388bc62433c99d55dffa81db8b06b7
+email           filed to rmisegal+uoh26finalgame@gmail.com (gmail 1a00173647364e60)
+```
+
+| # | our role | ending | winner | audit | reveal self-check |
+|---|---|---|---|---|---|
+| 1 | police | survival 35 | amireman | Verified OK | 35 bind 34 |
+| 2 | thief | survival 35 | ahk-yosi | Verified OK | 71 bind 70 |
+| 3 | police | survival 35 | amireman | Verified OK | 35 bind 34 |
+| 4 | thief | survival 35 | ahk-yosi | Verified OK | 71 bind 70 |
+| 5 | police | **capture [5,5]** | ahk-yosi | Verified OK | 15 bind 14 |
+| 6 | thief | survival 35 | ahk-yosi | Verified OK | 71 bind 70 |
+
+Offline re-verification of the sealed artifacts agrees with the live run:
+`our reveal binds: True; theirs: True (6 received)`.
+
+**The §4d defect is dead in the game that counted.** Sub-game 5 produced the same
+14-commitment / 15-record package that amireman reported in DEMO3 as *"only 15
+records"* filed against their game 6 - their thief is deterministic, so the identical
+capture at `[5,5]` recurs every series. Carrying its own index, it bound and verified.
+
+**Rule #37 counters, each side's own:** `{ahk-yosi: 2, amireman: 1}`; `game_number: 2`.
+Diversity bonus §9.2.2 to ahk-yosi as the winner of a first meeting.
+
+**Still one-sided.** `confirmed: true` is *our* §10.4 gate and can only ever attest to
+our own chair - the same field read true in DEMO4 while their side was failing, by
+their own account. Ask them for their `consensus_sha` and `confirmed`; `be4bf49fe955…`
+and `true` from them closes it from both chairs.
+
+**Prior friendlies**, archived alongside: `matches/amireman-demo4/` (60–40, 6/6 clean,
+consensus `e515ef812eb2…`) and `matches/amireman-demo5/` (60–40, 6/6 clean, consensus
+`8e64f32b8288…`, first run carrying the match-record timestamps).
+
 ## 5. Still open before anything counted
 
 - [ ] Their answers to the five questions above — **(1) the timeout contradiction is the blocking
