@@ -54,6 +54,29 @@ class PursuitSDK:
         return {"log": log, "verdict": verdict, "timeline": timeline(log),
                 "records_checked": len(mine) + len(theirs)}
 
+    def audit_binding(self, match_dir: Path) -> dict[str, Any]:
+        """Re-check every sealed log in a match directory for commit binding.
+
+        The offline form of the promise both peers make to each other: every
+        commitment sent during a sub-game is revealed afterwards as the exact
+        (payload, nonce) that produced it, and nothing from a neighbouring
+        sub-game is mixed in. Runs from the artifacts alone - no engine, no
+        network, either team's copy.
+        """
+        import json
+
+        from ..infra.interop_audit import audit_sealed_log
+
+        rows = [audit_sealed_log(json.loads(path.read_text(encoding="utf-8")))
+                for path in sorted(match_dir.glob("log_*.json"))]
+        return {
+            "match_dir": str(match_dir),
+            "sub_games": rows,
+            "mine_binds": all(row["mine_binds"] for row in rows),
+            "theirs_binds": all(row["theirs_binds"] for row in rows),
+            "reveals_received": sum(row["their_reveal_received"] for row in rows),
+        }
+
     # -- reporting -------------------------------------------------------------
     def build_local_result(self, *, game_uid: str, game_id: str, shared: Any,
                            police_cfg: Any, sub_games: list[dict[str, Any]],

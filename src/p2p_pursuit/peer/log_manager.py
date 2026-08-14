@@ -18,21 +18,32 @@ from .turn_engine import TurnEngine
 
 def build_log(engine: TurnEngine, opponent_records: list[dict[str, Any]],
               *, game_uid: str, game_id: str,
-              audit: dict[str, Any]) -> dict[str, Any]:
+              audit: dict[str, Any],
+              package: dict[str, Any] | None = None) -> dict[str, Any]:
+    """The sealed artifact for one sub-game.
+
+    ``package`` is the frozen reveal that was actually sent for this sub-game.
+    Preferred over the live engine because the log is written *after* the audit
+    exchange, by which point the opponent's first turn of the next sub-game can
+    already have reset the engine - and a log whose records are not the ones we
+    revealed is not evidence of anything.
+    """
     end = engine.end
+    frozen = package or engine.audit_snapshot()
+    n = frozen.get("sub_game", engine.sub_game)
     return {
         "report_type": "sub_game_log",
         "game_uid": game_uid,
         "game_id": game_id,
-        "sub_game": engine.sub_game,
-        "perspective": engine.role,
+        "sub_game": n,
+        "perspective": frozen.get("role", engine.role),
         "code_version": CODE_VERSION,
         "config_sha256": engine.shared.sha256,
         "commit_dialect": engine.commit_dialect,
-        "my_records": engine.my_records,
-        "my_hashes": engine.my_hashes,
+        "my_records": frozen.get("records", engine.my_records),
+        "my_hashes": frozen.get("hashes", engine.my_hashes),
         "opponent_records": opponent_records,
-        "opponent_hashes": engine.opp_hashes,
+        "opponent_hashes": engine.opponent_hashes_for(n),
         "result": None if end is None else
         {"ending": end.ending, "winner": end.winner, "cause": end.cause,
          "my_steps": engine.my_steps, "opp_steps": engine.opp_steps},

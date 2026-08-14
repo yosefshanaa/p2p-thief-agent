@@ -6,6 +6,7 @@ everything they read and write, keeping each file within the size discipline.
 
 from __future__ import annotations
 
+import copy
 import random
 from dataclasses import dataclass
 from typing import Any
@@ -51,6 +52,12 @@ class EngineState:
         self.machine = GamePhaseMachine()
         self.tokens_used = 0
         self.sub_game = 0
+        #: Frozen per-sub-game reveal, keyed by index and written exactly once.
+        #: The live `my_records` is reset at every boundary, so the package we
+        #: owe sub-game n has to be taken at the instant n ends - not read off a
+        #: running engine minutes later, by which time the opponent's first turn
+        #: of n+1 may already have moved us on. Never cleared by a boundary.
+        self.audit_ledger: dict[int, dict[str, Any]] = {}
         self.start_sub_game(1)
 
     def _brain_for(self, role: str) -> BrainBase:
@@ -94,6 +101,11 @@ class EngineState:
         self.start_sub_game(n)
 
     def start_sub_game(self, n: int) -> None:
+        # Seal the outgoing sub-game's reveal before its records are wiped. A
+        # boundary can be crossed by our own series loop OR by an inbound
+        # message, and only one of those runs after `finish_sub_game` has taken
+        # the package - so the freeze belongs here, not at the call site.
+        self.freeze_audit()
         self.sub_game = n
         self.board = Board(self.shared.grid_size)
         self.own_pos: Cell = self.shared.cop_start if self.role == POLICE \
@@ -139,6 +151,52 @@ class EngineState:
             return self.my_steps == self.opp_steps
         return self.my_steps < self.opp_steps
 
+    # -- the audit ledger ---------------------------------------------------
+    def freeze_audit(self) -> dict[str, Any] | None:
+        """Seal this sub-game's reveal into the ledger, once and for good.
+
+        Called the moment the sub-game ends and again at the boundary, so the
+        (payload, nonce) pairs we later reveal are literally the objects that
+        produced the commitments we sent - copied, so nothing that arrives
+        afterwards can edit them, and written once, so a late event cannot
+        overwrite a package we have already handed out.
+        """
+        n = getattr(self, "sub_game", 0)
+        records = getattr(self, "my_records", None)
+        if n <= 0 or not records or n in self.audit_ledger:
+            return self.audit_ledger.get(n)
+        snapshot = {
+            "sub_game": n,
+            "role": self.role,
+            "records": copy.deepcopy(records),
+            "hashes": list(self.my_hashes),
+            # What the opponent committed to *in play* here, so their reveal can
+            # still be audited against the right sub-game when it arrives late.
+            "opp_hashes": list(self.opp_hashes),
+        }
+        self.audit_ledger[n] = snapshot
+        return snapshot
+
+    def opponent_hashes_for(self, n: int) -> list[str]:
+        """Commitments the opponent sent us during sub-game ``n``."""
+        if n == self.sub_game:
+            return list(self.opp_hashes)
+        snapshot = self.audit_ledger.get(n)
+        return list(snapshot["opp_hashes"]) if snapshot else []
+
+    def audit_snapshot(self, n: int | None = None) -> dict[str, Any]:
+        """The frozen reveal for sub-game ``n`` (this one by default).
+
+        Falls back to freezing now for a sub-game still in flight, so a caller
+        can never be handed a *different* sub-game's records by accident.
+        """
+        n = self.sub_game if n is None else n
+        if n == self.sub_game:
+            self.freeze_audit()
+        return self.audit_ledger.get(
+            n, {"sub_game": n, "role": self.role, "records": [], "hashes": [],
+                "opp_hashes": []})
+
     def _record(self, sealed: dict, commit_hash: str) -> dict:
         self.my_records.append(sealed)
         self.my_hashes.append(commit_hash)
@@ -182,10 +240,12 @@ class EngineState:
             winner = THIEF if offender == POLICE else POLICE
             self.end = SubGameEnd(TECHNICAL_LOSS, winner, reason)
             self.machine.state = "TECHNICAL_LOSS"
+            self.freeze_audit()
 
     def _finish(self, ending: str, winner: str, cause: str) -> None:
         if self.end is None:
             self.end = SubGameEnd(ending, winner, cause)
+            self.freeze_audit()
 
     def sub_game_scores(self) -> tuple[int, int]:
         assert self.end is not None
