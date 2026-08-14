@@ -260,9 +260,30 @@ amireman thief:   2118c3d1e05019b359b9403d616fff87d6487c40
 **Updated before DEMO4** (received 2026-08-14, after their interop fixes):
 
 ```
-amireman thief:   05f25f183e4e96566ff598744474764b73c18c32   <- new
+amireman thief:   05f25f183e4e96566ff598744474764b73c18c32   <- superseded below
 amireman police:  cc26a88a636351bc4fefd050b0aeea055b3f1cc1   <- "unchanged"
 ```
+
+**Settled, and it answers the question below** (received 2026-08-14, third message):
+
+```
+amireman UNIFIED runtime SHA (all 6 sub-games, both roles, on the wire):
+                  e1622992b46e7366c7ca10650d3f82c560a9db21
+amireman police REPO SHA (published, not advertised):
+                  cc26a88a636351bc4fefd050b0aeea055b3f1cc1
+```
+
+So `cc26a88a…` is a **repo** HEAD, never a wire value - which is exactly why it never
+appeared in their revealed records, and exactly the shape we run ourselves (one runtime
+advertising one commit; two published repos with their own HEADs). One runtime covers
+both roles on their side too, so the DEMO1 concern about an unpatched Police half is
+closed.
+
+**They fixed the receive side.** They now bucket our incoming audit explicitly by
+`sub_game_number`, which is the half our own fix cannot supply (§4d, "what is still on
+their side"). Verified against our real code path 2026-08-14 - the envelope we emit is
+`['records', 'result_claim', 'sender', 'sub_game', 'sub_game_number']` with the index on
+the envelope *and* mirrored in every record payload, so either bucketing path works.
 
 **What their peer has actually declared on the wire, per sub-game, is ONE commit for
 BOTH roles** - read out of `github_commit` in their own revealed records:
