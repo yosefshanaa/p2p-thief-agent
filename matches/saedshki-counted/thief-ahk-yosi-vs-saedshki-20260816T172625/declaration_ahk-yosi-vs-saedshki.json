@@ -1,0 +1,51 @@
+{
+  "report_type": "declaration",
+  "game_uid": "749e57f6-03b8-5f91-7323-ec193385c9a1",
+  "game_id": "ahk-yosi-vs-saedshki",
+  "game_number": 3,
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "scent_model_sha256": "ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28",
+  "token_cap": 200000,
+  "started_at": "2026-08-16T17:26:28+00:00",
+  "ended_at": "2026-08-16T17:30:45+00:00",
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8801/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Darwin 25.5.0",
+        "machine": "arm64",
+        "python": "3.13.13",
+        "cpu_cores": 11,
+        "ram_gb": "unknown",
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "dc3fa235db9ce6664d704004de34bdce6b4b779f"
+    },
+    "opponent": {
+      "group_id": "saedshki",
+      "group_name": "saedshki",
+      "members": [
+        "Mohamed Shawki",
+        "Saed-Abdalgani"
+      ],
+      "repos": {
+        "cop": "https://github.com/Saed-Abdalgani/Final-project_police_thief_p2p",
+        "thief": "https://github.com/Saed-Abdalgani/Final-project_police_thief_p2p"
+      },
+      "code_version": "1.00"
+    }
+  },
+  "declaration_sha256": "24a55cdbe3a8f11e02c1053e90b21ba3520edce3b136a2d91cb93551606ae5d9"
+}
