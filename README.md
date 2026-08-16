@@ -38,8 +38,9 @@ reveal → mutual audit**; any tampering is a technical loss, no appeal.
 13. [Interpretation log](#13-interpretation-log-academic-freedom-book-p-5)
 14. [Secrets & Gmail](#14-secrets--gmail)
 15. [League play & submission](#15-league-play--submission)
-16. [Contributing](#16-contributing)
-17. [License & credits](#17-license--credits)
+16. [Match record](#16-match-record)
+17. [Contributing](#17-contributing)
+18. [License & credits](#18-license--credits)
 
 ---
 
@@ -64,8 +65,9 @@ The system is a two-agent **decentralized partially observable Markov decision p
   so the freshest visible cell ≈0.81 marks where the opponent *was*), the opponent's hint
   (adversarial channel), and protocol events — barrier declarations, capture claims (a claim
   legitimately leaks the claimant's cell), and denied claims as negative evidence.
-- **Rewards** `R_i`: capture 20/5, survival at 35 steps 5/10, tie 2/2, proven tamper 0/0
-  (both zeroed). A match is a best-of-6-sub-game series; horizon `h` = 35 steps per sub-game.
+- **Rewards** `R_i`: capture 20/5, survival at 35 steps 5/10, proven tamper 0/0 (both zeroed),
+  and — at series level, not per sub-game — 2/2 if the aggregate ends level. A match is a
+  best-of-6-sub-game series; horizon `h` = 35 steps per sub-game.
 - **Belief state**: each peer maintains an exact discrete Bayes filter over the 49 cells —
   scent likelihood (`τ^8` sharpness) → motion-model diffusion → trust-weighted hint update,
   with a trust coefficient driven by a contradiction detector (`domain/belief.py`,
@@ -199,9 +201,9 @@ sub-game trust coefficient adapts online by Bayesian update, not by reward.
 
 ## 5. Screenshots
 
-*(Mandatory evidence. The first three were captured live on this codebase — a real two-peer
-match over localhost MCP and the replay/tamper drill; the league terminal shot lands during
-the first counted match.)*
+*(Mandatory evidence, all captured live on this codebase — a real two-peer match over localhost
+MCP, the replay/tamper drill, and the terminal of a counted league match against a real opposing
+team.)*
 
 ### Live GUI — Bayesian belief heatmap (local truth only)
 
@@ -237,11 +239,34 @@ The SHA-256 re-hash mismatches its commit at frame 19 — red `TAMPERED` banner,
 `[TAMPERED]` stamp, and the headless run exits with code 3 (`"verdict": "TAMPERED"`).
 A forged match is void: technical loss 0/0, no appeal (rule #20).
 
-### Pending until the first counted match
+### League match terminal — the counted run, and Gmail's own receipt
 
-| Evidence | File | How it is captured |
+The counted match against `orcai-mj` was archived with its full terminal transcript — captured as
+text rather than as a screenshot, and better for it: every line is greppable, and the artifacts it
+names re-verify offline years after the tunnel is gone.
+
+| Evidence | Where | Value |
 |---|---|---|
-| League match terminal + Gmail send id | `docs/img/league_match_terminal.png` | counted-match run |
+| League match terminal | [`matches/…-orcai-mj-counted/terminal.log`](matches/ahk-yosi-vs-orcai-mj-counted/terminal.log) | 2,073 lines: handshake, all six sub-games, both audits, the filed report |
+| Gmail send id | same file, line 1836 | `19ffcbcac8890b74` — `labelIds: ['SENT']`, `mode: 'send'` |
+
+Its closing lines, verbatim:
+
+```text
+[police] sub-game 6: capture winner=police (barrier onto (6, 5)) audit=Verified OK
+2026-08-13 23:07:29,822 googleapiclient.discovery_cache INFO file_cache is only supported with oauth2client<4.0.0
+[email] {'delivered': True, 'receipt': {'id': '19ffcbcac8890b74', 'threadId': '19ffcbcac8890b74', 'labelIds': ['SENT']}, 'mode': 'send'}
+```
+
+`labelIds: ['SENT']` is Gmail's own acknowledgement, not ours — the reporter cannot forge it, and
+a dry run (the stand-in when Gmail is unreachable) is labelled `dry-run` instead, so the two can
+never be confused. The full result JSON is printed immediately below it in the transcript.
+
+The `G012` and `saedshki` counted runs were not archived this way: `logs/` is git-ignored, so a
+transcript only survives if it is copied into the match directory the way this one was. Their
+evidence is the sealed artifact set under [`matches/`](matches/) instead, which is the stronger
+record anyway — `p2p-pursuit verify --dir` re-checks every commitment in them without a network
+or an opponent (§16).
 
 ## 6. Status
 
@@ -254,13 +279,14 @@ A forged match is void: technical loss 0/0, no appeal (rule #20).
 | 5. Cloud exposure — public-URL config, smoke probe, [`docs/RUNBOOK.md`](docs/RUNBOOK.md), CI chaos drills (latency / dead link / silence) | ✅ incl. live two-tunnel drill + tunnel-kill drill |
 | 6. Crypto — commit-reveal, nonces, mutual audit, step-0 declaration, locks | ✅ |
 | 7. Reporting + GUI — 4 JSON artifacts, Gatekeeper, Gmail (draft/send), live GUI, replay verifier | ✅ |
-| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer |
+| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer **and against three opposing teams' live peers** (§16) |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 213 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-CI on every push. Counted league matches vs. real opposing teams
-are the remaining work (see [`docs/TODO.md`](docs/TODO.md) §8–9); the submission repos are
-already split, public and green.
+**Quality gate:** 349 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+CI on every push. Three counted league matches have been played and reported — two won, one
+tied, all 18 sub-games audited clean — which clears the book's ≥2-against-different-teams
+requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
+[`docs/TODO.md`](docs/TODO.md) §8–9, and the submission repos are already split, public and green.
 
 ## 7. Installation
 
@@ -298,6 +324,10 @@ uv run p2p-pursuit peer --role police --no-gui   # terminal 2 (port 8802)
 # Verify + view a sealed log (green "Verified OK" / red TAMPERED; exit 3 on tamper):
 uv run p2p-pursuit replay --log results/sim-*/log_*_g01.json --no-gui
 
+# Re-check a whole played match offline - every commitment sent in play must be
+# revealed as the same (payload, nonce), in both directions, per sub-game:
+uv run p2p-pursuit verify --dir matches/amireman-g012-counted/police-G012-20260814T180101
+
 # Probe a (remote) peer: reachability + which wire dialect they speak:
 uv run p2p-pursuit smoke http://127.0.0.1:8801/mcp     # dialect=native|reference|unknown
 
@@ -317,6 +347,19 @@ Flags: `--games N` (dev override; counted matches force 6), `--seed` (reproducib
 (artifact location), `--config-dir DIR` (non-default role directory). Typical league workflow:
 warm-up → negotiate constitution → `peer --counted` → archive artifacts → both teams' reports
 go out automatically ([`docs/RUNBOOK.md`](docs/RUNBOOK.md) is the step-by-step).
+
+**Playing an actual opponent** goes through a per-opponent contract file rather than the flags
+above, so one team's negotiated terms can never ride into the next team's handshake:
+
+```bash
+cp config/opponents/TEMPLATE.env config/opponents/<their-slug>.env   # their answers
+scripts/play.sh <their-slug> https://their-tunnel/mcp --role police  # bash/zsh; play.fish for fish
+```
+
+`scripts/play.sh` resolves the contract, finds a working runner, **refuses an uncounted run whose
+report would reach the lecturer**, and makes a counted run confirm its recipient before starting.
+Send a new team [`docs/INTEROP_GUIDE.md`](docs/INTEROP_GUIDE.md) first — it is the wire contract
+with reproducible golden vectors, and the `.env` above is written from its answers.
 
 ## 9. Configuration guide
 
@@ -346,25 +389,36 @@ full sealed logs (nonces included) and **audit each other** — one mismatch = `
 ```
 src/p2p_pursuit/
   sdk/        PursuitSDK - single business-logic entry point (CLI/GUI go through it)
-  domain/     board, rules, scoring, scent, belief, trust, hints,
-              crypto, protocol, audit, declarations, negotiation, brains_base
+  domain/     board, rules, scoring, scent, belief, trust, hints, crypto, protocol,
+              audit, declarations, negotiation, game_ids (deterministic id + uid),
+              brains_base
   strategy/   police_brain, thief_brain, params (the tunable doctrine vector),
               pathing, squeeze, talk_template, talk_llm
   learn/      OFFLINE ONLY - cem (policy search), arena (points objective),
               population + opponents (sparring archetypes), clone_data + clone_fit
               (fit a real opponent from its sealed logs)
-  peer/       engine_state, turn_engine, service, runtime(+reports), local_match,
-              state_machine, deadline, watchdog, log_manager, audit_bridge
-  infra/      mcp_server, mcp_client, transport, email_sender
-  report/     artifacts (declaration/config/log/result), results
-  gui/        live_view (belief heatmap + banner), replay_view, replay_data, view_model
-  shared/     config (JSON constitution + private TOML), gatekeeper, rate_limiter, sysinfo
+  peer/       engine_state (+ the frozen per-sub-game audit ledger), turn_engine,
+              service, runtime(+reports), series_protocol, unsealed_events,
+              local_match, state_machine, deadline, watchdog, log_manager, audit_bridge
+  infra/      mcp_server, mcp_client, transport, email_sender, dialect (probe),
+              interop_codec + interop_bridge + interop_audit (the reference dialect)
+  report/     artifacts (declaration/config/log/result), results, sim_artifacts,
+              mutual_signature, consensus (end-of-series digest)
+  gui/        live_view (belief heatmap + banner), replay_view, replay_data,
+              view_model, theme
+  shared/     config (JSON constitution + private TOML), env, gatekeeper,
+              rate_limiter, sysinfo, logging_setup, version
 config/police/  config/thief/   # byte-identical game.json + role-private game.toml
 config/doctrine.json            # the frozen tuned doctrine a counted match plays
-config/opponents/               # policies cloned from teams we have already played
-matches/     # tracked per-match artifact archive (configs, logs, results)
-tests/unit/  tests/integration/ # 89 tests incl. real MCP round-trip + cheat harness
-docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_BOOK, COST_ANALYSIS
+config/opponents/               # per-opponent contracts (TEMPLATE.env + <slug>.env)
+                                # and policies cloned from teams we have played
+scripts/     play.sh / play.fish (launch a match from a contract), sync_repos.py
+             (publish the two submission repos), send_report.py (re-file a result)
+matches/     # tracked per-match artifact archive (configs, logs, results, terminal)
+tests/unit/  tests/integration/ # 287 + 62 tests incl. real MCP round-trip + cheat harness
+docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, DEPLOY,
+             INTEROP_GUIDE, OPPONENT_BRIEF, interop_<team>, PROMPT_BOOK,
+             COST_ANALYSIS, SUBMISSION_CHECKLIST
 ```
 
 ## 12. Documentation map
@@ -377,11 +431,14 @@ docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, PROMPT_
 | [`docs/TODO.md`](docs/TODO.md) | Task tracking with milestone gates |
 | [`docs/GAP_ANALYSIS.md`](docs/GAP_ANALYSIS.md) | HW6 vs. final-project spec |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers, **and the between-match learning loop (§4b)** |
+| [`docs/INTEROP_GUIDE.md`](docs/INTEROP_GUIDE.md) | **Send this to a new team.** The full wire contract — both dialects, the commit formula, canonical JSON, scent physics, the consensus digest — with golden vectors they can reproduce before the first move (pinned by `tests/unit/test_interop_guide_vectors.py`) |
+| [`docs/OPPONENT_BRIEF.md`](docs/OPPONENT_BRIEF.md) | The message to send a new team, the reply we need back, and what we do with their answers |
+| [`docs/interop_amireman.md`](docs/interop_amireman.md) · [`docs/interop_uoh-sqak.md`](docs/interop_uoh-sqak.md) | Per-opponent interop records: their contract, the defects each meeting exposed in ours, and how each was fixed |
 | [`docs/DEPLOY.md`](docs/DEPLOY.md) | Hosting both peers on stable public HTTPS (`Dockerfile`, `$PORT` / `$P2P_OPPONENT_URL`) — and why that beats a tunnel |
 | [`docs/PROMPT_BOOK.md`](docs/PROMPT_BOOK.md) | Prompt-engineering log (guidelines §8.3) |
 | [`docs/COST_ANALYSIS.md`](docs/COST_ANALYSIS.md) | LLM token/cost model per banter provider |
 | [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) | The book's ch. 11.5/11.6 final sweep, mapped to evidence |
-| [`matches/`](matches/) | Per-match archives (artifacts, configs, terminal evidence) |
+| [`matches/`](matches/) | Per-match archives (artifacts, configs, terminal evidence) — indexed with scores, times and bonuses in [§16](#16-match-record) |
 
 ## 13. Interpretation log (academic freedom, book p. 5)
 
@@ -453,9 +510,106 @@ opponent). Per-match artifacts + the agreed config are archived under `matches/`
 the declaration and result artifacts carry the exact git commit hash that played. Submission:
 this codebase publishes to **two cross-linked repos** (police / thief), each with README +
 `/config` + PRD/PLAN/TODO, tagged `v1.0-submission`. Step-by-step:
-[`docs/RUNBOOK.md`](docs/RUNBOOK.md); checklist: [`docs/TODO.md`](docs/TODO.md) §8–9.
+[`docs/RUNBOOK.md`](docs/RUNBOOK.md); checklist: [`docs/TODO.md`](docs/TODO.md) §8–9. What has
+actually been played, with the artifacts to prove it: [§16](#16-match-record).
 
-## 16. Contributing
+## 16. Match record
+
+Every series this team has played is archived in this repository, artifacts and all: the signed
+step-0 declaration, the per-sub-game agreed constitution, the sealed logs (nonces included) and
+the result JSON that was filed. So each row below is not a claim — it is a link to the evidence,
+and any of it can be re-checked offline, without the opponent and without the network:
+
+```bash
+uv run p2p-pursuit verify --dir matches/amireman-g012-counted/police-G012-20260814T180101
+```
+
+Times are read from the artifacts themselves (`started_at` / `ended_at` on the signed
+declaration), never from file mtimes, and are shown in **UTC** — the team plays in
+Asia/Jerusalem, UTC+3 in August.
+
+### Counted league matches — 3 of 10 played
+
+| # | Opponent | Series points `ahk-yosi` – them | Winner | League bonus | Final points `ahk-yosi` – them | Started (UTC) | Ended (UTC) | Match archive |
+|---:|---|:---:|---|:---:|:---:|---|---|---|
+| 1 | [`orcai-mj`](https://github.com/akariya-mohammed/orcai-mj-cop) | 75 – 75 <br>(3 – 3 sub-games) | *tie, no winner* | **+2** <br>*tie score, to **each** side* | **77 – 77** | 2026-08-13 20:04:10 | 2026-08-13 20:07:26 ¹ | [`ahk-yosi-vs-orcai-mj-counted/`](matches/ahk-yosi-vs-orcai-mj-counted) |
+| 2 | [`amireman`](https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Police) · label `G012` | **60 – 40** <br>(4 – 2) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **70 – 40** | 2026-08-14 18:01:29 | 2026-08-14 18:05:30 | [`amireman-g012-counted/`](matches/amireman-g012-counted) |
+| 3 | [`saedshki`](https://github.com/Saed-Abdalgani/Final-project_police_thief_p2p) | **85 – 45** <br>(5 – 1) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **95 – 45** | 2026-08-16 17:26:28 | 2026-08-16 17:30:45 | [`saedshki-counted/`](matches/saedshki-counted) |
+| | **3 opponents** | **220 – 160** <br>(12 – 6) | **2 wins · 1 tie · 0 losses** | **+22** to us | **242 – 162** | | | |
+
+*¹ That series predates the timing fix (`da8856a`), so its declaration carries `ended_at: null`;
+the time shown is `generated_at` from the sealed result — the moment the report was signed,
+seconds after the last move. Every series from `G012` on records a real end time, per sub-game.*
+
+**Where the bonus column comes from.** Both values are *binding* parameters of the rules book —
+appendix ו׳, tables 17 and 18, each marked `קבוע` (**fixed**: not negotiable, and deviating from
+it disqualifies the team) — and each is stored in the constitution both peers hash at handshake,
+as `scoring.tie_score` and `network_and_league.diversity_reward`:
+
+- **Win against a team you have not played before → diversity reward `+10`** (`[תגמול גיוון]`,
+  table 18 row 2: *"points for a victory against a new opponent"*; §9.2.1 adds that it is the
+  victory, not the meeting, that earns it). Because only one counted game per opponent is ever
+  allowed, every counted win earns it, and warm-ups do not spend it — the book explicitly
+  encourages warming up against a team before the counted game.
+- **Series ends level → tie score `+2` to *each* side** (`[ציון תיקו]`, table 17 row 5:
+  *"points to each side when the aggregate score of all sub-games against an opponent ends in a
+  tie"*). The Tie Rule on p. 87 gives the reason: no encounter may be left without a scoring
+  outcome, so a level series still converts into fair credit for both teams.
+- **Losing a series earns no bonus.** There is no losing-side credit anywhere in the book — the
+  consolation is already inside the score table itself (a captured thief still banks 5, a police
+  whose thief survived still banks 5), which is why our two decided series were 60–40 and 85–45
+  rather than shutouts.
+
+**Series points vs final points.** The two columns are kept apart on purpose. *Series points* is
+the only figure the two teams compute independently and agree on cryptographically — it is what
+the mutual signature covers and what both filed reports must match. *Final points* is that plus
+the book's bonus, and it is our own tally: the result JSON does not carry a total, it carries the
+boolean the lecturer needs (`diversity_reward_applied` — `true` for us in `G012` and `saedshki`,
+`false` for **both** sides in the drawn orcai-mj series, since a draw awards it to nobody), and
+§9.2.2 says the diversity incentive is *weighted* from the two teams' mutual game-count
+declarations before it enters the league table. So treat the final column as the standing at the
+book's full parameter values — the lecturer's weighting is applied downstream of our report, and
+the book does not publish its formula.
+
+**All 18 counted sub-games audited `Verified OK`** — every gameplay commit re-hashed to the
+record its owner later revealed. The counterpart field `opponent_audit` reads *"not reported
+(reference dialect)"* for all three: that dialect never returns the opponent's verdict of us,
+and asserting an agreement we never received would be a lie in a signed artifact (§13,
+interpretation #8). Roles alternate every sub-game, so each score above is earned from both
+sides of the board.
+
+**League status:** the book requires ≥2 counted matches against *different* teams; three are
+played, two won, carrying **+22** in league credit. The cap is 10 counted matches with **one
+counted game per opponent**, so the seven remaining slots each need a new team — a rematch
+cannot be counted, and seven more wins would be the maximum remaining diversity credit (+70).
+The next match must therefore declare `--prior-counted 3`.
+
+### Friendly and interop runs — not counted, kept for the audit trail
+
+| Opponent | Label | Points | Started (UTC) | Archive | What it was for |
+|---|---|:---:|---|---|---|
+| `uoh-sqak` | — | *abandoned, 3 sub-games* | 2026-08-09 21:22:19 | [`friendly-uoh-sqak-2026-08-10/`](matches/friendly-uoh-sqak-2026-08-10) | First cross-team contact. Our police captured in g01, then a turn timeout and a both-peers-claim-`police` collision ended it — the eight wire gaps it exposed are what the interop layer was built from |
+| `amireman` | `AHK-DEMO1` | 85 – 45 | 2026-08-14 01:07:28 | [`amireman-demo1/`](matches/amireman-demo1) | First run on their published contract |
+| `amireman` | `AHK-DEMO2` | 55 – 55 | 2026-08-14 02:18:03 | [`amireman-demo2/`](matches/amireman-demo2) | End-of-series consensus digests disagreed; these artifacts are what the defect below was later diagnosed from |
+| `amireman` | `AHK-DEMO3` | *no local archive* | 2026-08-14 | — | Their audit of us failed 0/14 and 0/35. The cause was ours and it was not hashing but **filing**: reveals bucketed by arrival order instead of by declared sub-game, so each package lagged one sub-game behind. Write-up and their verbatim report: [`docs/interop_amireman.md`](docs/interop_amireman.md) §4d |
+| `amireman` | `AHK-DEMO4` | 60 – 40 | 2026-08-14 16:56:38 | [`amireman-demo4/`](matches/amireman-demo4) | First run after that fix — 6/6 clean in **both** directions |
+| `amireman` | `AHK-DEMO5` | 60 – 40 | 2026-08-14 17:45:06 | [`amireman-demo5/`](matches/amireman-demo5) | Confirmation run, immediately before the counted `G012` |
+
+Two aborted attempts at the orcai-mj pairing are kept alongside the counted archive:
+[`…-attempt0-aborted/`](matches/ahk-yosi-vs-orcai-mj-counted-attempt0-aborted) (declaration only)
+and [`…-attempt1-incomplete/`](matches/ahk-yosi-vs-orcai-mj-counted-attempt1-incomplete), where
+the opponent's tunnel returned 502 at sub-game 5 and the role state desynchronised in 6. Both
+sides agreed to replay; the completed series in the table is the one that was reported. Earlier
+warm-ups against the lecturer's own reference peer — not a team, so not a match — are in
+[`warmup-reference-interop/`](matches/warmup-reference-interop) and
+[`warmup-reference-2026-08-01/`](matches/warmup-reference-2026-08-01).
+
+Playing us is meant to be cheap: [`docs/INTEROP_GUIDE.md`](docs/INTEROP_GUIDE.md) is the full
+wire contract with reproducible golden vectors, `config/opponents/TEMPLATE.env` is the
+per-opponent contract to fill in from it, and `scripts/play.sh <slug> <their-url>` launches the
+match from bash or zsh.
+
+## 17. Contributing
 
 Quality gates every change must keep green (CI enforces): `uv run ruff check` — zero violations
 (E/F/W/I/N/UP/B/C4/SIM); `uv run pytest --cov` — coverage ≥ 85%; every source/test file ≤ 150
@@ -464,7 +618,7 @@ business logic behind the `PursuitSDK` facade; every external call behind the Ga
 tunables from `config/` — nothing hard-coded; English-only comments explaining *why*, not *what*.
 Branch off `master`, keep commits scoped, update `docs/` with the change.
 
-## 17. License & credits
+## 18. License & credits
 
 MIT (see `pyproject.toml`). Assignment and rules book: **Dr. Yoram Segal**, "Orchestration of
 AI Agents", University of Haifa; public reference simulation:

@@ -67,8 +67,54 @@ LECTURER="rmisegal+uoh26finalgame@gmail.com"
 counted="no"
 case " ${rest[*]-} " in *" --counted "*) counted="yes" ;; esac
 
-recipient="${P2P_EMAIL_RECIPIENT:-<committed default: $LECTURER>}"
-mode="${P2P_EMAIL_MODE:-<committed default>}"
+# -- headless by default ------------------------------------------------------
+# cli.py plays the series on a worker thread and mails the report only after
+# LiveView.run() returns (cli.py:52-58). An open GUI therefore holds a finished
+# report hostage indefinitely - measured 2026-08-16, a completed friendly sat
+# unsent behind a window nobody knew to close. `--gui` opts the window back in
+# and is consumed here rather than forwarded, since the CLI has no such flag.
+want_gui="no"
+filtered=()
+for a in ${rest[@]+"${rest[@]}"}; do
+    if [ "$a" = "--gui" ]; then want_gui="yes"; else filtered+=("$a"); fi
+done
+rest=(${filtered[@]+"${filtered[@]}"})
+if [ "$want_gui" = "no" ]; then
+    case " ${rest[*]-} " in *" --no-gui "*) ;; *) rest+=(--no-gui) ;; esac
+fi
+
+# Resolve what would ACTUALLY be sent by asking the loader that decides it,
+# rather than reading the env vars and guessing at the committed defaults.
+# Reading the vars alone leaves the likeliest mistake uncaught: a contract
+# copied from TEMPLATE.env that simply omits P2P_EMAIL_MODE resolves here to
+# the literal string "<committed default>", which is not "send", so the guard
+# below would wave through a friendly bound for the lecturer. The TOML default
+# is mode=send to the lecturer, so absence is the dangerous case, not the safe
+# one. Verified 2026-08-16: env-only checks pass that contract.
+role="police"
+prev=""
+for a in ${rest[@]+"${rest[@]}"}; do
+    [ "$prev" = "--role" ] && role="$a"
+    prev="$a"
+done
+config_dir="config/$role"
+prev=""
+for a in ${rest[@]+"${rest[@]}"}; do
+    [ "$prev" = "--config-dir" ] && config_dir="$a"
+    prev="$a"
+done
+eff=$("$ROOT/.venv/bin/python" - "$config_dir" <<'PY'
+import sys
+from pathlib import Path
+from p2p_pursuit.shared.config import load_role
+_, peer = load_role(Path(sys.argv[1]))
+print(peer.email_mode)
+print(peer.email_recipient)
+PY
+) || eff=""
+mode="$(printf '%s\n' "$eff" | sed -n 1p)"
+recipient="$(printf '%s\n' "$eff" | sed -n 2p)"
+[ -n "$mode" ] || { echo "cannot resolve the email mode - refusing to guess" >&2; exit 2; }
 
 echo "=== contract: $opponent ==="
 echo "  opponent    $P2P_OPPONENT_URL"
@@ -83,8 +129,7 @@ echo
 
 # The one mistake that cannot be undone: a friendly filed against the lecturer
 # reads as THE counted encounter, and the book allows exactly one per pair.
-if [ "$counted" = "no" ] && [ "$mode" = "send" ] && \
-   { [ "${P2P_EMAIL_RECIPIENT:-}" = "$LECTURER" ] || [ -z "${P2P_EMAIL_RECIPIENT:-}" ]; }; then
+if [ "$counted" = "no" ] && [ "$mode" = "send" ] && [ "$recipient" = "$LECTURER" ]; then
     echo "REFUSING: this is a FRIENDLY (no --counted) but the report would be SENT" >&2
     echo "          to the lecturer. Set P2P_EMAIL_MODE=draft, or point" >&2
     echo "          P2P_EMAIL_RECIPIENT at your own address, then re-run." >&2
@@ -107,3 +152,31 @@ echo
 
 # shellcheck disable=SC2086
 $RUNNER peer "${rest[@]-}" 2>&1 | tee "$transcript"
+
+# -- did the report actually leave? -------------------------------------------
+# A played series and a delivered report are two different things, and the gap
+# between them is silent - the sealed files land under results/ either way.
+# Worse, when Gmail is unreachable `pick_email_transport` substitutes a dry-run
+# transport that returns `delivered: True` with receipt id "dry-run-N", which
+# reads as success and sends nothing. So check for that explicitly.
+echo
+if grep -q "\[email\].*'delivered': True" "$transcript" && \
+   ! grep -q "\[email\].*dry-run" "$transcript"; then
+    echo "email: DELIVERED - $(grep -o "\[email\].*" "$transcript" | tail -1)"
+elif grep -q "\[email\].*dry-run" "$transcript"; then
+    echo "email: NOT SENT - the dry-run transport stood in for Gmail." >&2
+    echo "  'delivered: True' above is that dry run reporting itself." >&2
+    echo "  check credentials.json/token.json, then resend with scripts/send_report.py" >&2
+elif grep -q "\[email\]" "$transcript"; then
+    echo "email: NOT DELIVERED - $(grep -o "\[email\].*" "$transcript" | tail -1)" >&2
+else
+    latest=$(ls -td results/*/ 2>/dev/null | head -1)
+    echo "email: NEVER ATTEMPTED - the run ended before cli.py's report step." >&2
+    if [ -n "$latest" ]; then
+        res=$(ls "$latest"result_*.json 2>/dev/null | head -1)
+        [ -n "$res" ] && {
+            echo "  the match itself is filed under $latest" >&2
+            echo "  send it with: scripts/send_report.py $res --to <address>" >&2
+        }
+    fi
+fi

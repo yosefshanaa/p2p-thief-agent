@@ -58,8 +58,8 @@ sub-game boundary or in the final audit — by which time, in a counted match, i
 >    that if indices ever disagree mid-series the peer that is behind **joins** the one ahead
 >    instead of restarting. Two peers that both advance on failure and both insist on their own
 >    index will livelock indefinitely, and it is invisible until it happens.
-> 9. Your prior counted-game count (rule #37) — we declare **0**. Both declarations reach the
->    lecturer, so they must be truthful.
+> 9. Your prior counted-game count (rule #37) — we declare **3** (orcai-mj, amireman/`G012`,
+>    saedshki). Both declarations reach the lecturer, so they must be truthful.
 > 10. First mover: we propose **thief** (book default), fine either way. Timeout: silence past
 >     180 s forfeits that sub-game as a technical loss.
 >
@@ -68,7 +68,10 @@ sub-game boundary or in the final audit — by which time, in a counted match, i
 > match and we will be on the tunnel.
 
 Attach `config/police/game.json` (both roles' files are byte-identical) and add the opponent's
-team name at the top before sending.
+team name at the top before sending. Send [`INTEROP_GUIDE.md`](INTEROP_GUIDE.md) with it — it
+answers questions 5–7 from our side in full (commit formula, scent expression, mutual signature)
+with golden vectors they can reproduce, so the reply we get back is usually just their numbers
+against ours.
 
 ---
 
@@ -95,7 +98,7 @@ team name at the top before sending.
 **a. Probe the wire before believing the prose.**
 
 ```bash
-uv run p2p-pursuit smoke https://their-url/mcp     # prints dialect=native|reference|unknown
+PYTHONPATH=src .venv/bin/p2p-pursuit smoke https://their-url/mcp   # dialect=native|reference|unknown
 ```
 
 The probe classifies their advertised tools, so the wire contract becomes a warm-up fact rather
@@ -120,43 +123,58 @@ Four spellings inside the signed document (roles vocabulary, `result` values, `l
 per-sub-game tie) are our reading of the reference family's prose; diff them against the new
 opponent's kit before anything counted.
 
-**c. Set the negotiated terms as environment variables** — never a constitution edit, which would
-ride into the next match. Copy `config/opponents/uoh-sqak.env` as the template and write
-`config/opponents/<team>.env`:
+**c. Write their answers into a contract file** — never a constitution edit, which would ride
+into the next team's handshake. No config surgery, no rebuild:
 
-```fish
-set -x P2P_OPPONENT_URL           https://their-url/mcp
-set -x P2P_DIALECT                reference     # or native            (Q2)
-set -x P2P_ALTERNATE_ROLES        true          #                      (Q3)
-set -x P2P_HANDSHAKE_PER_SUB_GAME true          #                      (Q3)
-set -x P2P_CLAIM_ENCLOSURE        false         # their thief announces (Q4)
-set -x P2P_SCENT_MODEL            registered_v3 # their physics         (Q6)
-set -x P2P_DOCTRINE               config/doctrine-registered_v3.json
-set -x P2P_EMAIL_MODE             draft         # friendly: cannot mail the lecturer
+```bash
+cp config/opponents/TEMPLATE.env config/opponents/<slug>.env
+$EDITOR config/opponents/<slug>.env      # Q2/Q3/Q4 + dialect; keep P2P_EMAIL_MODE=draft
 ```
+
+Warm-up (uncounted, six sub-games), then the counted match:
+
+```bash
+scripts/play.sh <slug> https://their-url/mcp --role thief --games 6
+# then remove P2P_EMAIL_MODE=draft from the contract file and:
+scripts/play.sh <slug> https://their-url/mcp --role thief --counted --prior-counted 3
+```
+
+`scripts/play.sh` loads the contract, picks a working runner, refuses an uncounted run that would
+mail the lecturer, and makes a counted run confirm its recipient first. On a machine with `fish`,
+`scripts/play.fish` is the equivalent.
 
 **A doctrine belongs to a physics.** Adopting their scent model without swapping the doctrine
 searched under it loses roughly two thirds of our captures — see `docs/interop_uoh-sqak.md` and
-`docs/STRATEGY.md`. If their physics is one we have not met, run `p2p-pursuit learn`
-against it before the friendly, not after.
+`docs/STRATEGY.md`. If their physics is one we have not met, run `p2p-pursuit learn` against it
+before the friendly, not after. That is what the contract's `P2P_SCENT_MODEL` / `P2P_DOCTRINE`
+pair is for: they move together or not at all.
 
-Term overrides (`P2P_MAP_AREA`, `P2P_HINT_MAX_WORDS`, `P2P_MIN_CENTER_INTENSITY`,
-`P2P_AXIS_ORIGIN_CORNER`) exist for the same reason and default to our committed constitution.
-Set one only when their **code** — not their brief — sends a different value.
+**The counted run requires all six sub-games**, so a coordinated cold start (question 8) is a
+precondition, not a nicety — joining at their mid-series index plays fewer than six, and
+`--counted` refuses.
 
-**d. Play the friendly, then the counted match.**
+**`--prior-counted` is shared state across both machines.** It is **3** today (orcai-mj,
+amireman/`G012`, saedshki) and rises by one per counted match. Rather than remembering it, read it
+off the archive — whoever plays a counted match commits it to `matches/` immediately, and the next
+number is the count of counted archives there. Two counted matches launching at the same time on
+the two machines cannot each work it out: agree the two values in writing first
+(README [§16](../README.md#16-match-record) keeps the running record).
+
+**Watch the hash if you agree a term.** `P2P_MAP_AREA`, `P2P_HINT_MAX_WORDS`,
+`P2P_MIN_CENTER_INTENSITY` and `P2P_AXIS_ORIGIN_CORNER` overlay the constitution *before* it is
+hashed (`shared/config.py:206`), so setting any of them changes the `config_sha256` quoted in §1 —
+e.g. `P2P_HINT_MAX_WORDS=12` moves it to `61068a97…`. Re-send the new hash, or the handshake
+refuses on a value we ourselves advertised. Confirm what we will actually present with:
 
 ```bash
-uv run p2p-pursuit peer --role thief --games 6                      # friendly, uncounted
-uv run p2p-pursuit peer --role thief --counted --prior-counted 0    # the one that counts
+PYTHONPATH=src .venv/bin/python -c "from pathlib import Path; \
+from p2p_pursuit.shared.config import load_shared; \
+print(load_shared(Path('config/police/game.json')).sha256)"
 ```
 
-`P2P_EMAIL_MODE=draft` must stay set for the friendly and be removed for the counted match: a
-friendly report filed against an opponent risks being taken as *the* counted encounter, and the
-book allows exactly one, sealed once filed. Remove that line and nothing else.
-
-The counted run requires all six sub-games, so a coordinated cold start (Q8) is a precondition,
-not a nicety — joining at their mid-series index plays fewer than six and `--counted` refuses.
+Larger changes — board size, start cells, move budget, barrier quota, scoring, sub-game count —
+are not env vars. Give that team a private `config/opponents/<slug>/{police,thief}/` and pass
+`--config-dir`; editing `config/<role>/game.json` would ride into the next team's handshake.
 
 Full operational detail — tunnels, the interop findings behind questions 2–8, scoring, and the
 post-match archive step — is in `RUNBOOK.md` §1–4.
