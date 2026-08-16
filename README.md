@@ -279,10 +279,10 @@ or an opponent (§16).
 | 5. Cloud exposure — public-URL config, smoke probe, [`docs/RUNBOOK.md`](docs/RUNBOOK.md), CI chaos drills (latency / dead link / silence) | ✅ incl. live two-tunnel drill + tunnel-kill drill |
 | 6. Crypto — commit-reveal, nonces, mutual audit, step-0 declaration, locks | ✅ |
 | 7. Reporting + GUI — 4 JSON artifacts, Gatekeeper, Gmail (draft/send), live GUI, replay verifier | ✅ |
-| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer **and against three opposing teams' live peers** (§16) |
+| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 349 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+**Quality gate:** 379 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
 CI on every push. Three counted league matches have been played and reported — two won, one
 tied, all 18 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
@@ -415,7 +415,8 @@ config/opponents/               # per-opponent contracts (TEMPLATE.env + <slug>.
 scripts/     play.sh / play.fish (launch a match from a contract), sync_repos.py
              (publish the two submission repos), send_report.py (re-file a result)
 matches/     # tracked per-match artifact archive (configs, logs, results, terminal)
-tests/unit/  tests/integration/ # 287 + 62 tests incl. real MCP round-trip + cheat harness
+tests/unit/  tests/integration/ # 317 + 62 tests incl. real MCP round-trip + cheat harness
+tests/vectors/kit/              # the league kit's CORE vectors, run against our code
 docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, DEPLOY,
              INTEROP_GUIDE, OPPONENT_BRIEF, interop_<team>, PROMPT_BOOK,
              COST_ANALYSIS, SUBMISSION_CHECKLIST
@@ -432,6 +433,7 @@ docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, DEPLOY,
 | [`docs/GAP_ANALYSIS.md`](docs/GAP_ANALYSIS.md) | HW6 vs. final-project spec |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Tunnel + league match operations, interop with reference-derived peers, **and the between-match learning loop (§4b)** |
 | [`docs/INTEROP_GUIDE.md`](docs/INTEROP_GUIDE.md) | **Send this to a new team.** The full wire contract — both dialects, the commit formula, canonical JSON, scent physics, the consensus digest — with golden vectors they can reproduce before the first move (pinned by `tests/unit/test_interop_guide_vectors.py`) |
+| [`tests/vectors/kit/`](tests/vectors/kit/) | Conformance vectors vendored from the league's shared kit, [`copthief-league-protocol`](https://github.com/Imreec/copthief-league-protocol). `tests/unit/test_kit_conformance.py` runs **our** code against **their** published expectations — the direction that proves something |
 | [`docs/OPPONENT_BRIEF.md`](docs/OPPONENT_BRIEF.md) | The message to send a new team, the reply we need back, and what we do with their answers |
 | [`docs/interop_amireman.md`](docs/interop_amireman.md) · [`docs/interop_uoh-sqak.md`](docs/interop_uoh-sqak.md) | Per-opponent interop records: their contract, the defects each meeting exposed in ours, and how each was fixed |
 | [`docs/DEPLOY.md`](docs/DEPLOY.md) | Hosting both peers on stable public HTTPS (`Dockerfile`, `$PORT` / `$P2P_OPPONENT_URL`) — and why that beats a tunnel |

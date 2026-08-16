@@ -73,6 +73,13 @@ answers questions 5–7 from our side in full (commit formula, scent expression,
 with golden vectors they can reproduce, so the reply we get back is usually just their numbers
 against ours.
 
+**If they build against [`copthief-league-protocol`](https://github.com/Imreec/copthief-league-protocol),
+questions 5 and 7 are already answered.** We reproduce every CORE vector in that kit, pinned in
+`tests/unit/test_kit_conformance.py`. Skip to the two it deliberately leaves per-pair — **which
+scent model** and **who announces enclosure** — and ask only those. A kit-built team defaults to
+`subtractive_chebyshev_v1`, which we can run but have never tuned against, so open by proposing
+the book's `multiplicative_book_v1` (PROMOTED in their own registry).
+
 ---
 
 ## 2. The reply we need (checklist)

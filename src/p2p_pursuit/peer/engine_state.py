@@ -121,6 +121,10 @@ class EngineState:
         self.trust = TrustModel()
         self.my_steps = self.opp_steps = 0
         self.barriers_used = 0
+        # Cleared with the rest of the board: a claim from an earlier sub-game
+        # would make a later concession read as an answer to it, and skip the
+        # corroboration that is the whole point of telling them apart.
+        self.last_claim_cell: Cell | None = None
         self.next_mover = self.shared.first_mover
         self.end: SubGameEnd | None = None
         self.my_records: list[dict] = []

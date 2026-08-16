@@ -32,6 +32,15 @@ vector, your scent physics as an expression, whether roles alternate, whether yo
 re-handshake per sub-game, who announces enclosure, your prior counted-game count, and a
 wall-clock start time. Template in §13.
 
+**If you build against [`copthief-league-protocol`](https://github.com/Imreec/copthief-league-protocol)**
+(teams imreeyal and anrbj666), most of that is already settled between us: our implementation
+reproduces every CORE vector in that kit — canonical JSON including non-ASCII and float
+round-trip, the commit seal, both deterministic ids, the terms signature, and the settlement
+digest in its spaced encoding. Those vectors are vendored into our own suite as
+`tests/unit/test_kit_conformance.py`, so the claim is checked on every commit rather than
+asserted here. **Two things the kit leaves open still need agreeing per pair: which scent
+model (§6) and who announces enclosure (§9).**
+
 ---
 
 ## 1. Order of play
@@ -238,6 +247,22 @@ serving: each step serves the field BEFORE that step's own emission
 registered alternative model we switch to per opponent. What must not happen is the two
 sides silently disagreeing.
 
+**If you build against the league kit, you are probably on the other physics.** We implement
+all three registrations and select per opponent:
+
+| model | emission | decay | freshest cell |
+|---|---|---|---|
+| `book_v1` *(our default)* | figure-4 kernel | `τ × 0.9` | 0.81 |
+| `multiplicative_book_v3` | same kernel, no rounding | `τ × 0.9` | 0.90 |
+| `subtractive_chebyshev_v1` | flat rings 0.9 / 0.6 / 0.3 | `v − 0.1` | 0.90 |
+
+These are not spellings of one model. Under subtractive decay a 0.3 cell is gone in three
+steps; under multiplicative it is still 0.2187. **We would rather play a multiplicative
+model** — the kit registers the book's own as `multiplicative_book_v1` (PROMOTED), so it is
+a first-class choice there too — but say the word and we will run yours. Either way both
+sides exchange the hash of the model document before the first move, so the choice is on the
+record rather than in a mail thread.
+
 On the wire the field is sparse — `{"r,c": intensity}`, zeros dropped:
 
 ```json
@@ -359,7 +384,20 @@ a match from sub-game 2 onward while sub-game 1 looks perfect.
 - **Re-handshake per sub-game**, or one handshake per series. Say which.
 - **Enclosure** (a thief with no legal move, book §3.4): does your **thief announce** it,
   does your **cop claim** it, or is the rule off? **Exactly one side may report it**, or the
-  series desynchronises. Three opponents in a row wanted thief-announced.
+  series desynchronises. Three opponents in a row wanted thief-announced, which is also what
+  the league kit settles on (SPEC §3.1) and what we default to.
+
+  Under that convention our thief announces both endings only it can see — a barrier dropped
+  on its own cell (rule 46) and no legal move left (rule 47) — as
+  `claim_response: {"claim": [<our own cell>], "caught": true}`, the same shape as a
+  co-location answer, because `win_claim` is reserved for survival. Our cop settles capture
+  on **any** `caught: true` you send, whichever cell it names.
+
+  We also **corroborate** a conceded cell against our own barrier record and write the verdict
+  into the log and result (`concession corroborated` / `NOT corroborated`). To be explicit
+  about what that is and is not: it is evidence, not a sanction. We do not withhold your
+  points over it, because a false concession pays *both* sides and neither of us should be
+  the one grading it — the artifacts are.
 - **Capture claim.** If your contract makes the cop's claim protocol-level and unsuppressable
   every turn, say so — we gate ours behind a belief threshold by default, and under your rules
   that silently forfeits captures we earned.
