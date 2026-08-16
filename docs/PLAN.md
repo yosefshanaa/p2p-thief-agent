@@ -100,7 +100,7 @@ sequenceDiagram
     M->>O: receive_commit(hash only)
     O-->>M: ack (locked)
     M->>O: receive_reveal(public: hint, scent, barrier[, claim])
-    O->>O: belief update; forced events (confession / claim answer)
+    O->>O: belief update, then forced events (confession / claim answer)
     O-->>M: events (sealed envelopes)
     Note over M,O: sub-game end: audit_exchange(full sealed log + nonces) both ways
 ```

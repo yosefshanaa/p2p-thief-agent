@@ -78,18 +78,18 @@ The system is a two-agent **decentralized partially observable Markov decision p
 ```mermaid
 flowchart LR
     subgraph PeerA["Police peer (port 8802)"]
-        A_GUI[Live GUI\nbelief heatmap] --> A_SDK
-        A_SDK[PursuitSDK] --> A_RT[PeerRuntime\nstate machine + watchdog]
-        A_RT --> A_ENG[TurnEngine\ncommit/reveal/audit]
-        A_ENG --> A_BR[PoliceBrain\ntuned doctrine]
-        A_ENG --> A_BEL[Belief map + trust]
-        A_RT --> A_GK[Gatekeeper] --> A_MAIL[Gmail reporter]
+        A_GUI["Live GUI<br/>belief heatmap"] --> A_SDK
+        A_SDK["PursuitSDK"] --> A_RT["PeerRuntime<br/>state machine + watchdog"]
+        A_RT --> A_ENG["TurnEngine<br/>commit/reveal/audit"]
+        A_ENG --> A_BR["PoliceBrain<br/>tuned doctrine"]
+        A_ENG --> A_BEL["Belief map + trust"]
+        A_RT --> A_GK["Gatekeeper"] --> A_MAIL["Gmail reporter"]
     end
     subgraph PeerB["Thief peer (port 8801)"]
-        B_ENG[TurnEngine] --> B_BR[ThiefBrain\ntuned doctrine]
+        B_ENG["TurnEngine"] --> B_BR["ThiefBrain<br/>tuned doctrine"]
     end
-    A_RT <-->|"FastMCP HTTP:\nhandshake · receive_commit ·\nreceive_reveal · receive_event ·\naudit_exchange"| B_ENG
-    A_MAIL -->|result JSON| L[rmisegal+uoh26finalgame@gmail.com]
+    A_RT <-->|"FastMCP HTTP:<br/>handshake · receive_commit ·<br/>receive_reveal · receive_event ·<br/>audit_exchange"| B_ENG
+    A_MAIL -->|"result JSON"| L["rmisegal+uoh26finalgame@gmail.com"]
 ```
 
 Full C4, state-machine and sequence diagrams: [`docs/PLAN.md`](docs/PLAN.md) §2. The dilemmas a
