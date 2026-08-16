@@ -195,6 +195,16 @@ uv run p2p-pursuit learn tune  --role police --workers 12        # search, hold-
 `tune` writes `config/doctrine.json` **only if a hold-out seed set the search never saw
 improves** — a gain on the training seeds is the optimizer reporting its own noise back.
 
+**A doctrine belongs to a scent physics, so there is one per model.** The league's shared kit
+registers a second physics (`subtractive_chebyshev_v1` — flat rings, *subtractive* decay), and
+searching under it produced `config/doctrine-subtractive.json`. The measurement overturned the
+prediction that drove the work: hold-out points per sub-game came out **13.19** at home,
+**14.11** for the same doctrine under the foreign physics, and **14.94** once re-searched
+there — a brighter, flatter field helps our police (capture 77% → 98%) more than its extra
+leakage hurts our thief. Either doctrine loses 0.4–0.8 points under the other's physics and
+*says nothing*, so `P2P_SCENT_MODEL` and `P2P_DOCTRINE` are set together or not at all
+([`docs/STRATEGY.md`](docs/STRATEGY.md) §9).
+
 Two things are still not RL and are not claimed as such: the per-turn move remains deterministic,
 auditable Python over an exact Bayes filter (rule #25 — the LLM only ever writes banter), and the
 sub-game trust coefficient adapts online by Bayesian update, not by reward.
@@ -282,7 +292,7 @@ or an opponent (§16).
 | 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 379 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+**Quality gate:** 384 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
 CI on every push. Three counted league matches have been played and reported — two won, one
 tied, all 18 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
@@ -410,12 +420,13 @@ src/p2p_pursuit/
               rate_limiter, sysinfo, logging_setup, version
 config/police/  config/thief/   # byte-identical game.json + role-private game.toml
 config/doctrine.json            # the frozen tuned doctrine a counted match plays
+config/doctrine-subtractive.json  # its pair for the kit's scent physics (§4)
 config/opponents/               # per-opponent contracts (TEMPLATE.env + <slug>.env)
                                 # and policies cloned from teams we have played
 scripts/     play.sh / play.fish (launch a match from a contract), sync_repos.py
              (publish the two submission repos), send_report.py (re-file a result)
 matches/     # tracked per-match artifact archive (configs, logs, results, terminal)
-tests/unit/  tests/integration/ # 317 + 62 tests incl. real MCP round-trip + cheat harness
+tests/unit/  tests/integration/ # 322 + 62 tests incl. real MCP round-trip + cheat harness
 tests/vectors/kit/              # the league kit's CORE vectors, run against our code
 docs/        PRD, PRD/1..7, PLAN, TODO, STRATEGY, GAP_ANALYSIS, RUNBOOK, DEPLOY,
              INTEROP_GUIDE, OPPONENT_BRIEF, interop_<team>, PROMPT_BOOK,

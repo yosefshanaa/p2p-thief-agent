@@ -257,11 +257,13 @@ all three registrations and select per opponent:
 | `subtractive_chebyshev_v1` | flat rings 0.9 / 0.6 / 0.3 | `v − 0.1` | 0.90 |
 
 These are not spellings of one model. Under subtractive decay a 0.3 cell is gone in three
-steps; under multiplicative it is still 0.2187. **We would rather play a multiplicative
-model** — the kit registers the book's own as `multiplicative_book_v1` (PROMOTED), so it is
-a first-class choice there too — but say the word and we will run yours. Either way both
-sides exchange the hash of the model document before the first move, so the choice is on the
-record rather than in a mail thread.
+steps; under multiplicative it is still 0.2187 — a completely different trail memory, which
+is why we keep a separately searched doctrine per physics and select the pair together.
+
+**We are happy to play any of the three, including yours.** If you build against the kit and
+run `subtractive_chebyshev_v1`, just say so and we will bring the doctrine searched under it —
+no negotiation needed. Whichever we agree, both sides exchange the hash of the model document
+before the first move, so the choice is on the record rather than in a mail thread.
 
 On the wire the field is sparse — `{"r,c": intensity}`, zeros dropped:
 

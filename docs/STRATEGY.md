@@ -348,3 +348,60 @@ after a counted match, the sealed logs give the opponent's true position and mov
 and that team joins the pool as a fitted policy rather than a guess. **Until a counted match has
 been played, the number to trust is "better against six archetypes on unseen seeds", not
 "stronger in the league".**
+
+## 9. v7 — a doctrine per physics, and the prediction it falsified
+
+The league's shared conformance kit (`copthief-league-protocol`) registers **two** scent
+models, and the one we did not implement is its CORE: `subtractive_chebyshev_v1`, the
+reference implementation's physics. Flat Chebyshev rings 0.9 / 0.6 / 0.3 against our
+figure-4 kernel, and decay by **subtracting** 0.1 rather than scaling by 0.9.
+
+### The prediction, and why it was wrong
+
+The reasoning going in was: a subtractive field is a short memory — an outer-ring cell dies
+in three steps where ours still reads 0.2187 — and every trail-age reading in the doctrine
+was calibrated on multiplicative traces, so playing it should cost us badly. `interop_uoh-sqak`
+had already measured two thirds of our captures lost when the physics changed under a doctrine
+that did not move with it, which made the inference feel safe.
+
+It was backwards, and only measuring showed it. Hold-out seeds 9000–9011, full sparring pool,
+league points per sub-game:
+
+| doctrine ↓ / physics → | `book_v1` | `subtractive_chebyshev_v1` |
+|---|---|---|
+| `config/doctrine.json` (shipped) | **13.19** | 14.11 |
+| `config/doctrine-subtractive.json` | 12.82 | **14.94** |
+
+Even *before* any re-tuning, the shipped doctrine scored **higher** under the foreign physics
+(14.11 vs 13.19). The flat rings are brighter and wider than our kernel's tail, so the police
+reads the field far better — capture 77% → 93% — while the thief, emitting that same brighter
+field, leaks more and survival falls 89% → 75%. The two effects do not cancel; the police gain
+is larger, because the table pays 20 for a capture and 10 for a survival.
+
+### What the search then bought
+
+CEM over all 23 keys, 10 generations × 20 candidates, 12 training seeds, scored on 12 unseen
+hold-out seeds and written only because the hold-out improved:
+
+- **14.11 → 14.94 points/sub-game**
+- capture **93% → 98%**, survival **75% → 92.5%** — the search recovered nearly all of the
+  thief's loss without giving up the police's gain
+- 15 of 23 keys moved. The thief half moved where the physics hurt it: `stay_penalty`
+  0.053 → 0.580 and `corner_penalty` 0.243 → 0.513, i.e. under a field that betrays you
+  brightly, standing still and hugging corners get much more expensive.
+
+### The pairing is now the deliverable, not the file
+
+Either doctrine loses 0.4–0.8 points under the other's physics, and **that loss is silent** —
+nothing errors, the agent simply plays worse. So the model and the doctrine are one decision
+in two variables (`P2P_SCENT_MODEL` + `P2P_DOCTRINE`), asserted together in
+`tests/unit/test_doctrine_per_physics.py`, which also refuses any committed contract that
+names the kit's physics without its doctrine.
+
+The practical consequence for match-day: **if a kit-built team offers their CORE physics,
+take it.** It is our best measured cell, +1.75 points/sub-game over playing at home.
+
+§8's caveat applies unchanged and is worth repeating here, because this section is the more
+tempting one to over-read: every number above is our archetypes playing our archetypes under a
+different physics. It says the doctrine is better *at the game we simulated*. A kit-built
+opponent is a real team, and the only evidence that settles it is a counted match.
