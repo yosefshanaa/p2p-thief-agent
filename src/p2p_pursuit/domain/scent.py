@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from . import scent_subtractive
 from .board import Cell
 
 CENTER_INTENSITY = 0.9
@@ -26,7 +27,11 @@ BOOK_V1 = "book_v1"
 #: served *after* the update - so the freshest cell reads 0.9. Negotiated per
 #: opponent, because it is a different physics and not merely a different name.
 REGISTERED_V3 = "registered_v3"
-MODELS = (BOOK_V1, REGISTERED_V3)
+#: The reference implementation's physics, CORE in the league's shared kit:
+#: flat Chebyshev rings and *subtractive* decay. A different world, not a
+#: different spelling - see :mod:`.scent_subtractive`.
+SUBTRACTIVE_V1 = "subtractive_chebyshev_v1"
+MODELS = (BOOK_V1, REGISTERED_V3, SUBTRACTIVE_V1)
 
 # Book figure 4: radial falloff around the emitting agent (offsets -2..2).
 EMISSION_KERNEL: list[list[float]] = [
@@ -41,6 +46,8 @@ EMISSION_KERNEL: list[list[float]] = [
 def scent_model_document(model: str = BOOK_V1) -> dict:
     """The emission+decay model with a numeric example - the pre-series lock payload
     (book rule #23: both teams hash-lock this before the first move)."""
+    if model == SUBTRACTIVE_V1:
+        return scent_subtractive.model_document()
     if model == REGISTERED_V3:
         return {
             "model": "multiplicative_book_v3",
@@ -103,6 +110,10 @@ class ScentField:
         this, so a field we serve and a field the auditor recomputes cannot
         drift apart without the drift being in this one method.
         """
+        if self.model == SUBTRACTIVE_V1:
+            scent_subtractive.decay(self.grid, size=self.size)
+            scent_subtractive.emit(self.grid, center, size=self.size)
+            return self.snapshot()
         if self.model == REGISTERED_V3:
             self.advance(center)
             return self.snapshot()

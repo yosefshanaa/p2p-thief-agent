@@ -100,6 +100,10 @@ class TurnEngine(EngineState):
                                     or self.brain.should_claim(view, self.own_pos)):
             # Claim rides inside the reveal: the answer returns atomically, no race.
             package["reveal"]["claim"] = {"cell": list(self.own_pos), "at_step": self.my_steps}
+            # Remembered so a later `caught: true` can be read for what it is: the
+            # same cell is an answer, any other cell is a rule-46/47 concession
+            # and wants corroborating against our own barriers (unsealed_events).
+            self.last_claim_cell = tuple(self.own_pos)
         if self.role == THIEF and self.my_steps >= self.shared.survival_threshold:
             package["event"] = self._survival_claim()
         return package
