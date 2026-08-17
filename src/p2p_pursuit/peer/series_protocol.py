@@ -25,6 +25,28 @@ def role_for(natural: str, sub_game: int) -> str:
     return THIEF if natural == POLICE else POLICE
 
 
+def retarget_link(rt: Any, my_role: str, log_fn: Any) -> None:
+    """Point the outbound link at the agent that now holds the other role.
+
+    Only does anything for an opponent who serves one agent per role and told us
+    so with `{role}` in their URL (`shared/config.opponent_url_for`). For every
+    other peer the URL has no placeholder and this is a no-op, which is why it
+    can run unconditionally at every boundary.
+    """
+    from ..shared.config import ROLE_PLACEHOLDER, opponent_url_for
+
+    template = getattr(rt.peer, "opponent_url", "") or ""
+    if ROLE_PLACEHOLDER not in template:
+        return
+    wanted = opponent_url_for(template, THIEF if my_role == POLICE else POLICE)
+    # In the reference dialect `rt.link` is the bridge wrapping the real link.
+    link = getattr(rt.link, "link", rt.link)
+    if link is None or getattr(link, "url", None) == wanted:
+        return
+    link.url = wanted
+    log_fn(f"[{rt.natural_role}] pushing to {wanted} (they hold the other role now)")
+
+
 def take_role(rt: Any, n: int, log_fn: Any) -> None:
     """Adopt the role sub-game ``n`` owes, before any state is built for it.
 
@@ -38,6 +60,7 @@ def take_role(rt: Any, n: int, log_fn: Any) -> None:
         rt.engine.set_role(role)
         rt.service.my_handshake["role"] = role
         log_fn(f"[{rt.natural_role}] sub-game {n}: playing as {role} (alternating)")
+    retarget_link(rt, role, log_fn)
 
 
 def rehandshake_if_needed(rt: Any, n: int, log_fn: Any) -> bool:
@@ -84,6 +107,8 @@ def _adopt_complementary_role(rt: Any, n: int, theirs: dict[str, Any],
     rt.engine.begin_sub_game(n)
     rt.service.my_handshake["role"] = wanted
     payload["role"] = wanted
+    # Their index drifted, so the agent holding the other role changed with it.
+    retarget_link(rt, wanted, log_fn)
 
 
 def _rehandshake(rt: Any, n: int, log_fn: Any) -> bool:

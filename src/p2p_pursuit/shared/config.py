@@ -251,6 +251,29 @@ def load_peer(path: Path) -> PeerConfig:
 #: `.env` secrets already behave.
 PORT_VARS = ("P2P_MY_PORT", "PORT")
 OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
+#: Some peers serve one agent per role on one port (`/cop/mcp`, `/thief/mcp`)
+#: rather than one endpoint that routes. Against those, the endpoint we must push
+#: to is a function of the sub-game: under alternation their cop plays the even
+#: sub-games and their thief the odd ones, so a link pinned at one of the two
+#: spends half a series talking to an idle agent. Writing `{role}` in the URL
+#: says "substitute THEIR role for the sub-game about to be played" - measured
+#: against gal-roy1, whose `/mcp` root is not mounted at all.
+ROLE_PLACEHOLDER = "{role}"
+#: The reference family spells our `police` as `cop` - it is the key their own
+#: identity block uses (`interop_codec.interop_identity`: `mcp_servers` is keyed
+#: cop/thief), and it is the path segment gal-roy1 actually serves. Substituting
+#: our own spelling would ask for `/police/mcp` and get a 404, so the placeholder
+#: is defined in *their* vocabulary. A peer that serves some third spelling needs
+#: its own entry here rather than a hand-edited URL, because the substitution has
+#: to happen again at every alternation boundary.
+WIRE_ROLE_NAMES = {"police": "cop", "thief": "thief"}
+
+
+def opponent_url_for(url: str, their_role: str) -> str:
+    """Their endpoint for a sub-game in which they hold ``their_role``."""
+    if ROLE_PLACEHOLDER not in url:
+        return url
+    return url.replace(ROLE_PLACEHOLDER, WIRE_ROLE_NAMES.get(their_role, their_role))
 #: The reporting address is a *deployment* decision, not a code one. A hosted
 #: rehearsal must be incapable of mailing the lecturer, and the only safe way to
 #: guarantee that is to let the environment force `draft` - editing the
