@@ -1,0 +1,228 @@
+{
+  "report_type": "game_result",
+  "game_uid": "c909aa49-ec8e-40dc-7c64-fc5fb48280b4",
+  "game_id": "ahk-yosi-vs-gal-roy1",
+  "generated_at": "2026-08-17T17:40:37+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "gal-roy1",
+      "group_name": "gal-roy1",
+      "members": [],
+      "repos": {}
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "gal-roy1": "thief"
+      },
+      "result": "survival",
+      "winner_group": "gal-roy1",
+      "score": {
+        "ahk-yosi": 5,
+        "gal-roy1": 10
+      }
+    },
+    {
+      "index": 2,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "gal-roy1": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "gal-roy1": 5
+      }
+    },
+    {
+      "index": 3,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "gal-roy1": "thief"
+      },
+      "result": "survival",
+      "winner_group": "gal-roy1",
+      "score": {
+        "ahk-yosi": 5,
+        "gal-roy1": 10
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "barrier onto (0, 5)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 24,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "gal-roy1": "police"
+      },
+      "result": "capture",
+      "winner_group": "gal-roy1",
+      "score": {
+        "ahk-yosi": 5,
+        "gal-roy1": 20
+      }
+    },
+    {
+      "index": 5,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "gal-roy1": "thief"
+      },
+      "result": "survival",
+      "winner_group": "gal-roy1",
+      "score": {
+        "ahk-yosi": 5,
+        "gal-roy1": 10
+      }
+    },
+    {
+      "index": 6,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "captured at [5, 0]",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 21,
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "gal-roy1": "police"
+      },
+      "result": "capture",
+      "winner_group": "gal-roy1",
+      "score": {
+        "ahk-yosi": 5,
+        "gal-roy1": 20
+      }
+    }
+  ],
+  "totals": {
+    "police": 60,
+    "thief": 50
+  },
+  "my_role": "police",
+  "my_total": 60,
+  "opponent_total": 50,
+  "series_winner": "police",
+  "tokens_used": 10066,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 35,
+      "gal-roy1": 75
+    },
+    "sub_games_won": {
+      "ahk-yosi": 1,
+      "gal-roy1": 5
+    },
+    "ties": 0,
+    "winner_group": "gal-roy1",
+    "series_tie": false
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-gal-roy1.json",
+    "configs": [
+      "config_ahk-yosi-vs-gal-roy1_g01.json",
+      "config_ahk-yosi-vs-gal-roy1_g02.json",
+      "config_ahk-yosi-vs-gal-roy1_g03.json",
+      "config_ahk-yosi-vs-gal-roy1_g04.json",
+      "config_ahk-yosi-vs-gal-roy1_g05.json",
+      "config_ahk-yosi-vs-gal-roy1_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-gal-roy1_g01.json",
+      "log_ahk-yosi-vs-gal-roy1_g02.json",
+      "log_ahk-yosi-vs-gal-roy1_g03.json",
+      "log_ahk-yosi-vs-gal-roy1_g04.json",
+      "log_ahk-yosi-vs-gal-roy1_g05.json",
+      "log_ahk-yosi-vs-gal-roy1_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "gal-roy1": {}
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 5,
+    "gal-roy1": 1
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "gal-roy1": true
+  },
+  "mutual_signature": "a83dedb366158422d5d90f04183bbc0f132904f81106c426fa2ab5df1d36577f",
+  "result_sha256": "bfc99d8d19289aa25883942818a72e48c9af872c319c048bde160e4fe13464f5"
+}

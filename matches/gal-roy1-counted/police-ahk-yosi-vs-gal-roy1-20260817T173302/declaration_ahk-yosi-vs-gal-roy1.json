@@ -1,0 +1,45 @@
+{
+  "report_type": "declaration",
+  "game_uid": "c909aa49-ec8e-40dc-7c64-fc5fb48280b4",
+  "game_id": "ahk-yosi-vs-gal-roy1",
+  "game_number": 5,
+  "config_sha256": "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443",
+  "scent_model_sha256": "ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28",
+  "token_cap": 200000,
+  "started_at": "2026-08-17T17:34:07+00:00",
+  "ended_at": "2026-08-17T17:40:37+00:00",
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8801/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "9d4d27fca38ca230fe344aab309120d936b9c450"
+    },
+    "opponent": {
+      "group_id": "gal-roy1",
+      "group_name": "gal-roy1",
+      "members": [],
+      "repos": {},
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "e32506147fa7ce9637bcce5f1b3131f0971d7ce4567925f50a7d68ea19c4ced0"
+}
