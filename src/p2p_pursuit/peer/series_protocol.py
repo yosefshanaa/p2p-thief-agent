@@ -29,16 +29,18 @@ def retarget_link(rt: Any, my_role: str, log_fn: Any) -> None:
     """Point the outbound link at the agent that now holds the other role.
 
     Only does anything for an opponent who serves one agent per role and told us
-    so with `{role}` in their URL (`shared/config.opponent_url_for`). For every
-    other peer the URL has no placeholder and this is a no-op, which is why it
-    can run unconditionally at every boundary.
+    so - either with `{role}` in their URL or by naming both doors outright
+    (`shared/config.opponent_url_for`). For every other peer there is one
+    address and this is a no-op, which is why it can run unconditionally at
+    every boundary.
     """
     from ..shared.config import ROLE_PLACEHOLDER, opponent_url_for
 
     template = getattr(rt.peer, "opponent_url", "") or ""
-    if ROLE_PLACEHOLDER not in template:
+    doors = getattr(rt.peer, "opponent_doors", None) or {}
+    if ROLE_PLACEHOLDER not in template and not doors:
         return
-    wanted = opponent_url_for(template, THIEF if my_role == POLICE else POLICE)
+    wanted = opponent_url_for(template, THIEF if my_role == POLICE else POLICE, doors)
     # In the reference dialect `rt.link` is the bridge wrapping the real link.
     link = getattr(rt.link, "link", rt.link)
     if link is None or getattr(link, "url", None) == wanted:

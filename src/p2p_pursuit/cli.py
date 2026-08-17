@@ -40,7 +40,8 @@ def cmd_peer(args: argparse.Namespace) -> int:
     from .shared.config import opponent_url_for
 
     their_role = THIEF if role == POLICE else POLICE
-    runtime.attach(sdk.make_link(opponent_url_for(runtime.peer.opponent_url, their_role)))
+    runtime.attach(sdk.make_link(opponent_url_for(
+        runtime.peer.opponent_url, their_role, runtime.peer.opponent_doors)))
     runtime.start_server()
     if not runtime.connect():
         return 2
