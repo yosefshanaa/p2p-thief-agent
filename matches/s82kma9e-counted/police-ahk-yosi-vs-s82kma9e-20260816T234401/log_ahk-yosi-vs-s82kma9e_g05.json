@@ -1,0 +1,512 @@
+{
+  "report_type": "sub_game_log",
+  "game_uid": "84b0d0c0-4974-dad2-5a44-0f0d235f1b9b",
+  "game_id": "ahk-yosi-vs-s82kma9e",
+  "sub_game": 5,
+  "perspective": "police",
+  "code_version": "1.00",
+  "config_sha256": "691a12db876d0f88e81472dc9d87dd951306f651840f94b2c3b06ce5b440d431",
+  "commit_dialect": "reference",
+  "started_at": "2026-08-16T23:46:32+00:00",
+  "ended_at": "2026-08-16T23:46:41+00:00",
+  "opponent_turn_timestamps": [
+    "2026-08-16T23:46:32.849149+00:00",
+    "2026-08-16T23:46:35.775847+00:00",
+    "2026-08-16T23:46:37.338220+00:00",
+    "2026-08-16T23:46:40.338667+00:00",
+    "2026-08-16T23:46:41.182623+00:00"
+  ],
+  "my_records": [
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 5,
+      "sub_game_number": 5,
+      "step": 1,
+      "pos_before": [
+        0,
+        0
+      ],
+      "pos_after": [
+        0,
+        1
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "I’m lurking in Haifa’s southeast, so keep chasing—you’re already hopelessly behind.",
+      "scent": [
+        [
+          0.5,
+          0.8,
+          0.5,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "1e558031cf0908138dfb6383078f4551"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 5,
+      "sub_game_number": 5,
+      "step": 2,
+      "pos_before": [
+        0,
+        1
+      ],
+      "pos_after": [
+        1,
+        1
+      ],
+      "move": "S",
+      "barrier": null,
+      "intent": "lie",
+      "hint": "Closing in from the southeast, nowhere left to run.",
+      "scent": [
+        [
+          0.5,
+          0.7,
+          0.5,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.8,
+          0.5,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "c0281d72e9a18e3574559e812944f100"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 5,
+      "sub_game_number": 5,
+      "step": 3,
+      "pos_before": [
+        1,
+        1
+      ],
+      "pos_after": [
+        1,
+        2
+      ],
+      "move": "E",
+      "barrier": null,
+      "intent": "truth",
+      "hint": "I’m lurking in Haifa’s northwest, and you’re already too late to catch me.",
+      "scent": [
+        [
+          0.4,
+          0.6,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.4,
+          0.7,
+          0.8,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.4,
+          0.5,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "f7946d32e350d24ae8fc624d65674b64"
+    },
+    {
+      "kind": "step",
+      "role": "police",
+      "sub_game": 5,
+      "sub_game_number": 5,
+      "step": 4,
+      "pos_before": [
+        1,
+        2
+      ],
+      "pos_after": [
+        1,
+        2
+      ],
+      "move": "STAY",
+      "barrier": [
+        1,
+        3
+      ],
+      "intent": "lie",
+      "hint": "Slipping quietly past the southeast, try to keep up.",
+      "scent": [
+        [
+          0.3,
+          0.5,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.3,
+          0.6,
+          0.8,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.3,
+          0.5,
+          0.5,
+          0.5,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "nonce": "802a2528fb170dd6819d8678295b4c1d"
+    }
+  ],
+  "my_hashes": [
+    "5c7964855a55fc46c3486292abed1c656cbfa21272343453a39597d5d6260c2b",
+    "e81d8997f51937540ddcecc8284a3718af66cce390f1fbe01c64eee99de6364b",
+    "315d3ab1508c5a1eb5141dc9ce058ea3ddaec9effc30fcac5a862a4d7aa06760",
+    "fce11314db5f89131f4d84ff8e77b7e0496ca07f5af812694ebda1530de3fb60"
+  ],
+  "opponent_records": [
+    {
+      "payload": {
+        "step": 0,
+        "type": "system_spec",
+        "sub_game_number": 5,
+        "group_name": "s82kma9e",
+        "model": "template",
+        "code_version": "copthief-sparring/0.1.0",
+        "num_games_declared": 0,
+        "spec": {
+          "os": "any",
+          "cpu_type": "unspecified",
+          "cpu_cores": 0,
+          "ram_gb": 0,
+          "gpu_type": "none",
+          "vram_gb": 0
+        }
+      },
+      "nonce": "64f9ea42c70f34fbc56ec920b84a8e9b",
+      "commit": "6b4eadbb373ec61f45cc22bcde172170a3351fa5241e13b9b328b12170a8fa46"
+    },
+    {
+      "payload": {
+        "step": 1,
+        "role": "thief",
+        "sub_game": 5,
+        "state": "grid=7x7;self=[2, 3];barriers=[]",
+        "position": [
+          2,
+          3
+        ],
+        "move": "MOVE:N",
+        "intent": "lie",
+        "hint": "עובר עכשיו דרך הרובע הצפוני המזרחי",
+        "verdict": "moved"
+      },
+      "nonce": "c2334a15c1777d511e6fe34fb7dcc971",
+      "commit": "d2ad921a3d93d397c308f412650649d6e9ae7271c63a76f0f5167a31722ea3bf"
+    },
+    {
+      "payload": {
+        "step": 2,
+        "role": "thief",
+        "sub_game": 5,
+        "state": "grid=7x7;self=[1, 3];barriers=[]",
+        "position": [
+          1,
+          3
+        ],
+        "move": "MOVE:N",
+        "intent": "lie",
+        "hint": "אני איפשהו ברובע המרכזי המערבי",
+        "verdict": "moved"
+      },
+      "nonce": "64333ef1ff4ad7e09c2a5341e2fd6854",
+      "commit": "f44a5006704e82fe86e1c600d144cd6ea8ede402368dc2c417a1c23e93917418"
+    },
+    {
+      "payload": {
+        "step": 3,
+        "role": "thief",
+        "sub_game": 5,
+        "state": "grid=7x7;self=[0, 3];barriers=[]",
+        "position": [
+          0,
+          3
+        ],
+        "move": "MOVE:N",
+        "intent": "lie",
+        "hint": "אני איפשהו ברובע הדרומי המזרחי",
+        "verdict": "moved"
+      },
+      "nonce": "0b2cf76fe0a8f8e1cdaa95df73b31b02",
+      "commit": "ac330551f45a9328f62d6dfcd6072d5c6dce45170cda479011d8c821f083753c"
+    },
+    {
+      "payload": {
+        "step": 4,
+        "role": "thief",
+        "sub_game": 5,
+        "state": "grid=7x7;self=[1, 3];barriers=[]",
+        "position": [
+          1,
+          3
+        ],
+        "move": "MOVE:S",
+        "intent": "lie",
+        "hint": "הרחובות הדרומי האמצעי שקטים הלילה",
+        "verdict": "moved"
+      },
+      "nonce": "3f7deb564d96646595b74eb9d40f9f81",
+      "commit": "073fd0d0c744df1d3ff8d06ec604b3e03d9ef566ed85673e9426cc380e568eb3"
+    },
+    {
+      "payload": {
+        "step": 5,
+        "role": "thief",
+        "sub_game": 5,
+        "state": "grid=7x7;self=[1, 3];barriers=[[1, 3]]",
+        "position": [
+          1,
+          3
+        ],
+        "move": "STAY",
+        "intent": "truth",
+        "hint": "",
+        "verdict": "settled"
+      },
+      "nonce": "01732008a9c4c9d4f140d673443d266e",
+      "commit": "9cc92f420aaa6e7d2045132d1a45bfc3a3f9a3c341045b658063cee4fd8dd6d8"
+    }
+  ],
+  "opponent_hashes": [
+    "d2ad921a3d93d397c308f412650649d6e9ae7271c63a76f0f5167a31722ea3bf",
+    "f44a5006704e82fe86e1c600d144cd6ea8ede402368dc2c417a1c23e93917418",
+    "ac330551f45a9328f62d6dfcd6072d5c6dce45170cda479011d8c821f083753c",
+    "073fd0d0c744df1d3ff8d06ec604b3e03d9ef566ed85673e9426cc380e568eb3",
+    "9cc92f420aaa6e7d2045132d1a45bfc3a3f9a3c341045b658063cee4fd8dd6d8"
+  ],
+  "result": {
+    "ending": "capture",
+    "winner": "police",
+    "cause": "claim confirmed at [1, 3] (unsealed answer)",
+    "my_steps": 4,
+    "opp_steps": 5
+  },
+  "audit": {
+    "mine_of_them": {
+      "verdict": "Verified OK",
+      "violations": []
+    },
+    "theirs_of_us": {
+      "verdict": "not reported (reference dialect)",
+      "violations": []
+    },
+    "my_reveal_binds": {
+      "verdict": "Verified OK",
+      "violations": []
+    }
+  },
+  "tokens_used": 4621
+}

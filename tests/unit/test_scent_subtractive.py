@@ -77,10 +77,19 @@ def test_a_centre_below_the_minimum_does_not_emit() -> None:
 
 def test_the_field_serves_after_its_own_update() -> None:
     """Serving order is not pinned by any vector, so it is pinned here and
-    declared in the lock document - the two sides must not choose differently."""
+    declared in the lock document - the two sides must not choose differently.
+
+    It was 0.9 (decay-then-deposit) until s82kma9e's lock settled the question
+    the other way: their document says `"order": "deposit_then_decay"` and the
+    two golden fields they published require a 0.8 centre. We reproduced both,
+    both sides derived the same lock hash, and the counted match was played
+    under it (2026-08-17, 6/6 Verified OK). Whoever revisits this: the kit does
+    not pin the order, so it is a per-opponent agreement, and this is the one
+    we have signed and played.
+    """
     field = ScentField(size=BOARD, model=SUBTRACTIVE_V1)
     served = field.serve_for_step((3, 3))
-    assert served[3][3] == 0.9
+    assert served[3][3] == 0.8
 
 
 def test_the_model_is_registered_and_locks_to_its_own_hash() -> None:
@@ -88,6 +97,8 @@ def test_the_model_is_registered_and_locks_to_its_own_hash() -> None:
 
     assert SUBTRACTIVE_V1 in MODELS
     doc = scent_model_document(SUBTRACTIVE_V1)
-    assert doc["model"] == "subtractive_chebyshev_v1"
+    # `name`, not `model`: the document is s82kma9e's schema, adopted verbatim
+    # so the two sides hash the same object rather than merely equivalent ones.
+    assert doc["name"] == "subtractive_chebyshev_v1"
     others = {digest(scent_model_document(m)) for m in MODELS if m != SUBTRACTIVE_V1}
     assert digest(doc) not in others

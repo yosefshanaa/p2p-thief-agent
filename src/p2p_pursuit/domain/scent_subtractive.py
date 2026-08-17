@@ -46,22 +46,57 @@ def model_document() -> dict:
     field that changes a number has to be *in* here - including the serving
     order, which no vector pins and which silently shifts every reading by one
     step if the two sides choose differently.
+
+    This is **s82kma9e's canonical document, adopted byte-for-byte** on
+    2026-08-17 and hashing to
+        81ebee59640e80eae8ca9ee5f86abd26e7edf5cdbb27d15925cb6ee45ca6ddf4
+    which is the lock the counted match was played under. An earlier draft of
+    this function described the same physics in our own vocabulary; the two
+    hashed differently, and their kit refuses the handshake on a scent-hash
+    mismatch, so the schema had to be theirs rather than merely equivalent.
+    Do not tidy the field names, reorder the keys, or expand the sparse example
+    into a matrix - `tests/unit/test_scent_models.py` pins the digest, and a
+    second test pins the example against what this module actually computes.
+
+    Note `params.order`: their document says **deposit_then_decay**, which is
+    why `ScentField.serve_for_step` emits before it decays.
     """
+    half = FIELD_SIZE // 2
+    falloff = CENTER_INTENSITY / (half + 1)
+    emit_field = {
+        f"{r},{c}": round(CENTER_INTENSITY - falloff * max(abs(r - 3), abs(c - 3)),
+                          ROUND_DIGITS)
+        for r in range(3 - half, 3 + half + 1)
+        for c in range(3 - half, 3 + half + 1)
+    }
     return {
-        "model": "subtractive_chebyshev_v1",
-        "source": "copthief-league-protocol SPEC section 5 (CORE)",
-        "emission": ("value = round(max(0, intensity - falloff * chebyshev), 3), "
-                     "falloff = intensity / (half + 1), half = grid_size // 2"),
-        "composition": "merged into the trail by max, never summed",
-        "decay": "round(max(0, v - decay), 3) once per game step",
-        "decay_per_step": DECAY_PER_STEP,
-        "center_intensity": CENTER_INTENSITY,
-        "min_center_intensity": MIN_CENTER_INTENSITY,
-        "field_size": FIELD_SIZE,
-        "rounding_digits": ROUND_DIGITS,
-        "numeric_example": {"rings": [0.9, 0.6, 0.3], "after_one_decay": [0.8, 0.5, 0.2]},
-        "serving": "each step serves the field AFTER that step's own update",
-        "transmitted": "only cells with value > 0",
+        "example": {
+            "after_one_decay": {k: round(v - DECAY_PER_STEP, ROUND_DIGITS)
+                                for k, v in emit_field.items()},
+            "emit_center": [3, 3],
+            "emit_field": emit_field,
+            "note": "emit at the centre of a 7x7 board, then one decay",
+        },
+        "family": "scent_model",
+        "name": "subtractive_chebyshev_v1",
+        "params": {
+            "cadence": "per_full_turn",
+            "clamp": [0.0, None],
+            "decay": "subtractive",
+            "decay_per_step": DECAY_PER_STEP,
+            "distance": "chebyshev",
+            "emit_intensity": CENTER_INTENSITY,
+            "falloff": "linear",
+            "falloff_step": "emit_intensity / (field_size // 2 + 1)",
+            "field_size": FIELD_SIZE,
+            "initial_field": "empty",
+            "min_center_intensity": MIN_CENTER_INTENSITY,
+            "order": "deposit_then_decay",
+            "receiver_side_decay": True,
+            "rounding_decimals": ROUND_DIGITS,
+            "transmitted": True,
+            "update": "tau' = round(max(0, tau - decay_per_step), 3)",
+        },
     }
 
 

@@ -31,6 +31,9 @@ REGISTERED_V3 = "registered_v3"
 #: flat Chebyshev rings and *subtractive* decay. A different world, not a
 #: different spelling - see :mod:`.scent_subtractive`.
 SUBTRACTIVE_V1 = "subtractive_chebyshev_v1"
+#: Long-form alias. Both names are in use across the test suite and both are
+#: the same model string; neither is deprecated.
+SUBTRACTIVE_CHEBYSHEV_V1 = SUBTRACTIVE_V1
 MODELS = (BOOK_V1, REGISTERED_V3, SUBTRACTIVE_V1)
 
 # Book figure 4: radial falloff around the emitting agent (offsets -2..2).
@@ -111,8 +114,14 @@ class ScentField:
         drift apart without the drift being in this one method.
         """
         if self.model == SUBTRACTIVE_V1:
-            scent_subtractive.decay(self.grid, size=self.size)
+            # deposit_then_decay, NOT decay-then-deposit. The kit pins no vector
+            # for this and the two orders differ by a whole step: emit-first
+            # serves a 0.8 centre, decay-first serves 0.9. s82kma9e's signed lock
+            # says `"order": "deposit_then_decay"` and their two published golden
+            # fields require 0.8, so this is the order we contracted, locked and
+            # played the counted match under (2026-08-17, 6/6 Verified OK).
             scent_subtractive.emit(self.grid, center, size=self.size)
+            scent_subtractive.decay(self.grid, size=self.size)
             return self.snapshot()
         if self.model == REGISTERED_V3:
             self.advance(center)
