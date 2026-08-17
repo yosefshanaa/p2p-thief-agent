@@ -139,16 +139,29 @@ other and we should find out now.** Send us yours and we will reproduce it befor
 
 ## 4. The constitution
 
-Our committed `game.json` hashes to:
+Our committed `game.json` currently hashes to:
 
 ```
-3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443
+c31d30330c68fb4459b42a625fbf5b20ae11a8c63568d8dd7817359d6f5d74bb
 ```
 
-Our handshake compares that by **exact equality** and refuses to start on any mismatch, so
-both sides must load a byte-identical file. Send yours back if you want any value changed
-and we will adopt it — minimums may only rise. We keep per-opponent config directories, so
-adopting your values never leaks into another team's match.
+**That number is per-pairing, not per-repo, and yours will differ from ours.** `agreed_between`
+names both teams and sits inside the hashed object, so the digest changes the moment we name
+you — as it must. Do not treat a difference here as a mismatch to reconcile; ask instead
+whether the *terms* agree.
+
+**What actually gates the game depends on which family you are.** If you speak our native
+dialect, the whole-file hash is compared by exact equality and any mismatch refuses. If you
+speak the **reference family**, it never crosses the wire at all: your greeting carries no
+constitution hash, so the constitution *is* the 14 flat signed terms below, and
+`interop_codec.handshake_from_agreement` mirrors our own lock hashes into the comparison
+**only** when your terms match ours exactly and your signature verifies. A reference peer
+therefore has one thing to diff, not two — the 14 terms — and those are invariant across
+pairings.
+
+Send your `game.json` back if you want any value changed and we will adopt it — minimums may
+only rise. We keep per-opponent config directories, so adopting your values never leaks into
+another team's match.
 
 The book defaults it encodes:
 

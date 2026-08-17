@@ -122,11 +122,34 @@ def test_the_published_terms_are_the_ones_we_actually_send():
 
 
 def test_the_published_constitution_hash_is_current():
+    """The guide's number must be the one our committed file actually produces.
+
+    Read out of the guide rather than hardcoded here, because this digest is
+    **per-pairing**: `agreed_between` names both teams and is inside the hashed
+    object, so it changes every time we name a new opponent. A third copy of the
+    value in the test suite would mean every pairing starts by editing a test,
+    which trains exactly the wrong reflex. What is invariant is that the guide
+    and the file agree - so that is what is asserted.
+    """
+    import re
     from pathlib import Path
 
     from p2p_pursuit.domain.crypto import digest
 
     base = Path(__file__).resolve().parents[2]
+    guide = (base / "docs" / "INTEROP_GUIDE.md").read_text(encoding="utf-8")
+    published = re.search(r"^([0-9a-f]{64})$", guide, re.MULTILINE)
+    assert published, "the guide no longer publishes a constitution hash"
     raw = json.loads((base / "config" / "police" / "game.json").read_text())
-    assert digest(raw) == \
-        "3835f6a137620d8d98ab3925b2d1ed397d2d20d23bb9ba857bcd104284aac443"
+    assert digest(raw) == published.group(1), (
+        "docs/INTEROP_GUIDE.md quotes a stale constitution hash - it moves with "
+        "`agreed_between`, so re-publish it whenever the pairing changes")
+
+
+def test_the_two_role_constitutions_stay_byte_identical():
+    """Whatever the pairing, both roles must load the same file (book 9.4)."""
+    from pathlib import Path
+
+    base = Path(__file__).resolve().parents[2] / "config"
+    assert (base / "police" / "game.json").read_bytes() == \
+        (base / "thief" / "game.json").read_bytes()
