@@ -15,15 +15,14 @@ cd "$(dirname "$0")/.."
 ROOT=$(pwd)
 
 opponent=${1:-}
-url=${2:-}
-if [ -z "$opponent" ] || [ -z "$url" ]; then
-    echo "usage: scripts/play.sh <opponent-name> <their-/mcp-url> [peer args...]" >&2
+if [ -z "$opponent" ]; then
+    echo "usage: scripts/play.sh <opponent-name> [their-/mcp-url] [peer args...]" >&2
+    echo "       the URL is optional when the contract names both doors itself" >&2
     echo "       contracts available:" >&2
     ls config/opponents/*.env 2>/dev/null | sed 's|.*/|         |; s|\.env$||' >&2
     exit 2
 fi
-shift 2
-rest=("$@")
+shift
 
 envfile="config/opponents/${opponent}.env"
 if [ ! -f "$envfile" ]; then
@@ -37,7 +36,25 @@ set -a
 # shellcheck disable=SC1090
 . "$envfile"
 set +a
-export P2P_OPPONENT_URL="$url"
+
+# The URL is positional ONLY when it is really the next argument - a peer arg
+# like `--role` never is. A contract that names a door per role (a peer running
+# one process per role on two ports, which `{role}` cannot express) carries its
+# own addresses and needs no positional at all; demanding one there invites
+# pasting a single door and then wondering why half the sub-games dial it.
+url=""
+case "${1:-}" in
+    -*|"") ;;
+    *) url=$1; shift ;;
+esac
+if [ -n "$url" ]; then
+    export P2P_OPPONENT_URL="$url"
+elif [ -z "${P2P_OPPONENT_COP_URL:-}${P2P_OPPONENT_THIEF_URL:-}${P2P_OPPONENT_URL:-}" ]; then
+    echo "no opponent address: pass their /mcp URL, or set P2P_OPPONENT_COP_URL /" >&2
+    echo "P2P_OPPONENT_THIEF_URL in $envfile" >&2
+    exit 2
+fi
+rest=("$@")
 
 # -- find a runner ------------------------------------------------------------
 # uv first, but only if it can actually import the package; a checkout whose
