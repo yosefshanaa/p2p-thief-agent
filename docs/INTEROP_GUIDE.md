@@ -250,11 +250,16 @@ sides silently disagreeing.
 **If you build against the league kit, you are probably on the other physics.** We implement
 all three registrations and select per opponent:
 
-| model | emission | decay | freshest cell |
-|---|---|---|---|
-| `book_v1` *(our default)* | figure-4 kernel | `τ × 0.9` | 0.81 |
-| `multiplicative_book_v3` | same kernel, no rounding | `τ × 0.9` | 0.90 |
-| `subtractive_chebyshev_v1` | flat rings 0.9 / 0.6 / 0.3 | `v − 0.1` | 0.90 |
+| model | emission | decay | serve order | freshest cell |
+|---|---|---|---|---|
+| `book_v1` *(book default)* | figure-4 kernel | `τ × 0.9` | pre-emission | 0.81 |
+| `registered_v3` (*aka* `multiplicative_book_v3`) | same kernel, no rounding | `τ × 0.9` | post-emission | 0.90 |
+| `subtractive_chebyshev_v1` *(kit CORE)* | flat rings 0.9 / 0.6 / 0.3 | `v − 0.1` | `deposit_then_decay` | **0.80** |
+
+The subtractive row's serve order is **not pinned by any kit vector** — it is a per-pair
+agreement, and it moves every reading by one step. Ours follows `s82kma9e`'s locked document
+(`"order": "deposit_then_decay"`), so our freshest served cell reads **0.80**, not 0.90. If
+yours reads 0.90 you decay before you deposit; say so and we will match you.
 
 These are not spellings of one model. Under subtractive decay a 0.3 cell is gone in three
 steps; under multiplicative it is still 0.2187 — a completely different trail memory, which
@@ -263,7 +268,18 @@ is why we keep a separately searched doctrine per physics and select the pair to
 **We are happy to play any of the three, including yours.** If you build against the kit and
 run `subtractive_chebyshev_v1`, just say so and we will bring the doctrine searched under it —
 no negotiation needed. Whichever we agree, both sides exchange the hash of the model document
-before the first move, so the choice is on the record rather than in a mail thread.
+before the first move, so the choice is on the record rather than in a mail thread. Ours are:
+
+```
+book_v1                    ea7225f5d71989add99a0057287342b7c5b86ab4efffd1608da25d0e368c0a28
+registered_v3              0761ca169ee93a11cb19e6e28251074ab7223bdb157ec5123138d87aad651f6f
+subtractive_chebyshev_v1   81ebee59640e80eae8ca9ee5f86abd26e7edf5cdbb27d15925cb6ee45ca6ddf4
+```
+
+The subtractive hash is `s82kma9e`'s canonical document adopted **byte-for-byte**, because a
+document that merely describes the same physics in different words hashes differently and a
+kit handshake refuses on a scent-hash mismatch. If yours differs, send us the JSON and we will
+adopt yours rather than argue about vocabulary.
 
 On the wire the field is sparse — `{"r,c": intensity}`, zeros dropped:
 
