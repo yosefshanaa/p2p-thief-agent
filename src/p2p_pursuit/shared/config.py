@@ -93,6 +93,10 @@ class PeerConfig:
     repos: dict[str, str] = field(default_factory=dict)
     my_port: int = 8800
     opponent_url: str = ""
+    #: Their endpoint per role they hold, when one URL cannot express it - see
+    #: `opponent_url_for`. Empty for every peer that serves both roles at one
+    #: address, which is most of them.
+    opponent_doors: dict[str, str] = field(default_factory=dict)
     turn_timeout_seconds: int = 180
     #: Wall-clock patience for the opening handshake and for each per-sub-game
     #: re-handshake, on top of the short retry burst. An opponent whose peer
@@ -251,6 +255,13 @@ def load_peer(path: Path) -> PeerConfig:
 #: `.env` secrets already behave.
 PORT_VARS = ("P2P_MY_PORT", "PORT")
 OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
+#: A door per role, for a peer that runs one OS process per role on addresses a
+#: `{role}` substitution cannot build - two ports, two hosts, two schemes. Keyed
+#: by the role *they* hold, spelled their way, because that is how their own
+#: pairing message names the endpoints. Either may be set alone; whichever is
+#: missing falls back to `P2P_OPPONENT_URL`.
+OPPONENT_DOOR_VARS = {"police": "P2P_OPPONENT_COP_URL",
+                      "thief": "P2P_OPPONENT_THIEF_URL"}
 #: Some peers serve one agent per role on one port (`/cop/mcp`, `/thief/mcp`)
 #: rather than one endpoint that routes. Against those, the endpoint we must push
 #: to is a function of the sub-game: under alternation their cop plays the even
@@ -269,8 +280,22 @@ ROLE_PLACEHOLDER = "{role}"
 WIRE_ROLE_NAMES = {"police": "cop", "thief": "thief"}
 
 
-def opponent_url_for(url: str, their_role: str) -> str:
-    """Their endpoint for a sub-game in which they hold ``their_role``."""
+def opponent_url_for(url: str, their_role: str,
+                     doors: dict[str, str] | None = None) -> str:
+    """Their endpoint for a sub-game in which they hold ``their_role``.
+
+    Three topologies, because three are in use. One URL serving both roles is
+    the common case and needs nothing. gal-roy1 serves a path per role and said
+    so with `{role}`, which is a substitution. vibecode runs two OS processes on
+    two *ports* of one host (Appendix E rule 1), and a port cannot be built by
+    substituting a role name - `:6122{role}` yields `:6122cop`. So a peer may
+    also name its doors outright, which covers any split at all: different port,
+    different host, different scheme.
+    """
+    if doors:
+        door = doors.get(their_role)
+        if door:
+            return door
     if ROLE_PLACEHOLDER not in url:
         return url
     return url.replace(ROLE_PLACEHOLDER, WIRE_ROLE_NAMES.get(their_role, their_role))
@@ -313,6 +338,11 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     url = os.environ.get(OPPONENT_URL_VAR)
     if url and url.strip():
         patch["opponent_url"] = url.strip()
+    doors = {role: (os.environ.get(var) or "").strip()
+             for role, var in OPPONENT_DOOR_VARS.items()}
+    doors = {role: door for role, door in doors.items() if door}
+    if doors:
+        patch["opponent_doors"] = doors
     mode = (os.environ.get(EMAIL_MODE_VAR) or "").strip()
     if mode in ("draft", "send"):
         patch["email_mode"] = mode
