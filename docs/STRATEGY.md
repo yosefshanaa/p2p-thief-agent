@@ -405,3 +405,310 @@ take it.** It is our best measured cell, +1.75 points/sub-game over playing at h
 tempting one to over-read: every number above is our archetypes playing our archetypes under a
 different physics. It says the doctrine is better *at the game we simulated*. A kit-built
 opponent is a real team, and the only evidence that settles it is a counted match.
+
+---
+
+## 10. v8 — reading the archive, and the estimator it condemned
+
+Every version above tunes a policy. This one starts by asking a different question: **eighty-one
+sealed sub-games have been played — five counted opponents, two more in friendlies, and the
+reference peer — so what do they say we actually did wrong?** The answer is committed as a tool rather than quoted, so it can be re-run:
+
+```
+p2p-pursuit learn review          # read-only over matches/
+```
+
+Three findings, and the third invalidates a signal both brains were built on.
+
+### 10.1 The police was not failing to find the thief. It was failing to convert.
+
+A capture needs our cell to *become* the thief's cell, so a turn that begins with the thief one
+orthogonal step away is a chance. Counting every one of them across the archive:
+
+| what we did with a capture chance | turns |
+| --- | ---: |
+| **converted** — stepped onto it | **11** |
+| spent the turn placing a barrier instead | 27 |
+| stood still | 15 |
+| walked somewhere else | 23 |
+| **total chances** | **76** |
+
+Fourteen per cent. And the largest single loss is self-inflicted: a barrier placement *forfeits
+the move*, so more than a third of all chances were traded for a wall from a cell adjacent to the
+thief. Alongside that, 157 barriers bought 287 turns in which the police could not reach the
+thief **at all** — behind its own walls.
+
+### 10.2 The thief was walking into the pursuer's reach
+
+Across 35 thief sub-games it finished its move inside the cells the pursuer could take next on
+**43 turns**, and was captured on 14. The deaths are not spread evenly: 79% of them are on the
+bottom or right edge, which is the signature of the third finding.
+
+### 10.3 The position estimate was a scan artefact
+
+Both brains read the opponent's cell off `max()` of its served scent field. That field
+**saturates**: emission *adds* the book's kernel and clamps at 0.9, so after a handful of steps a
+whole swathe of cells sits at the cap. Measured over every sealed record — 91% of served fields
+have between 6 and 20 cells tied at the maximum, and one has 20. `max()` then returns whichever
+tied cell row-major iteration reaches first, which is a bias toward the **top-left**.
+
+Replayed against the ground truth in the same records, that estimator names the emitter's cell
+**219 times in 1,935** — 11%. And a thief weighting a top-left phantom at `w_trail` runs
+south-east, which is exactly where 11 of its 14 deaths are.
+
+Worse, it was switched off entirely for most matches anyway. The v7 search had set
+`police_fresh_min` to **0.849** — above the **0.81** ceiling `book_v1` can physically serve, since
+it serves the field *before* the step's own emission. Instrumented in the lab, the police's trail
+branch fired **0 times in 2,629 turns**. `thief_fresh_min` was 0.850, the same story. The search
+could not see the problem because an objective cannot punish a feature that never fires; both
+bounds are now capped at 0.80, which repairs every committed vector on load.
+
+### 10.4 The field is not weakly informative — it is fully invertible
+
+One step of the scent model is a known function of exactly one unknown: the emitter's cell. So
+solve it. `domain/scent_locate.py` replays `ScentField` forward from the previously served field
+for each of the 49 candidate centres and keeps the one that reproduces the field we received.
+Replaying the model itself, rather than re-deriving any algebra, makes this **model-agnostic** —
+whichever physics a match negotiated is the physics that gets inverted, serve order, rounding,
+clamping and all.
+
+Against the archive: **1,935 of 1,935 transitions, exactly.** Against 11% for the estimator it
+replaces.
+
+What differs between the three registered models is only the *lag*. `book_v1` serves before
+emitting, so a fix names where the opponent stood one step ago — and since the thief moves first
+each round, that leaves the police a five-cell answer. `registered_v3` and
+`subtractive_chebyshev_v1` serve after, so the fix is the opponent's cell *now*.
+
+This cuts both ways and it is worth saying plainly: **our own position is equally readable**, by
+anyone who does this arithmetic. Under `subtractive_chebyshev_v1` it does not even need
+arithmetic — the argmax alone is exact, which is how gal-roy1 dropped a barrier on our thief. The
+consequence for doctrine is that a thief cannot hide; it can only keep geometry. Deception, in
+this league, is a tax on opponents who do not invert the field.
+
+### 10.5 What changed in the two brains
+
+**Police** (`v6`): order of business is now **pounce → squeeze → barrier → pursue**.
+
+- The *pounce* steps onto a cell that is plausibly the thief's, in preference to barring it.
+  Landing-and-claiming is answered under rule #21, which every peer implements because the
+  protocol does not work without it; rule #46 (a barrier onto the thief) is optional and several
+  peers we have played ignore it. Same evidence, same trigger — but one keeps the move and is
+  settled by a rule that is actually agreed.
+- `pounce_floor` gates it on the probability the fix implies, because under `book_v1` five cells
+  share the mass and "chase the likeliest cell every turn" measured *worse* than not pouncing.
+- `w_cut` scores the ground we take from the thief (a Voronoi split), not just the distance we
+  close. Pure distance is a tail chase between equal-speed agents: the evidence names where it
+  *was*, so aiming there holds the gap open forever. The counted match against gal-roy1 is the
+  clean example — over 102 police turns the gap sat at **2 for 45 of them** and reached 1 only 3
+  times, the thief was never once within a single step at our decision, and 27 barriers bought
+  **zero** capture chances.
+- The barrier branch no longer fires on the belief peak while a fix is in hand. The pounce has
+  already declined every cell we can reach, so a placement there goes on ground the tracker says
+  the thief is *not* on — it cannot convert under rule #46 and it forfeits the move anyway. Lab
+  effect is small (0.77 → 0.70 barriers/sub-game, capture unchanged) because the lab barely
+  spends barriers; the archive spends **3.4 per sub-game**, which is where it is aimed.
+- Sealing a pocket is now refused unless the thief could be *in* it, which is what the 287
+  cut-off turns were.
+- The enclosure claim (`turn_engine`) no longer names its cell by that argmax. It was a sealed,
+  audited claim resting on an 11%-accurate estimate.
+
+**Thief** (`v6`): the pursuer's cell is now known, and one new term follows from it.
+
+- `w_strike` penalises ending the move inside the pursuer's next-step reach — the 43 exposures.
+- The same map answers a second question for free: the cells a pursuer can *bar* are exactly the
+  cells it can step onto, so multiplying the strike values of our exits gives the chance it can
+  seal us in. That term is gated on `claim_enclosure`, because where the rule was **not** agreed
+  a sealed pocket is a *survival* — that is how the reference peer beat us on 2026-08-01, sitting
+  in one for 27 turns while our police finished outside its own wall.
+
+### 10.6 A third way to model an opponent
+
+The pool had two: a fitted linear clone (about three moves in four) and a fixed script (honest
+only for a deterministic opponent — of eight teams, only gal-roy1's thief and s82kma9e's police
+qualify). Neither fits a *reactive* team, and reactive is what most of them are.
+
+`learn/recorded.py` keeps every observed decision and replays the move the team played from the
+nearest state we ever saw them in. `p2p-pursuit learn record --name <team> --match <dir>...`
+builds one from the sealed logs, reporting agreement on a held-out quarter of the decisions:
+
+| team | as police | as thief |
+| --- | ---: | ---: |
+| reference | 95% | 99% |
+| orcai-mj | 87% | 100% |
+| amireman | 80% | 72% |
+| gal-roy1 | 50% | 100% |
+| saedshki | 42% | 100% |
+
+They join the pool as `recorded:<team>` in the roles they were actually observed in.
+
+### 10.7 The objective had a hole in it, and it was not in the search
+
+The v8 thief search returned **9.941 → 9.971 points** — nothing. Not because the thief is
+optimal, but because sixteen of seventeen pool members scored a flat **10.00** against it. An
+objective that cannot distinguish two thieves cannot improve one, and this one duly spent its
+freedom driving `corner_penalty` to **0.001** — it had never been shown a pursuer that could
+punish a corner. That is the same failure mode as §8's deception keys, and it deserves the same
+answer: fix the sparring, not the bound.
+
+Two holes, both found by asking why the lab and the wire disagreed. The archive says our thief is
+caught in **14 of 35** sub-games; the lab said 1 in 100.
+
+**The lab was not playing the league's rules.** Whether the police issues a capture claim every
+turn is negotiated per opponent — amireman and gal-roy1 signed `always_claim`, s82kma9e did not —
+and the lab defaulted to *off* for both sides. With it off, a pool police can only convert by
+barrier or by enclosure, because `BrainBase.should_claim` wants belief ≥ 0.5 and the measured
+posterior peak never reaches it. So the objective had quietly deleted the police's main
+conversion path. Both regimes are now played, **split by seed** so the cost does not double and
+`claim_threshold` stays searchable. Thief survival against the pool: **94.0% → 86.6%**, and half
+the pool acquires a way to punish a mistake.
+
+**No pool member knew where the thief was.** Every police archetype navigated by belief or by the
+field's argmax — i.e. by the estimator §10.3 condemned. `interceptor` is the opponent that does
+what we now do: invert the field, chase the exact cell, and close doors. Adding it is a hedge
+with a clear rationale — the inversion is arithmetic over a field the rules *require* both peers
+to publish, so a doctrine that only survives opponents who have not noticed has an expiry date.
+
+Building it produced a result worth recording on its own: **a pursuer that knows the thief's exact
+cell and simply walks at it catches our evader 0 times in 12.** Two equal-speed agents on open
+ground never meet. Captures come from taking the room away — which is why `interceptor` cuts
+territory and spends barriers, and why our own police grew `w_cut`.
+
+### 10.8 What the thief got that tuning could not have given it
+
+Because the search had so little to say about the thief half, its two real improvements are
+structural and evidence-led rather than fitted:
+
+- **`w_strike`** — do not end the move inside the pursuer's next-step reach. 43 archived turns did
+  exactly that; 14 of them ended the sub-game.
+- **Escape room** — the territory term now counts only cells reachable *without walking through*
+  the pursuer's reach. A plain Voronoi count walks straight through it, which is why an edge run
+  into a corner scored as roomy until the last turn, and why 79% of this thief's deaths are on
+  the bottom or right edge. On the exact board from the counted match against gal-roy1, the thief
+  now breaks off the edge at (1,6) instead of stepping into (0,6) where it was barred in.
+
+The honest limit: the arena still overstates our thief badly (87% survival against 60% on the
+wire), so the thief half of v8 rests on the archive, not on the search.
+
+### 10.9 Result
+
+Four co-evolution stages, each hold-out gated on seeds its search never saw, each starting from
+the previous stage's file so that `mirror` — ourselves — is the *improved* opponent rather than a
+fixed target:
+
+| stage | points | capture | survival |
+| --- | --- | --- | --- |
+| police, round 1 | 15.74 → **19.21** | 71.6% → **94.7%** | — |
+| thief, round a | 9.51 → **9.91** | — | 90.3% → **98.2%** |
+| police, round b | 18.42 → **18.75** | 89.5% → **91.7%** | — |
+| thief, round b | 9.77 → **10.00** | — | 95.4% → **100%** |
+
+Each baseline *falls* as the other role improves — round b's police starts at 18.42 where round a
+ended at 19.21, because it now faces the round-a thief. That is the co-evolution doing its job,
+and it is why a single-round search overstates itself.
+
+The thief half is the more interesting record, because the search reinforced the new term twice
+without being asked to: `w_strike` went 4.0 (designed) → **4.79** → **8.13**, and `corner_penalty`
+climbed back from the 0.001 the blind objective had left it at to **0.244**.
+
+**End to end**, v5 agent against v8 agent on a fresh validation range (seeds 21000–21015, 22
+opponents, both claim regimes):
+
+| | points/sub-game | capture | survival |
+| --- | ---: | ---: | ---: |
+| v5 doctrine + v5 estimator | 11.791 | 58.9% | 92.7% |
+| **v8 doctrine + v8 tracker** | **14.071** | **86.8%** | **97.9%** |
+
+And the archive's own conversion metric, measured in the lab under the same definition:
+
+```
+v5:  377 chances, 147 converted (39.0%),  88 lost to a barrier,  3.89 barriers/sub-game
+v8:  876 chances, 178 converted (20.3%),  29 lost to a barrier,  0.75 barriers/sub-game
+```
+
+The v8 police creates **2.3× as many chances** — it can find the thief now — and spends **five
+times fewer barriers**. Its conversion *rate* is lower, and that is not a defect: under a lagged
+fix most of those extra chances are a one-in-five gamble that `pounce_floor` correctly declines
+in favour of position. The outcome, 58.9% → 86.8%, is what the table pays for.
+
+### 10.10 What is honest to claim, and what is not
+
+- **`w_cut` is narrow.** On the full mixed pool it scores identically to zero (14.037 either way).
+  Against the partners built from real teams it is a real optimum — 80% → **92.5%** capture at the
+  tuned 0.074, falling back to 80% at 0.0 and at 0.5. Its case rests on those and on the archive,
+  not on the aggregate.
+- **One partner regressed**: `recorded:orcai-mj`, 15.00 → 7.50. It is an **11-state** table — their
+  thief sub-games ran 12 steps because we captured them quickly — so it has almost no coverage and
+  behaves arbitrarily once our police plays differently. The linear clone of the same team went
+  *up* over the same seeds. Thin partners are noise, not evidence.
+- **The arena still overstates the thief.** 97.9% survival here against **60%** on the wire (14
+  captures in 35 archived sub-games). The thief half of v8 therefore rests on the archive
+  findings and on terms whose reasoning is checkable, not on the search's own delta.
+- **None of this is a counted match.** Every number above is simulation. The only evidence that
+  settles it is a league game.
+
+### 10.11 The pairing, re-measured under v8
+
+Both vectors re-searched from scratch (both roles, 28 keys, hold-out gated), then each played
+under each physics on validation seeds 18000-18009 against the full 22-opponent pool:
+
+| | `doctrine.json` | `doctrine-subtractive.json` |
+| --- | ---: | ---: |
+| **book_v1** | **14.081** | 13.905 |
+| **subtractive_chebyshev_v1** | 14.270 | **15.095** |
+
+The diagonal still wins, and §9's match-day advice is unchanged: **if a kit-built team offers
+their CORE physics, take it** — 15.095 is the best cell on the board.
+
+The off-diagonal is the more instructive number. Playing the *book* vector under subtractive
+physics still captures **100%** — the police is fine — while thief survival collapses to
+**64.4%** against 98.3%. Nothing errors; one half of the agent simply plays a game it was not
+tuned for. That is the whole argument for `P2P_SCENT_MODEL` and `P2P_DOCTRINE` being one decision
+in two variables.
+
+All 28 keys differ between the two vectors, and the differences read as physics rather than as
+noise: subtractive serves *after* emitting, so its fix names the pursuer's cell **now** rather
+than one step ago, and the search spends that precision — `corner_penalty` 0.244 → **0.409**,
+`w_strike` 8.13 → **9.14**, `w_cut` 0.074 → **0.544** — while zeroing the hedges that only ever
+stood in for uncertainty: `stay_penalty`, `w_territory` and `w_trap` all go to 0.
+
+### 10.12 A third vector, and the pattern the three of them make
+
+`registered_v3` re-searched the same way: **14.651 -> 15.045** points, thief survival
+**80.1% -> 96.3%**, capture already at 100%. Twenty-five of 28 keys differ from the book vector.
+
+Both of the models that serve *after* emitting behave the same way, and it is the lag that
+explains it. Under `book_v1` a fix is one step old, so the thief could be on any of five cells;
+under the other two it is the opponent's cell **now**. Exact information is worth weighting, and
+the search weights it — without being told which model it is looking at:
+
+| key | `book_v1` (lag 1) | `subtractive` (lag 0) | `registered_v3` (lag 0) |
+| --- | ---: | ---: | ---: |
+| `w_cut` — take ground, not distance | 0.074 | **0.544** | **0.458** |
+| `w_strike` — never end inside its reach | 8.13 | **9.14** | **9.00** |
+
+Both lag-0 vectors also put the police at **100% capture**, so every point the search found there
+came from the thief half. That is the mirror of the same fact: a physics that hands *us* the
+opponent's exact cell hands them ours, and the evader is the side that pays.
+
+They diverge elsewhere, which is the argument against treating "lag 0" as one physics:
+`corner_penalty` goes **up** under subtractive (0.409) and **down** under registered_v3 (0.140),
+because a flat Chebyshev ring and the book's radial kernel corner an evader differently. Three
+models, three vectors, and `P2P_SCENT_MODEL` picks which.
+
+### 10.13 The per-opponent pairing, and one term that did not survive contact
+
+`config/doctrine-orcai-mj.json` — the vector `amireman.env` and `friendly-0812.env` both point at
+— re-searched against a pool weighted toward those two teams: **13.553 -> 14.320** points,
+capture **78.3% -> 90.0%**, at a cost of **100% -> 93.5%** thief survival. The search traded a
+little evasion for a lot of conversion, which is the right trade at 20 points a capture against
+10 for surviving, and it is the trade the objective is built to find.
+
+Four vectors now ship, and the numbers that produced each are above:
+
+| file | physics | hold-out |
+| --- | --- | --- |
+| `doctrine.json` | `book_v1` | four co-evolution rounds, §10.9 |
+| `doctrine-subtractive.json` | `subtractive_chebyshev_v1` | 14.313 -> **15.113** |
+| `doctrine-registered_v3.json` | `registered_v3` | 14.651 -> **15.045** |
+| `doctrine-orcai-mj.json` | `book_v1`, their pool | 13.553 -> **14.320** |

@@ -10,7 +10,7 @@ against every opponent - which is what role alternation does to a match anyway.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from pathlib import Path
 
@@ -27,6 +27,25 @@ SHARED_PATH = Path("config/police/game.json")
 #: against the scent model it was searched under, so a hardcoded lab config
 #: silently optimises for the wrong game whenever a model is negotiated.
 QUIET = apply_env_overrides(PeerConfig(raw={}, group_name="lab", group_id="lab"))
+
+#: Whether the police issues a capture claim every turn is **negotiated per
+#: opponent**, and the league is genuinely split on it: of the contracts we have
+#: signed, amireman and gal-roy1 play `always_claim`, s82kma9e does not.
+#:
+#: It is not a detail. A claim is how landing on the thief becomes a capture, so
+#: with it off a pool police converts only via a barrier or an enclosure - and
+#: `BrainBase.should_claim` wants belief 0.5, which the measured posterior peak
+#: never reaches. The lab defaulted to off, and the consequence was an objective
+#: that could not see our thief at all: it survived 94% overall and 100% against
+#: sixteen of seventeen members, so a thief search had nothing to learn and duly
+#: drove `corner_penalty` to 0.001. Switching it on drops survival to 87% and
+#: gives half the pool a way to punish a mistake.
+#:
+#: Both regimes are played rather than one being chosen, alternating by seed, so
+#: the objective covers the league as it actually is and the cost does not
+#: double. Alternating also keeps `claim_threshold` searchable - under
+#: `always_claim` the brain's own claim policy is inert.
+CLAIM_REGIMES = (False, True)
 
 
 @lru_cache(maxsize=1)
@@ -55,10 +74,12 @@ class Score:
         return self.survivals_as_thief / max(self.thief_sub_games, 1)
 
 
-def sub_game(shared: SharedConfig, police_brain, thief_brain, seed: int) -> tuple[str, int, int]:
+def sub_game(shared: SharedConfig, police_brain, thief_brain, seed: int,
+             always_claim: bool = False) -> tuple[str, int, int]:
     """Play one sub-game between two brains; return (ending, police, thief) points."""
-    police = TurnEngine(POLICE, shared, QUIET, brain=police_brain, seed=seed * 2)
-    thief = TurnEngine(THIEF, shared, QUIET, brain=thief_brain, seed=seed * 2 + 1)
+    peer = replace(QUIET, always_claim=always_claim)
+    police = TurnEngine(POLICE, shared, peer, brain=police_brain, seed=seed * 2)
+    thief = TurnEngine(THIEF, shared, peer, brain=thief_brain, seed=seed * 2 + 1)
     play_sub_game(police, thief)
     ending = police.end.ending if police.end else SURVIVAL
     return (ending, *police.score_table.score(ending))
@@ -77,18 +98,24 @@ def score(doctrine: Doctrine, pool: dict[str, Member], seeds: tuple[int, ...],
     report = Score()
     for name, member in pool.items():
         earned = played = 0
-        for seed in seeds:
+        for index, seed in enumerate(seeds):
+            # Half the seeds under each claim regime - see CLAIM_REGIMES. Keyed
+            # off the seed's position so every candidate in a generation meets
+            # the same split, which is the common-random-numbers discipline the
+            # search depends on.
+            claiming = CLAIM_REGIMES[index % len(CLAIM_REGIMES)]
             # We play police only against archetypes that are distinctive as
             # thieves, and vice versa - see population.Member.roles.
             if POLICE in roles and THIEF in member.roles:
                 ending, police_pts, _ = sub_game(
-                    shared, ours(POLICE, doctrine), member.make(THIEF), seed)
+                    shared, ours(POLICE, doctrine), member.make(THIEF), seed, claiming)
                 earned, played = earned + police_pts, played + 1
                 report.police_sub_games += 1
                 report.captures_as_police += ending == CAPTURE
             if THIEF in roles and POLICE in member.roles:
                 ending, _, thief_pts = sub_game(
-                    shared, member.make(POLICE), ours(THIEF, doctrine), seed + 500_000)
+                    shared, member.make(POLICE), ours(THIEF, doctrine),
+                    seed + 500_000, claiming)
                 earned, played = earned + thief_pts, played + 1
                 report.thief_sub_games += 1
                 report.survivals_as_thief += ending == SURVIVAL

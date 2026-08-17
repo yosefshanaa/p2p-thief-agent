@@ -123,33 +123,59 @@ referee-less FastMCP orchestration forces, and how this project resolves them:
 The graded core. Full doctrine, tuning history and evaluation evidence:
 [`docs/STRATEGY.md`](docs/STRATEGY.md).
 
-**Police — interception, then the squeeze.** The freshest scent cell marks where the thief *was*;
-consecutive freshest cells yield a velocity estimate, and the brain solves a small pursuit curve
-to step toward where the thief *will be* (lookahead k ∈ 0..4). Every threshold is a **ratio of a
-rolling window of recent belief peaks**, never an absolute — v3's kill shot needed 0.30 while the
-measured peak never exceeded 0.294 over 385 turns, so it was unreachable dead code. Ambush the
-argmax for exactly one turn (a second is the camping pathology that idled 21% of all turns), and
-break ties against reversing (28% of real moves were A→B→A step-backs). Once the gap stops
-closing, switch from chasing to the book's third capture path (§3.4): **close the evader's exits
-one at a time** — enclosure costs two barriers in a corner, where landing on a moving equal-speed
-evader is near-impossible. Flood-fill vetoes self-trapping placements, and an enclosed opponent
-is *claimed*, because a foreign peer will never confess it (that fix alone turned 0/5 into 5/5
-against the live reference peer).
+**Reading the opponent — the scent field is invertible, so we invert it.** Both brains used to
+estimate the opponent's cell as `argmax` of its served scent field. Replayed against the ground
+truth in our own 81 sealed sub-games, that names the emitter **219 times in 1,935** — 11% — because
+the field *saturates*: emission adds the book's kernel and clamps at 0.9, so 91% of served fields
+have between 6 and 20 cells tied at the maximum and `max()` returns whichever the row-major scan
+reaches first. But one step of the model is a known function of exactly one unknown, so
+[`domain/scent_locate.py`](src/p2p_pursuit/domain/scent_locate.py) replays `ScentField` forward
+from the previous field for each of the 49 candidate centres and keeps the one that reproduces
+what arrived. Against the same archive: **1,935 of 1,935, exactly.** Replaying the model itself
+makes it model-agnostic — whichever physics was negotiated is the one inverted — and the only
+difference between them is the lag (`book_v1` serves before emitting, so the fix is one step old;
+the other two serve after, so it is current). It cuts both ways, and the doctrine assumes it
+does: our own cell is equally readable, so the thief's defence is geometry, not concealment.
 
-**Thief — risk-aware evasion off the pursuer's trail.** Candidate cells are scored by the
-police's *projected* belief mass within claim range (BFS ≤ 2), fleeing the pursuer's **scent
-trail** rather than our posterior of it (measured: our belief of the police sits 1.85 cells off,
-so fleeing the posterior means fleeing a phantom). Two-ply mobility, forward-projected
-interception risk, juking only under genuine close pursuit, corner discipline scaled by the
-pursuer's *remaining* barrier quota, never STAY twice, and **scent-consistent lies** sampled with
-a private RNG — the old lie picked the furthest stale cell of a field we transmit ourselves,
-making it a deterministic function of public data.
+**Police — pounce, then squeeze.** The archive's verdict was that the police was not failing to
+*find* the thief but to *convert*: 76 turns began with the thief one step away and 11 ended on its
+cell, while 27 were spent placing a barrier — which forfeits the move — from a cell right beside
+it. So a capture now takes precedence over everything: step onto the cell and claim it, because
+rule #21 (a truthful answer to a claim) is load-bearing for the protocol and every peer
+implements it, while rule #46 (a barrier onto the thief) is optional and several peers ignore it.
+Pursuit scores the ground taken from the thief (`w_cut`, a Voronoi split), not just the distance
+closed — pure distance is a tail chase between equal-speed agents, and against gal-roy1 the gap
+sat at 2 for 45 of 102 turns while 27 barriers bought zero chances. Thresholds remain **ratios of
+a rolling window of recent belief peaks**, ambush lasts exactly one turn, ties break against
+reversing, and once the gap stops closing the doctrine switches to the book's third capture path
+(§3.4): close the evader's exits one at a time. Flood-fill vetoes self-trapping placements, a
+pocket is refused unless the thief could be *in* it, and an enclosed opponent is *claimed* —
+naming the cell from the fix, not from an 11%-accurate argmax, since that claim is audited.
+
+**Thief — evasion against an opponent that can see you.** Candidates are scored by the police's
+projected belief mass within claim range (BFS ≤ 2), by two-ply mobility, and by the room we own
+— but the room is now counted only where we can reach it *without walking through* the pursuer's
+next-step reach, which is what a corner actually collapses and what a plain Voronoi count walks
+straight through (79% of this thief's archived deaths are on the bottom or right edge). The term
+that answers how it dies is `w_strike`: never end the move inside the cells the pursuer can take
+next — 43 archived turns did, and 14 ended the sub-game. The same map answers a second question
+for free, since the cells a pursuer can *bar* are exactly the cells it can step onto; that seal
+term is gated on whether enclosure was agreed, because where it was not, a sealed pocket is a
+*survival*. Plus juking only under genuine close pursuit, corner discipline scaled by the
+pursuer's remaining (publicly declared) quota, never STAY twice, and **scent-consistent lies**
+sampled with a private RNG.
 
 **Evidence.** Validation seeds unseen by both the search and its hold-out, scored in league points
-against a population of opponent archetypes (not self-play — see §4): **12.35 → 13.00
-points/sub-game, capture 75.0% → 79.8%, survival 80.0% → 92.0%**. Live against the reference implementation: police 5/5 captures, thief
-never caught. Full tuning history, including the negative results that cost real effort and the
-two hand-measured verdicts the search overturned: [`docs/STRATEGY.md`](docs/STRATEGY.md).
+against a population of 22 opponents — archetypes *and* every team we have played, under both
+negotiated claim regimes (not self-play — see §4): **11.79 → 14.07 points/sub-game, capture
+58.9% → 86.8%, survival 92.7% → 97.9%**. The police creates 2.3× as many capture chances while
+spending five times fewer barriers (3.89 → 0.75 per sub-game). Four co-evolution rounds, each
+hold-out gated and each starting from the last so that "ourselves" is the *improved* opponent; the
+search reinforced the thief's new safety term twice unprompted (`w_strike` 4.0 → 4.79 → 8.13).
+Live against the reference implementation: police 5/5 captures, thief never caught. Full tuning
+history — including the negative results that cost real effort, the two hand-measured verdicts the
+search overturned, and the two holes found *in the objective itself* —
+[`docs/STRATEGY.md`](docs/STRATEGY.md).
 
 ## 4. Reinforcement learning
 
@@ -178,19 +204,41 @@ objective is *league points per sub-game*, not capture rate — the table pays 2
 police scored 90–98% against our own thief and **0/5** against the live reference peer, because a
 simulation containing one evader teaches you about that evader. Candidates are therefore scored
 against a population of archetypes — random walker, momentum runner, distance-gradient chaser and
-fleer, trail hound, barrier-spender, mobility-preserving holder, and ourselves — each declaring
-*which roles it is genuinely distinct in*, because listing an archetype in a role where it plays
-an identical trajectory would silently triple that behaviour's weight in the objective.
+fleer, trail hound, barrier-spender, mobility-preserving holder, an `interceptor` that inverts the
+scent field as we do, and ourselves — plus every real team we have played, each declaring *which
+roles it is genuinely distinct in*, because listing an archetype in a role where it plays an
+identical trajectory would silently triple that behaviour's weight in the objective.
+
+**And why the objective itself needed auditing.** A thief search returned nothing — 9.941 → 9.971
+points — because sixteen of seventeen pool members scored a flat 10.00 against our evader, and an
+objective that cannot tell two thieves apart cannot improve one. It duly spent its freedom driving
+`corner_penalty` to 0.001, never having been shown a pursuer that could punish a corner. Two
+holes, both found by asking why the lab said our thief was caught once in a hundred sub-games
+while the wire said 14 in 35. The lab was not playing the league's rules — whether the police
+claims every turn is negotiated per opponent, our contracts are split on it, and the lab defaulted
+to *off*, which deletes the police's main conversion path; both regimes are now played, split by
+seed. And no pool member knew where the thief was, since every one of them navigated by the
+estimator the archive condemned. Building the fix produced a result worth keeping on its own: **a
+pursuer that knows the thief's exact cell and simply walks at it catches our evader 0 times in
+12** — two equal-speed agents on open ground never meet, and captures come from taking the room
+away.
 
 **Learning between matches (the part that compounds).** After the audit exchange, a sealed log
 holds the opponent's exact position and move at every step — the protocol hands us a labelled
-dataset of a real team. `learn clone` fits a linear policy to it and adds that team to the pool,
-so the next search answers opponents that are no longer hypothetical:
+dataset of a real team, and 81 sub-games of one about ourselves. Three commands use it:
 
 ```bash
-uv run p2p-pursuit learn clone --match matches/<team>            # their moves -> a playable policy
+uv run p2p-pursuit learn review                                  # read the archive back as evidence
+uv run p2p-pursuit learn record --name <team> --match matches/<dir>   # their decisions -> a partner
 uv run p2p-pursuit learn tune  --role police --workers 12        # search, hold-out gated
 ```
+
+`review` is read-only and is where every number in this section comes from. `record` builds the
+third and strongest kind of sparring partner: a fitted linear clone reproduces about three moves
+in four, and a fixed script is honest only for a deterministic opponent (of eight teams, only
+gal-roy1's thief and s82kma9e's police qualify), so a *reactive* team is modelled instead by
+keeping every observed decision and replaying the move it played from the nearest state we ever
+saw it in — 95%/99% of held-out decisions for the reference peer, 87%/100% for orcai-mj.
 
 `tune` writes `config/doctrine.json` **only if a hold-out seed set the search never saw
 improves** — a gain on the training seeds is the optimizer reporting its own noise back.
@@ -401,12 +449,14 @@ src/p2p_pursuit/
   sdk/        PursuitSDK - single business-logic entry point (CLI/GUI go through it)
   domain/     board, rules, scoring, scent, belief, trust, hints, crypto, protocol,
               audit, declarations, negotiation, game_ids (deterministic id + uid),
-              brains_base
+              brains_base, scent_locate + tracking (invert the opponent's own
+              scent field to recover its exact cell)
   strategy/   police_brain, thief_brain, params (the tunable doctrine vector),
-              pathing, squeeze, talk_template, talk_llm
+              pathing, squeeze, predict (where it goes next), talk_template, talk_llm
   learn/      OFFLINE ONLY - cem (policy search), arena (points objective),
               population + opponents (sparring archetypes), clone_data + clone_fit
-              (fit a real opponent from its sealed logs)
+              (fit a real opponent from its sealed logs), recorded (replay a real
+              team decision by decision), review (read the played archive back)
   peer/       engine_state (+ the frozen per-sub-game audit ledger), turn_engine,
               service, runtime(+reports), series_protocol, unsealed_events,
               local_match, state_machine, deadline, watchdog, log_manager, audit_bridge
@@ -421,8 +471,10 @@ src/p2p_pursuit/
 config/police/  config/thief/   # byte-identical game.json + role-private game.toml
 config/doctrine.json            # the frozen tuned doctrine a counted match plays
 config/doctrine-subtractive.json  # its pair for the kit's scent physics (§4)
-config/opponents/               # per-opponent contracts (TEMPLATE.env + <slug>.env)
-                                # and policies cloned from teams we have played
+config/opponents/               # per-opponent contracts (TEMPLATE.env + <slug>.env),
+                                # policies cloned from teams we have played, paths/
+                                # (verified deterministic trajectories) and recorded/
+                                # (their decisions, replayed state by state)
 scripts/     play.sh / play.fish (launch a match from a contract), sync_repos.py
              (publish the two submission repos), send_report.py (re-file a result)
 matches/     # tracked per-match artifact archive (configs, logs, results, terminal)

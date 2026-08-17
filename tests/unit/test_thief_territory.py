@@ -81,18 +81,23 @@ def test_cells_the_pursuer_cannot_reach_stay_ours():
 def test_the_thief_walks_out_of_the_pocket_rather_than_deeper_in():
     """End to end: given the killing board, the chosen move must not stay in."""
     import random
-    from types import SimpleNamespace
 
     from p2p_pursuit.domain.belief import BeliefMap
+    from p2p_pursuit.domain.brains_base import BrainView
+    from p2p_pursuit.domain.rules import THIEF
 
     board = Board(SIZE, {(5, 5), (4, 6)})
     belief = BeliefMap(SIZE)
     belief.grid[6][5] = 1.0                      # pursuer where it actually stood
     flat = [[0.0] * SIZE for _ in range(SIZE)]
-    view = SimpleNamespace(
-        board=board, own_pos=(5, 6), belief=belief, own_scent=flat,
-        opp_scent=flat, step=12, sub_game=1, survival_threshold=35,
-        barrier_quota=14, rng=random.Random(0))
+    # A real BrainView, not a stand-in: this test used to build a namespace with
+    # exactly the fields the brain happened to read, so every field added to the
+    # view since has broken it rather than exercised it.
+    view = BrainView(
+        role=THIEF, sub_game=1, step=12, own_pos=(5, 6), board=board, belief=belief,
+        opp_scent=flat, own_scent=flat, barriers_used=2, barrier_quota=14,
+        steps_remaining=23, survival_threshold=35, trust=0.5, map_area="New York",
+        rng=random.Random(0), opp_cells=((6, 5),), opp_fix=(6, 5), opp_fix_lag=0)
 
     brain = ThiefBrain(Doctrine())
     decision = brain._pick_move(view)
