@@ -154,3 +154,37 @@ class Camper(BrainBase):
         return Decision(move=min(view.board.legal_moves(view.own_pos),
                                  key=lambda m: (dist.get(target_of(view.own_pos, m), FAR),
                                                 view.rng.random())))
+
+
+class Scripted(BrainBase):
+    """Replays one recorded move sequence, in order, every sub-game.
+
+    Every other member of this pool is a *policy*: give it a board and it
+    reasons. This one is a transcript. It exists because a fitted clone answers
+    the wrong question against a deterministic opponent - gal-roy1's thief walks
+    an identical perimeter loop in every sub-game, and their clone, fitted at 78%
+    move agreement, is a reactive imitation that wanders where the original never
+    does. Our shipped doctrine catches that imitation 83% of the time in
+    simulation while catching the original 0 times in 9 live sub-games, so the
+    imitation cannot be what we tune against.
+
+    ``view.step`` indexes the script, so the replay restarts with each sub-game
+    without this brain tracking any state of its own.
+
+    One honest limitation, because it bounds what a capture here is worth: when
+    our barriers make the scripted move illegal, the transcript has nothing to
+    say and this brain holds position. A live thief would deviate and might
+    escape, so a capture that depends on blocking the loop is evidence the seal
+    works, not proof the opponent cannot answer it.
+    """
+
+    def __init__(self, moves: tuple[str, ...]) -> None:
+        if not moves:
+            raise ValueError("a scripted opponent needs at least one move")
+        self.moves = moves
+
+    def _pick_move(self, view: BrainView) -> Decision:
+        move = self.moves[(max(view.step, 1) - 1) % len(self.moves)]
+        if move != "STAY" and move not in view.board.legal_moves(view.own_pos):
+            return Decision(move="STAY")
+        return Decision(move=move)

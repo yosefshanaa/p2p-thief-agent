@@ -75,14 +75,22 @@ def _barriers_of(payload: dict) -> list[Cell]:
 
 
 def _position_of(payload: dict) -> Cell | None:
-    """The mover's own cell, from a field or from the state string.
+    """The mover's own cell, from a field or from the state.
 
-    Three spellings in the wild and no way to know which a peer uses until its
-    log arrives, so all three are tried rather than one being assumed.
+    Four spellings in the wild and no way to know which a peer uses until its
+    log arrives, so all of them are tried rather than one being assumed.
+
+    ``state`` appears in two of those four: as the reference peer's descriptive
+    string (handled by `SELF_IN_STATE`) and as a bare ``[row, col]`` pair, which
+    is gal-roy1's shape. Reading only the string form drops the pair silently -
+    measured 2026-08-17, where every one of gal-roy1's 130 sealed records across
+    a five-sub-game series yielded no position and the clone reported "0
+    decisions", indistinguishable from a peer that never sent an audit package.
     """
-    for key in ("pos_after", "position"):
+    for key in ("pos_after", "position", "state"):
         value = payload.get(key)
-        if isinstance(value, list) and len(value) == 2:
+        if (isinstance(value, list) and len(value) == 2
+                and all(isinstance(v, int) and not isinstance(v, bool) for v in value)):
             return (int(value[0]), int(value[1]))
     found = SELF_IN_STATE.search(str(payload.get("state", "")))
     return (int(found.group(1)), int(found.group(2))) if found else None
@@ -134,3 +142,39 @@ def samples_from_match(directory: Path, size: int = 7) -> list[Sample]:
     for path in sorted(directory.rglob("log_*.json")):
         out.extend(samples_from_log(json.loads(path.read_text(encoding="utf-8")), size))
     return out
+
+
+def move_script_from_match(directory: Path, role: str = THIEF) -> list[str]:
+    """The opponent's move sequence, if every sub-game played the same one.
+
+    Returns ``[]`` unless the trajectories agree, because a script is only a
+    faithful model of a *deterministic* opponent - and determinism is a property
+    to verify, not assume. gal-roy1's thief satisfies it: identical moves in
+    every sub-game of every series we have played against them.
+
+    A single sub-game's worth of moves is what comes back, since that is what
+    one sub-game of simulation replays.
+    """
+    scripts: list[tuple[str, ...]] = []
+    for path in sorted(directory.rglob("log_*.json")):
+        log = json.loads(path.read_text(encoding="utf-8"))
+        my_role = log.get("perspective") or POLICE
+        their_role = THIEF if my_role == POLICE else POLICE
+        # Under role alternation they are the cop in half the sub-games, and
+        # their cop trajectory is a different sequence entirely. Comparing the
+        # two makes a perfectly deterministic opponent look non-deterministic,
+        # so sub-games where they held the other role are skipped, not folded in.
+        if their_role != role:
+            continue
+        moves = tuple(s["move"] for s in _steps(log.get("opponent_records", [])))
+        if len(moves) > 1:
+            scripts.append(moves)
+    if not scripts:
+        return []
+    longest = max(scripts, key=len)
+    # A shorter sub-game is a prefix of the longest when the opponent is
+    # deterministic: it ended early because *we* caught it, not because it
+    # chose differently.
+    if any(longest[:len(s)] != s for s in scripts):
+        return []
+    return list(longest)

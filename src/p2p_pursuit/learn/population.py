@@ -85,10 +85,36 @@ def clone_factories(directory: Path = CLONE_DIR) -> dict[str, Member]:
     return found
 
 
+def path_factories(directory: Path = CLONE_DIR) -> dict[str, Member]:
+    """Opponents that replay a recorded trajectory, keyed ``path:<team>``.
+
+    A fitted clone and a replayed path answer different questions, and against a
+    deterministic opponent only the second one is honest: our shipped doctrine
+    catches gal-roy1's *clone* 83% of the time in simulation and caught the team
+    itself 0 times in 9 live sub-games. The clone is a reactive imitation at 78%
+    move agreement, so it wanders where the original never does.
+
+    Kept in a `paths/` subdirectory because `clone_factories` globs this one for
+    weight files and would raise on a script.
+    """
+    from .opponents import Scripted
+
+    found: dict[str, Member] = {}
+    for path in sorted((directory / "paths").glob("*.json")):
+        roles = json.loads(path.read_text(encoding="utf-8")).get("roles", {})
+        scripts = {role: tuple(moves) for role, moves in roles.items() if moves}
+        if not scripts:
+            continue
+        found[f"path:{path.stem}"] = Member(
+            make=lambda role, s=scripts: Scripted(s[role]),
+            roles=tuple(scripts))
+    return found
+
+
 def build(names: tuple[str, ...] | None = None,
           directory: Path = CLONE_DIR) -> dict[str, Member]:
     """Resolve pool names to members; ``None`` means everything available."""
-    available = {**BUILTIN, **clone_factories(directory)}
+    available = {**BUILTIN, **clone_factories(directory), **path_factories(directory)}
     if names is None:
         return available
     missing = [n for n in names if n not in available]

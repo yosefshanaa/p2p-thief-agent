@@ -1,0 +1,31 @@
+{
+  "team": "gal-roy1",
+  "source": "results/police-ahk-yosi-vs-gal-roy1-20260817T150610",
+  "samples": 113,
+  "agreement": {
+    "police": 0.5455,
+    "thief": 0.7826
+  },
+  "weights": {
+    "police": {
+      "pursuer_dist": -1.7492721072156003,
+      "mobility": -0.01091836411444902,
+      "mobility2": 1.7619628372108957,
+      "edge": -1.2792758042996208,
+      "centre": 0.4539311185557855,
+      "stay": -2.3399031413146654,
+      "straight": 0.10208039748183673,
+      "reverse": -2.052770205568966
+    },
+    "thief": {
+      "pursuer_dist": 1.1823238369599665,
+      "mobility": 4.0,
+      "mobility2": -1.6940009565986434,
+      "edge": -0.1559596075133669,
+      "centre": 3.7018598245740852,
+      "stay": -0.30103480581343334,
+      "straight": 1.3361334721604834,
+      "reverse": -4.0
+    }
+  }
+}

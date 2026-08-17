@@ -1,0 +1,47 @@
+{
+ "team": "gal-roy1",
+ "roles": {
+  "thief": [
+   "E",
+   "S",
+   "E",
+   "S",
+   "W",
+   "W",
+   "W",
+   "W",
+   "N",
+   "N",
+   "N",
+   "N",
+   "E",
+   "E",
+   "E",
+   "E",
+   "S",
+   "S",
+   "S",
+   "S",
+   "E",
+   "N",
+   "S",
+   "S",
+   "W",
+   "W",
+   "W",
+   "W",
+   "W",
+   "N",
+   "W",
+   "N",
+   "N",
+   "N",
+   "N"
+  ]
+ },
+ "source": [
+  "results/police-ahk-yosi-vs-gal-roy1-20260817T150610",
+  "results/police-ahk-yosi-vs-gal-roy1-20260817T144759"
+ ],
+ "note": "identical in both counted attempts, 2026-08-17; verified deterministic across every sub-game they played as thief"
+}

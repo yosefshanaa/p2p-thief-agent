@@ -56,6 +56,8 @@ class ReferenceBridge:
         #: deliver, and repeating the turn to say so is the bug this flag exists
         #: to prevent (see `_terminal_win_claim`).
         self._win_claim_sent = False
+        #: Sub-game the scent-channel note has already been logged for.
+        self._scent_note_for: int | None = None
 
     # -- inbound: their pushes into our server -------------------------------
     def on_negotiate(self, message: dict) -> dict:
@@ -74,6 +76,7 @@ class ReferenceBridge:
                 engine.declare_technical(
                     engine.other, f"both peers claim role {engine.role!r}")
             return {"ok": False, "error": "role collision"}
+        self._note_scent_channel(message, engine.sub_game)
         parts = codec.from_turn_message(message, sub_game=engine.sub_game,
                                         grid_size=self.grid_size)
         self.service.receive_commit(parts["commit"])
@@ -83,6 +86,24 @@ class ReferenceBridge:
         if parts["claim_response"] or parts["win_claim"]:
             self._apply_side_channels(parts)
         return {"ok": True}
+
+    def _note_scent_channel(self, message: dict, sub_game: int) -> None:
+        """Say once per sub-game whether their turns carry a pheromone field.
+
+        `from_turn_message` substitutes an empty grid for a missing `smell_grid`,
+        which is right - a peer that sends none must not crash us - but it makes
+        the difference between "tracking them by scent" and "navigating on hints
+        that are lies half the time" completely invisible. Our police captured
+        nothing in nine sub-games against gal-roy1 and this line is what tells us
+        whether it ever had a trail to follow.
+        """
+        if sub_game == self._scent_note_for:
+            return
+        self._scent_note_for = sub_game
+        cells = len(message.get("smell_grid") or {})
+        log.info("sub-game %s: their turns %s", sub_game,
+                 f"carry a smell_grid ({cells} cells)" if cells else
+                 "carry NO smell_grid - our belief runs on hints alone")
 
     def on_submit_audit(self, payload: dict) -> dict:
         """Their revealed log: audited on their terms, then filed where the rest
