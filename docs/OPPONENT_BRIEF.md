@@ -58,8 +58,8 @@ sub-game boundary or in the final audit — by which time, in a counted match, i
 >    that if indices ever disagree mid-series the peer that is behind **joins** the one ahead
 >    instead of restarting. Two peers that both advance on failure and both insist on their own
 >    index will livelock indefinitely, and it is invisible until it happens.
-> 9. Your prior counted-game count (rule #37) — we declare **4** (orcai-mj, amireman/`G012`,
->    saedshki, s82kma9e). Both declarations reach the lecturer, so they must be truthful.
+> 9. Your prior counted-game count (rule #37) — we declare **5** (orcai-mj, amireman/`G012`,
+>    saedshki, s82kma9e, gal-roy1). Both declarations reach the lecturer, so they must be truthful.
 > 10. First mover: we propose **thief** (book default), fine either way. Timeout: silence past
 >     180 s forfeits that sub-game as a technical loss.
 >
@@ -154,7 +154,7 @@ Warm-up (uncounted, six sub-games), then the counted match:
 ```bash
 scripts/play.sh <slug> https://their-url/mcp --role thief --games 6
 # then remove P2P_EMAIL_MODE=draft from the contract file and:
-scripts/play.sh <slug> https://their-url/mcp --role thief --counted --prior-counted 4
+scripts/play.sh <slug> https://their-url/mcp --role thief --counted --prior-counted 5
 ```
 
 `scripts/play.sh` loads the contract, picks a working runner, refuses an uncounted run that would
@@ -171,8 +171,8 @@ pair is for: they move together or not at all.
 precondition, not a nicety — joining at their mid-series index plays fewer than six, and
 `--counted` refuses.
 
-**`--prior-counted` is shared state across both machines.** It is **4** today (orcai-mj,
-amireman/`G012`, saedshki, s82kma9e) and rises by one per counted match. Rather than remembering it, read it
+**`--prior-counted` is shared state across both machines.** It is **5** today (orcai-mj,
+amireman/`G012`, saedshki, s82kma9e, gal-roy1) and rises by one per counted match. Rather than remembering it, read it
 off the archive — whoever plays a counted match commits it to `matches/` immediately, and the next
 number is the count of counted archives there. Two counted matches launching at the same time on
 the two machines cannot each work it out: agree the two values in writing first

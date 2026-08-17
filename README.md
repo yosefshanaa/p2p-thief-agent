@@ -292,9 +292,9 @@ or an opponent (§16).
 | 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 394 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-CI on every push. Four counted league matches have been played and reported — three won, one
-tied, all 24 sub-games audited clean — which clears the book's ≥2-against-different-teams
+**Quality gate:** 418 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+CI on every push. Five counted league matches have been played and reported — three won, one
+tied, one lost, all 30 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
 [`docs/TODO.md`](docs/TODO.md) §8–9, and the submission repos are already split, public and green.
 
@@ -541,7 +541,7 @@ Times are read from the artifacts themselves (`started_at` / `ended_at` on the s
 declaration), never from file mtimes, and are shown in **UTC** — the team plays in
 Asia/Jerusalem, UTC+3 in August.
 
-### Counted league matches — 4 of 10 played
+### Counted league matches — 5 of 10 played
 
 | # | Opponent | Series points `ahk-yosi` – them | Winner | League bonus | Final points `ahk-yosi` – them | Started (UTC) | Ended (UTC) | Match archive |
 |---:|---|:---:|---|:---:|:---:|---|---|---|
@@ -549,7 +549,8 @@ Asia/Jerusalem, UTC+3 in August.
 | 2 | [`amireman`](https://github.com/AMIR13BD/Game-P2P-Cop-Chase-Police) · label `G012` | **60 – 40** <br>(4 – 2) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **70 – 40** | 2026-08-14 18:01:29 | 2026-08-14 18:05:30 | [`amireman-g012-counted/`](matches/amireman-g012-counted) |
 | 3 | [`saedshki`](https://github.com/Saed-Abdalgani/Final-project_police_thief_p2p) | **85 – 45** <br>(5 – 1) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **95 – 45** | 2026-08-16 17:26:28 | 2026-08-16 17:30:45 | [`saedshki-counted/`](matches/saedshki-counted) |
 | 4 | [`s82kma9e`](https://github.com/Imreec/copthief-league-protocol) | **90 – 30** <br>(**6 – 0**) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **100 – 30** | 2026-08-16 23:44:07 | 2026-08-16 23:47:47 | [`s82kma9e-counted/`](matches/s82kma9e-counted) |
-| | **4 opponents** | **310 – 190** <br>(18 – 6) | **3 wins · 1 tie · 0 losses** | **+32** to us | **342 – 192** | | | |
+| 5 | [`gal-roy1`](https://github.com/galbb12/orch-models-final-cop) *(private)* | 35 – 75 <br>(1 – 5) | `gal-roy1` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-17 17:34:07 | 2026-08-17 17:40:37 | [`gal-roy1-counted/`](matches/gal-roy1-counted) |
+| | **5 opponents** | **345 – 265** <br>(19 – 11) | **3 wins · 1 tie · 1 loss** | **+32** to us <br>**+10** to them | **377 – 277** | | | |
 
 *¹ That series predates the timing fix (`da8856a`), so its declaration carries `ended_at: null`;
 the time shown is `generated_at` from the sealed result — the moment the report was signed,
@@ -585,9 +586,9 @@ declarations before it enters the league table. So treat the final column as the
 book's full parameter values — the lecturer's weighting is applied downstream of our report, and
 the book does not publish its formula.
 
-**All 24 counted sub-games audited `Verified OK`** — every gameplay commit re-hashed to the
+**All 30 counted sub-games audited `Verified OK`** — every gameplay commit re-hashed to the
 record its owner later revealed. The counterpart field `opponent_audit` reads *"not reported
-(reference dialect)"* for all four: that dialect never returns the opponent's verdict of us,
+(reference dialect)"* for all five: that dialect never returns the opponent's verdict of us,
 and asserting an agreement we never received would be a lie in a signed artifact (§13,
 interpretation #8). Roles alternate every sub-game, so each score above is earned from both
 sides of the board.
@@ -600,11 +601,24 @@ scent-hash mismatch — locked it at `81ebee59…`, and played the doctrine sear
 says `order: deposit_then_decay`, so the freshest served cell reads **0.8**, not 0.9. Result was
 a 6–0 sweep with clean audits throughout.
 
-**League status:** the book requires ≥2 counted matches against *different* teams; four are
-played, three won, carrying **+32** in league credit. The cap is 10 counted matches with **one
-counted game per opponent**, so the six remaining slots each need a new team — a rematch cannot
-be counted, and six more wins would be the maximum remaining diversity credit (+60). The next
-match must therefore declare `--prior-counted 4`.
+**Match 5 is our first counted loss, and it is one-sided in a specific way.** Against
+`gal-roy1` our police did not capture once in three full 35-step chases — as it had not in the
+two friendlies before it, nor in the two abandoned attempts: **0 captures in 15 police sub-games
+against this opponent**. Their thief walks a deterministic perimeter circuit, and a tail chase at
+equal speed with the thief moving first cannot close the final cell: we reach distance 1 twice a
+sub-game and never 0, while 5 of our 14 barriers go unused. That is not a tuning gap — a CEM
+search over all nine police keys against a replay of their exact circuit
+(`config/opponents/paths/gal-roy1.json`) never captured either, while the same circuit offers 29
+cells our cop can reach before they do. The thief half held up: it survived 2 of 3 sub-games in
+each of the two friendlies, and both losses here came from a barrier landing on its own square
+rather than from being outrun. The fix is interception rather than pursuit, and it is the open
+item in [`docs/TODO.md`](docs/TODO.md).
+
+**League status:** the book requires ≥2 counted matches against *different* teams; five are
+played — three won, one drawn, one lost — carrying **+32** in league credit. The cap is 10
+counted matches with **one counted game per opponent**, so the five remaining slots each need a
+new team — a rematch cannot be counted, and five more wins would be the maximum remaining
+diversity credit (+50). The next match must therefore declare `--prior-counted 5`.
 
 ### Friendly and interop runs — not counted, kept for the audit trail
 
