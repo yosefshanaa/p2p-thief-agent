@@ -59,6 +59,22 @@ class Doctrine:
     police_fresh_min: float = 0.7
     claim_threshold: float = 0.15
     police_truth_rate: float = 0.20
+    #: Least probability that a one-step move lands on the thief before we spend
+    #: the move on it rather than on position. The pounce is what converts a
+    #: scent fix into points: of 76 capture chances in the played archive we
+    #: took 11, and 27 of the misses were spent placing a barrier from a cell
+    #: adjacent to the thief. A barrier forfeits the move; a pounce is the move.
+    pounce_floor: float = 0.18
+    #: How much more likely the thief is to take a cell one step further from us
+    #: than one step nearer. 1.0 is the uniform prior over its legal moves.
+    flee_bias: float = 1.8
+    #: Weight on shrinking the thief's half of the board (a Voronoi split), as
+    #: against simply closing the distance. Pure distance is a tail chase: the
+    #: freshest evidence names where it *was*, so an equal-speed pursuer aiming
+    #: there holds the gap and never closes it - measured over the three police
+    #: sub-games of the counted match vs gal-roy1, the gap sat at 2 for 45 of 102
+    #: turns, reached 1 exactly 3 times, and produced no capture chance at all.
+    w_cut: float = 0.35
     # -- thief: a weighted score over one-step candidates
     w_mobility: float = 0.5
     w_mobility2: float = 0.25
@@ -85,6 +101,15 @@ class Doctrine:
     thief_fresh_min: float = 0.7
     thief_truth_rate: float = 0.15
     lie_candidates: int = 3
+    #: Mirror of `flee_bias`: how much more likely the pursuer is to take a cell
+    #: one step *nearer* to us. Below 1.0 because a pursuer closes.
+    chase_bias: float = 0.55
+    #: Penalty on ending our move inside the pursuer's next-step reach. This is
+    #: the term the thief never had: across the archive our thief finished its
+    #: move inside that reach 43 times in 35 sub-games and was taken 14 times,
+    #: including both losses to gal-roy1, where it stepped to a cell orthogonally
+    #: adjacent to a pursuer whose exact cell its own scent feed was carrying.
+    w_strike: float = 4.0
 
 
 #: Fields the offline search is NOT allowed to touch, and why.
@@ -118,8 +143,19 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "seal_distance": (1, 5, True),
     "endgame_reserve": (0, 6, True),
     "belief_floor": (0.02, 0.40, False),
-    "police_fresh_min": (0.30, 0.90, False),
+    # Capped at the lowest ceiling any negotiated model can serve, not at the
+    # kernel's centre. `book_v1` serves before its own emission so its field
+    # tops out at 0.81, and `subtractive_chebyshev_v1` at 0.80 - so the search's
+    # old ceiling of 0.90 let it pick a threshold no field can ever cross. It
+    # did: the shipped vector carried 0.849118, which switched the whole trail
+    # branch off for every book_v1 match we have played, silently, because the
+    # objective cannot see a feature that never fires. Measured in the lab, the
+    # police's trail test fired 0 times in 2,629 turns.
+    "police_fresh_min": (0.30, 0.80, False),
     "claim_threshold": (0.03, 0.50, False),
+    "pounce_floor": (0.02, 0.60, False),
+    "flee_bias": (0.80, 4.00, False),
+    "w_cut": (0.0, 2.0, False),
     "w_mobility": (0.0, 2.0, False),
     "w_mobility2": (0.0, 1.5, False),
     "w_territory": (0.0, 1.0, False),
@@ -133,11 +169,18 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "corner_penalty": (0.0, 3.0, False),
     "juke_penalty": (0.0, 3.0, False),
     "juke_range": (1, 6, True),
-    "thief_fresh_min": (0.30, 0.90, False),
+    "thief_fresh_min": (0.30, 0.80, False),  # same dead-threshold cap as the police's
+    "chase_bias": (0.20, 1.20, False),
+    "w_strike": (0.0, 10.0, False),
 }
 
-POLICE_KEYS = tuple(k for k in SPACE if k.startswith(("peak", "gap", "kill", "seal",
-                                                      "endgame", "belief", "police", "claim")))
+#: Which half of the vector each role reads. Spelled out rather than derived
+#: from a name prefix: the prefix rule silently filed every new key under the
+#: thief, so a `--role police` search would have left three police keys at their
+#: defaults while reverting them in the thief's file.
+POLICE_KEYS = ("peak_window", "gap_window", "kill_shot_ratio", "seal_ratio",
+               "seal_distance", "endgame_reserve", "belief_floor", "police_fresh_min",
+               "claim_threshold", "pounce_floor", "flee_bias", "w_cut")
 THIEF_KEYS = tuple(k for k in SPACE if k not in POLICE_KEYS)
 
 

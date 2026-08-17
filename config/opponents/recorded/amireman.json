@@ -1,0 +1,2599 @@
+{
+ "team": "amireman",
+ "sources": [
+  "matches/amireman-g012-counted",
+  "matches/amireman-demo5",
+  "matches/amireman-demo4",
+  "matches/amireman-demo2",
+  "matches/amireman-demo1"
+ ],
+ "samples": 780,
+ "states": {
+  "thief": 82,
+  "police": 116
+ },
+ "holdout_agreement": {
+  "thief": 0.717,
+  "police": 0.7978
+ },
+ "roles": {
+  "thief": [
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     0,
+     1
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     1,
+     1
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     2,
+     1
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     2,
+     2
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 9
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     3,
+     2
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     3,
+     3
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 13
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 12
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 8
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     3,
+     6
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     2,
+     6
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     3,
+     5
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     2,
+     5
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     2,
+     5
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     2,
+     4
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     1,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     0,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 12
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     0,
+     3
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 8
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     1,
+     4
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     0,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "S",
+    "weight": 8
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     0,
+     4
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     1,
+     3
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     1,
+     6
+    ],
+    "pursuer": [
+     0,
+     3
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     0,
+     6
+    ],
+    "pursuer": [
+     0,
+     3
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     0,
+     1
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     1,
+     1
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     1,
+     2
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     2,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     2,
+     3
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 9
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "STAY",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     4,
+     2
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     3,
+     2
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     3,
+     3
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     3,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     2,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     1,
+     1
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     2,
+     1
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 6
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     1,
+     0
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     3,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     3,
+     3
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     3,
+     5
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     3,
+     5
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     3,
+     6
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     4,
+     6
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     0
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     0
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     0
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     0
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     0
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     0
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     1,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   }
+  ],
+  "police": [
+   {
+    "pos": [
+     0,
+     1
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     1,
+     1
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 6
+   },
+   {
+    "pos": [
+     1,
+     2
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     2,
+     2
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 6
+   },
+   {
+    "pos": [
+     2,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 5
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 8
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 5
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     4,
+     2
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     1
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 5
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 5
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 5
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 5
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 5
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     1
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 6
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     1,
+     2
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     1,
+     3
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     2,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     4,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     3,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     0,
+     1
+    ],
+    "pursuer": [
+     3,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     2,
+     1
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     1
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     4,
+     2
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     3,
+     2
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     3,
+     3
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     3,
+     4
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     3,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     6
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     0,
+     2
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     1,
+     2
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     0
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     1
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     2
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     3
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     4,
+     6
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 2
+   },
+   {
+    "pos": [
+     2,
+     1
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     2,
+     2
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     0
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     0
+    ],
+    "pursuer": [
+     5,
+     2
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     1
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     3,
+     6
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     2,
+     6
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     2,
+     4
+    ],
+    "pursuer": [
+     1,
+     6
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     1,
+     4
+    ],
+    "pursuer": [
+     0,
+     6
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     0,
+     4
+    ],
+    "pursuer": [
+     1,
+     6
+    ],
+    "prev_move": "N",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 1
+   }
+  ]
+ }
+}

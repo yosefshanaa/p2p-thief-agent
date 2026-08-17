@@ -18,6 +18,23 @@ thief had simply not been given a lesson the police already learned:
 * **Deception.** The lie pointed at the single furthest stale cell of a scent
   field we transmit ourselves, making it a deterministic function of public
   data. It is now sampled with our private rng.
+
+v6 replaces the signal all of that rests on. "The pursuer's scent trail" meant
+the argmax of its served field, and mining the played archive showed that argmax
+names the emitter's cell 11% of the time - the field saturates, 91% of served
+fields have between 6 and 20 cells tied at the maximum, and ``max`` then returns
+whichever tied cell row-major iteration reaches first. That is a bias toward the
+top-left corner, and our thief spent `w_trail` fleeing it: 11 of its 14 deaths in
+the archive are in the bottom and right edges. :mod:`..domain.tracking` inverts
+the field instead, which is exact, so the pursuer's cell is now known rather
+than guessed.
+
+Knowing it exactly makes one term possible that no amount of tuning could
+substitute for: **do not end the move where the pursuer can step next**. Across
+35 archived sub-games this thief finished its move inside that reach 43 times
+and was taken 14 times, and both losses to gal-roy1 are the same picture - it
+walked to a cell orthogonally adjacent to a pursuer whose exact position its own
+scent feed was carrying.
 """
 
 from __future__ import annotations
@@ -28,6 +45,7 @@ from ..domain.hints import region_of
 from ..domain.rules import Decision
 from .params import Doctrine, active
 from .pathing import bfs_distances, scent_centroid
+from .predict import spread, strike_zone
 
 # The weights live in params.Doctrine so the offline search can address them;
 # `w_trail` is the weight on the trail-derived pursuer cell against the diffuse
@@ -46,19 +64,26 @@ class ThiefBrain(BrainBase):
         self._fresh: Cell | None = None
         self._prev_fresh: Cell | None = None
         self._sub_game: int | None = None
+        self._strike: dict[Cell, float] = {}
 
     def _pick_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
             self._sub_game, self._last_move, self._run_len = view.sub_game, None, 0
             self._prev_peak = self._fresh = self._prev_fresh = None
+            self._strike = {}
         self._track_trail(view)
+        # Where the pursuer is now, and therefore which cells it can take on its
+        # next move - the cells this thief must not be standing on. Both come
+        # from the exact fix; with no fix they stay empty and the older,
+        # belief-driven terms carry the turn as they always did.
+        self._strike = self._danger(view)
         centroid = scent_centroid(view.own_scent)
         peak = view.belief.argmax()
-        projected = self._project(view, peak)
-        chased = self._pursuer_distance(view, peak) <= self.p.juke_range
+        projected = view.opp_lead or self._project(view, peak)
+        chased = self._pursuer_distance(view, view.opp_fix or peak) <= self.p.juke_range
         # One BFS from the pursuer per turn, shared by every candidate: the
         # territory term needs *its* distances, not ours.
-        pursuer = self._fresh if self._fresh is not None else peak
+        pursuer = view.opp_fix or self._fresh or peak
         opp_dist = bfs_distances(view.board, pursuer) if pursuer is not None else {}
         unreachable = view.board.size * view.board.size
         # A pocket is only a trap while the pursuer can still seal its mouth.
@@ -84,10 +109,14 @@ class ThiefBrain(BrainBase):
             # step ago - and one step ago bounds where it can be now. Fleeing a
             # posterior this diffuse means fleeing a phantom, which is precisely
             # how a distance-maximising evader walks into a pursuer.
-            if self._fresh is not None:
-                expected = self.p.w_trail * dist.get(self._fresh, view.board.size * 2) \
+            if pursuer is not None and (view.opp_fix is not None or self._fresh is not None):
+                expected = self.p.w_trail * dist.get(pursuer, view.board.size * 2) \
                     + (1.0 - self.p.w_trail) * expected
             s = expected - self.p.w_risk * risk
+            # The one term that answers how this thief actually dies. Distance
+            # and risk both treat the pursuer as a cloud; this treats it as an
+            # agent with a move left to play, and refuses to hand it the cell.
+            s -= self.p.w_strike * self._danger_at(view, pos, threat)
             if projected is not None and dist.get(projected, 99) <= 2:
                 s -= self.p.w_lead_risk  # he is heading here: do not be here when he arrives
             s += self.p.w_mobility * len(view.board.open_neighbors(pos))
@@ -97,7 +126,13 @@ class ThiefBrain(BrainBase):
             # cannot reach first - the difference between a corridor with two
             # exits and a corridor with two exits the pursuer is standing in.
             if opp_dist:
-                owned = self._territory(dist, opp_dist, unreachable)
+                # Room we own, but only the room we can actually get *to*: a
+                # Voronoi count walks straight through the pursuer, so an edge
+                # run into a corner scores as roomy right up to the last turn.
+                # 79% of this thief's deaths in the archive are on the bottom or
+                # right edge, arrived at exactly that way.
+                owned = min(self._territory(dist, opp_dist, unreachable),
+                            self._escape_room(view, pos))
                 s += self.p.w_territory * owned
                 if owned < self.p.trap_floor:
                     s -= self.p.w_trap * (self.p.trap_floor - owned) * threat
@@ -132,6 +167,69 @@ class ThiefBrain(BrainBase):
         self._last_move = best
         self._prev_peak = peak
         return Decision(move=best)
+
+    def _danger(self, view: BrainView) -> dict[Cell, float]:
+        """Probability that the pursuer can be on each cell after its next move.
+
+        Two steps of inference from one exact fix: spread it over the moves the
+        pursuer has made since the field was written (biased toward closing,
+        because a pursuer closes), then over the move it is about to make. The
+        second spread is the point - under strict alternation the thief commits
+        first, so a cell that is merely *next to* the pursuer is not near it, it
+        is inside it.
+        """
+        if view.opp_fix is None:
+            return {}
+        where = spread(view.board, view.opp_fix, view.own_pos,
+                       steps=view.opp_fix_lag, bias=self.p.chase_bias)
+        return strike_zone(view.board, where)
+
+    def _danger_at(self, view: BrainView, pos: Cell, threat: float) -> float:
+        """How likely this cell is to end the sub-game, if we finish our move on it.
+
+        Two ways, and the second is why the first is not enough. The pursuer can
+        *step* onto it - that is the strike map. It can also *bar* our way out,
+        and the set of cells it can bar is exactly the set it can step onto, so
+        the same map answers both: multiply the strike values of our exits and
+        that is the chance it can seal every one of them.
+
+        The seal term is worth points only where the two teams agreed that an
+        enclosed thief is captured. Where they did not, a sealed pocket is a
+        *survival*, and it is how the reference peer beat us on 2026-08-01 - it
+        sat in one for 27 turns while our police finished outside its own wall.
+        Penalising the same geometry under both rulesets would throw that away.
+        """
+        danger = self._strike.get(pos, 0.0)
+        if not view.claim_enclosure or threat <= 0.0:
+            return danger
+        exits = view.board.open_neighbors(pos)
+        if not exits:
+            return danger + threat        # already enclosed: nothing left to seal
+        seal = 1.0
+        for cell in exits:
+            seal *= self._strike.get(cell, 0.0)
+        return danger + seal * threat
+
+    #: A strike cell counts as closed when the pursuer is more likely than not
+    #: to be able to take it. Not "any chance at all": under a lagged fix that
+    #: would wall off thirteen cells, a quarter of the board, and leave the
+    #: thief with nowhere that scores at all.
+    CLOSED = 0.5
+
+    def _escape_room(self, view: BrainView, pos: Cell) -> int:
+        """Cells reachable from ``pos`` without walking through the pursuer.
+
+        The quantity a corner actually collapses, and the one a plain Voronoi
+        count misses: ground on the far side of the pursuer is not ours in any
+        sense that helps, because reaching it means passing through it.
+        """
+        if not self._strike:
+            return view.board.size * view.board.size
+        trial = view.board.clone()
+        for cell, chance in self._strike.items():
+            if chance >= self.CLOSED and cell != pos:
+                trial.add_barrier(cell)
+        return len(bfs_distances(trial, pos))
 
     def _track_trail(self, view: BrainView) -> None:
         """Freshest cell of the PURSUER's scent trail, turn over turn."""

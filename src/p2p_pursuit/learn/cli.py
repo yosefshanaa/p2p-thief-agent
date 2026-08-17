@@ -105,6 +105,54 @@ def cmd_clone(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_record(args: argparse.Namespace) -> int:
+    """Build a decision table for one team from every match we played them in."""
+    from .recorded import agreement as recorded_agreement
+    from .recorded import table_from_samples
+
+    samples: list = []
+    for directory in args.match:
+        samples.extend(samples_from_match(Path(directory)))
+    if len(samples) < args.min_samples:
+        _err(f"[learn] {len(samples)} decisions across {len(args.match)} directories - "
+             f"below --min-samples {args.min_samples}")
+        return 3
+    table = table_from_samples(samples)
+    # Hold out every fourth decision and rebuild without it. A table that
+    # reproduces its own training rows is a dictionary, not a model; what the
+    # pool needs to know is how it answers ground it has not stood on.
+    held = [s for i, s in enumerate(samples) if i % 4 == 0]
+    trained = table_from_samples([s for i, s in enumerate(samples) if i % 4])
+    scores = {role: round(recorded_agreement(trained.get(role, []),
+                                             [s for s in held if s.role == role]), 4)
+              for role in table}
+    out = Path(args.out) / "recorded" / f"{args.name}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"team": args.name, "sources": list(args.match), "samples": len(samples),
+               "states": {role: len(rows) for role, rows in table.items()},
+               "holdout_agreement": scores, "roles": table}
+    out.write_text(json.dumps(payload, indent=1) + "\n", encoding="utf-8")
+    for role, value in scores.items():
+        _err(f"[learn] {args.name} as {role}: {len(table[role])} states, "
+             f"{value:.0%} of held-out moves reproduced")
+    _err(f"[learn] wrote {out}; it joins the pool as recorded:{args.name}")
+    print(json.dumps({k: v for k, v in payload.items() if k != "roles"}, indent=2))
+    return 0
+
+
+def cmd_review(args: argparse.Namespace) -> int:
+    """Print what the played matches say about our own play. Never writes."""
+    from .review import format_review, review
+
+    result = review(Path(args.matches))
+    if not result.sub_games:
+        _err(f"[learn] no sealed sub-game logs under {args.matches}")
+        return 3
+    _err(format_review(result))
+    print(json.dumps(result.as_dict(), indent=2))
+    return 0
+
+
 def add_parser(sub: argparse._SubParsersAction) -> None:
     learn = sub.add_parser("learn", help="offline policy search and opponent cloning")
     inner = learn.add_subparsers(dest="learn_command", required=True)
@@ -130,3 +178,18 @@ def add_parser(sub: argparse._SubParsersAction) -> None:
     clone.add_argument("--min-samples", type=int, default=30)
     clone.add_argument("--out", default=str(population.CLONE_DIR))
     clone.set_defaults(fn=cmd_clone)
+
+    record = inner.add_parser(
+        "record", help="build a decision table for a team from its played matches")
+    record.add_argument("--match", required=True, action="append",
+                        help="a directory of sealed logs (repeat for every series)")
+    record.add_argument("--name", required=True, help="team name")
+    record.add_argument("--min-samples", type=int, default=60)
+    record.add_argument("--out", default=str(population.CLONE_DIR))
+    record.set_defaults(fn=cmd_record)
+
+    review = inner.add_parser(
+        "review", help="read the played archive back as evidence (read-only)")
+    review.add_argument("--matches", default="matches",
+                        help="root directory of sealed match logs")
+    review.set_defaults(fn=cmd_review)

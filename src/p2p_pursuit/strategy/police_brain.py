@@ -26,6 +26,21 @@ wins outright, and spending those turns on doors cost 25/30 -> 20/30.
 
 Barriers are otherwise still rare: an unconditional spend was measured and it
 loses (see `belief_floor`). Every placement passes the flood-fill self-trap veto.
+
+v6 is the first version to know where the thief *is*. Everything above reasons
+about a belief cloud and a "freshest scent cell", and mining the played archive
+showed both were far weaker than assumed: the served field saturates, so its
+argmax names the emitter 11% of the time, and the shipped doctrine had pushed
+`police_fresh_min` to 0.849 - above the 0.81 ceiling `book_v1` can serve - which
+switched the trail branch off entirely (0 firings in 2,629 lab turns).
+:mod:`..domain.tracking` replaces both by inverting the field, which is exact.
+
+That turns the police's problem from *finding* the thief into *converting*, and
+the archive is blunt about the conversion: 76 turns began with the thief one
+step away and 11 of them ended on its cell. Twenty-seven were spent placing a
+barrier instead - forfeiting the move, from a cell adjacent to the thief. So the
+order of business is now pounce, then squeeze, then barrier, then pursue, and
+pursuit aims at where the thief will be rather than where it was.
 """
 
 from __future__ import annotations
@@ -38,6 +53,7 @@ from ..domain.hints import region_of
 from ..domain.rules import Decision
 from .params import Doctrine, active
 from .pathing import bfs_distances, still_connected
+from .predict import spread
 from .squeeze import squeeze_play, squeeze_target
 
 # The numbers live in params.Doctrine (so the offline search in learn/ can
@@ -84,6 +100,7 @@ class PoliceBrain(BrainBase):
         self._recent: deque[float] = deque(maxlen=self.p.peak_window)
         self._camped = 0
         self._gaps: deque[int] = deque(maxlen=self.p.gap_window)
+        self._where: dict[Cell, float] = {}
 
     def _decide_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
@@ -91,17 +108,31 @@ class PoliceBrain(BrainBase):
             self._last_move, self._camped = None, 0
             self._recent.clear()
             self._gaps.clear()
+            self._where = {}
         # Track the scent trail on EVERY turn, including barrier turns: tracking
         # it inside the interception branch meant one barrier placement blinded
         # the velocity estimate for the turn after it (displacement of 2).
         self._track_trail(view)
         peak = view.belief.argmax()
         b_max = view.belief.grid[peak[0]][peak[1]]
+        # Where the thief is *now*, given a fix on where it was. Computed once
+        # and reused: the pounce spends it, the pursuit aims at it, and the
+        # claim is answered against it.
+        self._where = self._thief_now(view)
+        # First refusal to the capture. A barrier forfeits the move, so any turn
+        # that could have ended on the thief's cell and ended on a barrier
+        # instead traded a capture for a wall - 27 times in the played archive,
+        # more than twice as often as we actually converted.
+        pounce = self._pounce(view)
+        if pounce is not None:
+            self._last_move = pounce.move
+            self._camped = 0
+            return pounce
         barrier = self._barrier_play(view, peak, b_max)
         # The squeeze (book 3.4): once the evader is on cramped ground, take its
         # exits one at a time. Enclosure - no legal move left - captures just as
         # landing on it does, and costs only 2 barriers in a corner.
-        quarry = self._fresh or peak
+        quarry = self._likeliest() or self._fresh or peak
         # Squeeze only against a quarry that is genuinely evading. If we are
         # still closing the gap, chasing wins outright - that is how a random
         # walker gets caught, and spending those turns on doors instead cost
@@ -114,7 +145,7 @@ class PoliceBrain(BrainBase):
                                    quota_left=view.barrier_quota - view.barriers_used,
                                    reserve=self.p.endgame_reserve,
                                    claim_enclosure=view.claim_enclosure)
-        if barrier is not None and self._would_seal(view, barrier, quarry):
+        if barrier is not None and self._would_seal(view, barrier):
             # Sealing the last exit only wins if the opponent agrees an enclosed
             # thief is captured. Against one that does not, it builds a pocket we
             # cannot enter either and hands them survival. `squeeze_play` already
@@ -128,37 +159,97 @@ class PoliceBrain(BrainBase):
             self._last_move = None
             return Decision(move="STAY", barrier=barrier)
         target = squeeze_target(view.board, view.own_pos, quarry) if evading else None
-        return self._pursue(view, target or self._intercept_target(view) or peak)
+        return self._pursue(view, target or self._intercept_target(view)
+                            or self._likeliest() or peak)
 
-    def _would_seal(self, view: BrainView, barrier: Cell, quarry: Cell) -> bool:
+    def _would_seal(self, view: BrainView, barrier: Cell) -> bool:
         """Would this placement create a pocket nothing can leave - or enter?
 
-        Deliberately not asked about the *quarry*. The quarry is the freshest
-        scent cell, which lags by a turn, and the live failure happened while
-        their thief oscillated (6,6)<->(5,6): at the moment we barred (5,6) the
-        quarry estimate WAS (5,6), so a quarry-based test asked whether barring
-        a cell encloses that same cell, answered no, and let the seal through.
+        Deliberately not asked about a single *quarry* cell, which is why this
+        takes none. The quarry used to be the freshest scent cell, which lags by
+        a turn, and the live failure happened while their thief oscillated
+        (6,6)<->(5,6): at the moment we barred (5,6) the quarry estimate WAS
+        (5,6), so a quarry-based test asked whether barring a cell encloses that
+        same cell, answered no, and let the seal through. The question is asked
+        of the board, and then of every cell the thief could be on.
 
         With the rule unagreed an enclosed cell has no upside whatsoever - we
         cannot claim it and we cannot enter it - so the honest test is whether
         the board gains any enclosed open cell at all. That is 49 cheap checks
         and it cannot be fooled by a stale estimate.
+
+        With the rule agreed, sealing is a win - but only when what we seal in
+        is the thief. Walling off empty ground costs a barrier, costs the turn
+        that placed it, and permanently removes cells from our own reach; over
+        the played archive our police spent 287 turns unable to reach the thief
+        at all, behind walls of its own making. The scent fix makes the
+        difference checkable: an empty pocket is refused, a pocket the thief
+        could be standing in is not.
         """
-        if view.claim_enclosure:
-            return False
         size = view.board.size
         cells = [(r, c) for r in range(size) for c in range(size)]
         before = {c for c in cells if view.board.is_open(c) and view.board.is_enclosed(c)}
         trial = view.board.clone()
         trial.add_barrier(tuple(barrier))
         after = {c for c in cells if trial.is_open(c) and trial.is_enclosed(c)}
-        return bool(after - before)
+        pockets = after - before
+        if not pockets:
+            return False
+        if not view.claim_enclosure:
+            return True
+        if not view.opp_cells:
+            return False  # no fix to judge it by: the agreed rule is the licence
+        return not any(cell in pockets for cell in view.opp_cells)
 
     def _evading(self, view: BrainView, quarry: Cell) -> bool:
         """Has the gap stopped closing? Then distance alone will not finish this."""
         gap = bfs_distances(view.board, view.own_pos).get(quarry, 99)
         self._gaps.append(gap)
         return len(self._gaps) == self._gaps.maxlen and gap >= self._gaps[0]
+
+    def _thief_now(self, view: BrainView) -> dict[Cell, float]:
+        """Probability over the thief's current cell, from the scent fix.
+
+        Under a model that serves after emitting, the fix *is* the answer and
+        this is a delta. Under ``book_v1`` the fix is one step old, so the mass
+        is spread over the moves it could have made - weighted by `flee_bias`,
+        because an evader that has just been located does not walk toward us.
+
+        Empty when there is no fix, which is the first turn of a sub-game and
+        any turn where the field could not be inverted uniquely. Everything that
+        reads it must therefore still have a belief-based fallback.
+        """
+        if view.opp_fix is None:
+            return {}
+        return spread(view.board, view.opp_fix, view.own_pos,
+                      steps=view.opp_fix_lag, bias=self.p.flee_bias)
+
+    def _likeliest(self) -> Cell | None:
+        """The single most probable cell for the thief right now."""
+        return max(self._where, key=self._where.get) if self._where else None
+
+    def _pounce(self, view: BrainView) -> Decision | None:
+        """Step onto the thief, when a step can reach it.
+
+        This is the capture. Landing on the thief's cell and claiming it is
+        answered truthfully by rule #21, which every peer in the league
+        implements because the protocol does not work without it - unlike rule
+        #46 (a barrier onto the thief), which several do not honour. So when a
+        cell we can enter this turn is plausibly the thief's, entering it is
+        strictly better than barring it: same evidence, same trigger, and the
+        conversion path is the one that is actually agreed.
+        """
+        if not self._where:
+            return None
+        moves = view.board.legal_moves(view.own_pos)
+        best, best_p = None, 0.0
+        for move in moves:
+            chance = self._where.get(target_of(view.own_pos, move), 0.0)
+            if chance > best_p:
+                best, best_p = move, chance
+        if best is None or best_p < self.p.pounce_floor:
+            return None
+        return Decision(move=best)
 
     def _track_trail(self, view: BrainView) -> None:
         """Remember the freshest served-scent cell, turn over turn."""
@@ -179,12 +270,23 @@ class PoliceBrain(BrainBase):
         signal than belief-peak jitter. Project position(t) = fresh + v*(1+k)
         and aim at the first projected cell we can reach in time.
         """
-        fresh, prev = self._fresh, self._prev_fresh
-        if fresh is None or prev is None:
-            return None
-        dr, dc = fresh[0] - prev[0], fresh[1] - prev[1]
-        if abs(dr) + abs(dc) != 1:
-            return None
+        # Two exact fixes make a real heading; the scent argmax the trail used
+        # to be read from jitters across a saturated field, so `abs(dr)+abs(dc)
+        # == 1` was rarely true and, when it was, was often true by accident.
+        if view.opp_lead is not None and view.opp_fix is not None:
+            dr = view.opp_lead[0] - view.opp_fix[0]
+            dc = view.opp_lead[1] - view.opp_fix[1]
+            fresh = view.opp_fix
+            if abs(dr) + abs(dc) == 0:
+                return None
+            dr, dc = (dr > 0) - (dr < 0), (dc > 0) - (dc < 0)
+        else:
+            fresh, prev = self._fresh, self._prev_fresh
+            if fresh is None or prev is None:
+                return None
+            dr, dc = fresh[0] - prev[0], fresh[1] - prev[1]
+            if abs(dr) + abs(dc) != 1:
+                return None
         mine = bfs_distances(view.board, view.own_pos)
         for k in range(5):  # thief is ~1 step past `fresh` now, +k more when we arrive
             cand = (fresh[0] + dr * (1 + k), fresh[1] + dc * (1 + k))
@@ -197,6 +299,14 @@ class PoliceBrain(BrainBase):
     def _barrier_play(self, view: BrainView, target: Cell, b_max: float) -> Cell | None:
         left = view.barrier_quota - view.barriers_used
         if left <= 0:
+            return None
+        # With a fix in hand the belief peak is the weaker of two estimates, and
+        # spending a barrier on it is worse than doing nothing: the pounce has
+        # already declined every cell we can reach, so a placement here goes on
+        # ground the tracker says the thief is *not* on. That is how 157
+        # barriers bought 287 turns of being walled away from it.
+        if self._where and self._where.get(target, 0.0) <= 0.0:
+            self._recent.append(b_max)
             return None
         # Compare against the window BEFORE this turn joins it, so the test is
         # "has the posterior just sharpened relative to recent history".
@@ -237,6 +347,13 @@ class PoliceBrain(BrainBase):
         else:
             self._camped = 0
         dist_from_target = bfs_distances(view.board, target)
+        # Room the thief owns, from wherever it most likely is. Distance alone
+        # is a tail chase between equal-speed agents - the evidence names where
+        # it was, so aiming there holds the gap open forever. Taking ground it
+        # would otherwise reach first is how the gap actually closes.
+        quarry = self._likeliest()
+        theirs = bfs_distances(view.board, quarry) if quarry is not None else {}
+        far = view.board.size * view.board.size
 
         def score(move: str) -> tuple:
             pos = target_of(view.own_pos, move)
@@ -247,7 +364,12 @@ class PoliceBrain(BrainBase):
             near = view.belief.mass_in({
                 (pos[0] + dr, pos[1] + dc) for dr in (-2, -1, 0, 1, 2) for dc in (-2, -1, 0, 1, 2)
             })
-            return (d, reversing, -near, view.rng.random())
+            cut = 0.0
+            if theirs:
+                mine = bfs_distances(view.board, pos)
+                cut = sum(1 for cell, theirs_d in theirs.items()
+                          if mine.get(cell, far) <= theirs_d)
+            return (d - self.p.w_cut * cut, reversing, -near, view.rng.random())
 
         # Ambush is legitimate; camping is not. One STAY can pay - an evader may
         # walk onto us, which is how a random walker is often caught - but a
@@ -281,6 +403,17 @@ class PoliceBrain(BrainBase):
         return best
 
     def should_claim(self, view: BrainView, new_pos: Cell) -> bool:
+        """Claim whenever the cell we just took is plausibly the thief's.
+
+        The scent fix supersedes the belief here, and by a wide margin: the
+        belief peak names the thief's cell 9% of the time in the lab, while a
+        fix is exact. A claim does leak our own cell - but the opponent can read
+        that off the field we are required to publish anyway, by the same
+        inversion we use, so the leak is not information it was owed and did not
+        have. What a missed claim costs is the capture itself.
+        """
+        if self._where.get(new_pos, 0.0) > 0.0:
+            return True
         belief_here = view.belief.grid[new_pos[0]][new_pos[1]]
         desperate = view.steps_remaining <= 8 and belief_here >= 0.05
         return belief_here >= self.claim_threshold or desperate

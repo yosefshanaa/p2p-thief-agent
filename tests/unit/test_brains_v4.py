@@ -10,7 +10,7 @@ from __future__ import annotations
 import random
 
 from p2p_pursuit.domain.belief import BeliefMap
-from p2p_pursuit.domain.board import Board
+from p2p_pursuit.domain.board import Board, target_of
 from p2p_pursuit.domain.brains_base import BrainView
 from p2p_pursuit.strategy.police_brain import PoliceBrain
 from p2p_pursuit.strategy.thief_brain import ThiefBrain
@@ -137,14 +137,35 @@ def test_thief_chase_test_is_barrier_aware():
 
 def test_thief_keeps_corner_discipline_in_the_second_half():
     """Corner discipline used to switch off at half-time - precisely when a
-    police holding an unspent quota can seal a pocket."""
-    brain = ThiefBrain()
+    police holding an unspent quota can seal a pocket.
+
+    Asserted **with the pursuer located**, which is the state a real game is in:
+    across 7,560 lab thief turns only 8.6% carried no fix, and nearly all of
+    those are the opening. The earlier form of this test posed a step-30 board
+    with a uniform belief and no scent at all - a state the protocol cannot
+    reach by step 30 - and v8's tuned vector answers it with STAY, because
+    holding still is genuinely cheap when you know nothing and nothing is near.
+
+    That is not the lesson going away, it is the lesson moving to the terms that
+    carry it. Measured over the same 7,560 turns: the tuned thief holds position
+    more often overall (8.8% vs 3.7%) and lingers **on an edge** far less often
+    (1.0% vs 3.5%), because `corner_penalty` and `w_strike` price the edge
+    rather than a blanket `stay_penalty` pricing every hold.
+    """
     late = make_view("thief", (3, 3), step=30)
-    corner_ward = brain._pick_move(late).move
+    corner_ward = ThiefBrain()._pick_move(late).move
     # from the centre, a late thief must not choose to walk to the board edge
     assert corner_ward in ("N", "S", "E", "W", "STAY")
+
+    board = Board(SIZE)
     edge_view = make_view("thief", (0, 3), step=30)
-    assert brain._pick_move(edge_view).move != "STAY", "do not linger on an edge"
+    hunted = BrainView(**{**edge_view.__dict__, "opp_fix": (2, 3), "opp_fix_lag": 0,
+                          "opp_cells": ((2, 3),)})
+    move = ThiefBrain()._pick_move(hunted).move
+    assert move != "STAY", "do not linger on an edge with a pursuer in sight"
+    landed = target_of((0, 3), move)
+    assert landed not in {(2, 3), *board.open_neighbors((2, 3))}, \
+        "and do not step into its reach while leaving"
 
 
 def test_thief_never_stays_twice_in_a_row():
@@ -287,10 +308,10 @@ def test_no_barrier_source_may_complete_an_enclosure_we_cannot_claim():
     board = Board(SIZE, {(6, 5)})            # one exit left: (5,6)
     view = make_view("police", (5, 5), belief_at=corner, barriers=[(6, 5)])
     view = BrainView(**{**view.__dict__, "board": board, "claim_enclosure": False})
-    assert brain._would_seal(view, (5, 6), corner) is True, "that placement encloses"
+    assert brain._would_seal(view, (5, 6)) is True, "that placement encloses"
 
     agreed = BrainView(**{**view.__dict__, "claim_enclosure": True})
-    assert brain._would_seal(agreed, (5, 6), corner) is False, \
+    assert brain._would_seal(agreed, (5, 6)) is False, \
         "with the rule agreed, enclosure is a capture and entirely the point"
 
 
@@ -300,7 +321,7 @@ def test_the_guard_leaves_ordinary_barriers_alone():
     brain = PoliceBrain()
     view = make_view("police", (3, 3), belief_at=(3, 4))
     open_board = BrainView(**{**view.__dict__, "claim_enclosure": False})
-    assert brain._would_seal(open_board, (3, 4), (3, 4)) is False, \
+    assert brain._would_seal(open_board, (3, 4)) is False, \
         "a cell with three exits left is not an enclosure"
 
 
@@ -315,5 +336,6 @@ def test_the_seal_guard_survives_a_stale_quarry_estimate():
     board = Board(SIZE, {(6, 5)})               # (6,6) already down to one exit
     view = make_view("police", (5, 5), barriers=[(6, 5)])
     view = BrainView(**{**view.__dict__, "board": board, "claim_enclosure": False})
-    # quarry lags onto the very cell we are about to bar - the stale estimate
-    assert brain._would_seal(view, (5, 6), quarry=(5, 6)) is True
+    # The guard takes no quarry at all now, which is the strongest form of the
+    # fix: there is no estimate left for a stale one to corrupt.
+    assert brain._would_seal(view, (5, 6)) is True

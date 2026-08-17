@@ -21,7 +21,15 @@ from pathlib import Path
 from ..domain.brains_base import BrainBase
 from ..domain.rules import POLICE, THIEF
 from ..strategy.params import REPO_ROOT, Doctrine
-from .opponents import BarrierHappy, Camper, Greedy, Holder, Momentum, RandomWalker
+from .opponents import (
+    BarrierHappy,
+    Camper,
+    Greedy,
+    Holder,
+    Interceptor,
+    Momentum,
+    RandomWalker,
+)
 
 Factory = Callable[[str], BrainBase]
 #: Package-relative, like the doctrine: a clone directory that fails to resolve
@@ -54,6 +62,11 @@ BUILTIN: dict[str, Member] = {
     "hound": Member(lambda role: Greedy(flee=False, use_trail=True), roles=(POLICE,)),
     "noisy": Member(lambda role: Greedy(flee=role == THIEF, jitter=0.25)),
     "barrier": Member(lambda role: BarrierHappy(), roles=(POLICE,)),
+    # The pool's only pursuer that knows where the thief actually is. Added
+    # after a thief search found nothing to learn: sixteen of seventeen members
+    # scored a flat 10.00 against our evader, so the objective was blind and the
+    # search zeroed `corner_penalty` for want of anything that punished a corner.
+    "interceptor": Member(lambda role: Interceptor(), roles=(POLICE,)),
     "holder": Member(lambda role: Holder(), roles=(THIEF,)),
     "camper": Member(lambda role: Camper(), roles=(THIEF,)),
     "mirror": Member(ours),
@@ -111,10 +124,26 @@ def path_factories(directory: Path = CLONE_DIR) -> dict[str, Member]:
     return found
 
 
+def recorded_factories(directory: Path = CLONE_DIR) -> dict[str, Member]:
+    """Teams replayed decision-by-decision, keyed ``recorded:<team>``.
+
+    The strongest of the three ways this pool models a played team, and the only
+    one that suits a *reactive* one - see :mod:`.recorded`. These are the members
+    a doctrine is actually being tuned against, because they are the teams that
+    beat us.
+    """
+    from .recorded import Recorded, load_tables
+
+    return {f"recorded:{team}": Member(make=lambda role, t=table: Recorded(t[role]),
+                                       roles=tuple(table))
+            for team, table in load_tables(directory).items()}
+
+
 def build(names: tuple[str, ...] | None = None,
           directory: Path = CLONE_DIR) -> dict[str, Member]:
     """Resolve pool names to members; ``None`` means everything available."""
-    available = {**BUILTIN, **clone_factories(directory), **path_factories(directory)}
+    available = {**BUILTIN, **clone_factories(directory), **path_factories(directory),
+                 **recorded_factories(directory)}
     if names is None:
         return available
     missing = [n for n in names if n not in available]

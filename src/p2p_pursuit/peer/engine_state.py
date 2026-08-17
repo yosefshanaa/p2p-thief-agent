@@ -19,6 +19,7 @@ from ..domain.brains_base import BrainBase, BrainView, load_brain
 from ..domain.rules import POLICE, THIEF
 from ..domain.scent import ScentField
 from ..domain.scoring import TECHNICAL_LOSS, ScoreTable
+from ..domain.tracking import OpponentTracker
 from ..domain.trust import TrustModel
 from ..shared.config import PeerConfig, SharedConfig
 from .state_machine import GamePhaseMachine
@@ -118,6 +119,9 @@ class EngineState:
         opp_start = self.shared.thief_start if self.role == POLICE else self.shared.cop_start
         self.belief = BeliefMap.at(self.shared.grid_size, opp_start)
         self.own_field = ScentField(self.shared.grid_size, model=self.peer.scent_model)
+        # Fresh per sub-game, like the board: a fix carried across the boundary
+        # would name a cell from a game that is already over.
+        self.opp_tracker = OpponentTracker(self.shared.grid_size, self.peer.scent_model)
         self.trust = TrustModel()
         self.my_steps = self.opp_steps = 0
         self.barriers_used = 0
@@ -248,6 +252,9 @@ class EngineState:
             steps_remaining=self.shared.max_moves - self.my_steps,
             survival_threshold=self.shared.survival_threshold,
             trust=self.trust.value, map_area=self.shared.map_area, rng=self.rng,
+            opp_cells=tuple(self.opp_tracker.possible(self.board)),
+            opp_fix=self.opp_tracker.fix, opp_fix_lag=self.opp_tracker.lag,
+            opp_lead=self.opp_tracker.projected(self.board),
             claim_enclosure=self.peer.claim_enclosure)
 
     def _last_opp_scent(self) -> list[list[float]]:

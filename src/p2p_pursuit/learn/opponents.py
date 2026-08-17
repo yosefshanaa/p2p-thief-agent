@@ -156,6 +156,95 @@ class Camper(BrainBase):
                                                 view.rng.random())))
 
 
+class Interceptor(BrainBase):
+    """A police that inverts the scent field, as we now do - the one to fear.
+
+    Every other police in this pool navigates by belief or by the field's
+    argmax, and against all of them our thief survives: in the search that
+    produced v8's thief half, sixteen of seventeen pool members scored a flat
+    10.00, which is another way of saying the objective could not see the thief
+    at all. An optimiser tunes only what its objective can punish, and that one
+    duly drove `corner_penalty` to 0.001 - it had never been shown a pursuer
+    that could exploit a corner.
+
+    Nothing here is speculative. The inversion is arithmetic over a field the
+    rules require both peers to publish, so any team that notices can do it, and
+    a doctrine that only survives opponents who have *not* noticed is a doctrine
+    with an expiry date. This is that team, written out: chase the exact cell,
+    step onto it when a step reaches it, and spend barriers on the exits of a
+    thief that has run out of room.
+
+    It reads `view.opp_cells`, so it is only as strong as the fix - against a
+    peer serving no scent at all it degrades to the belief peak, like everything
+    else.
+    """
+
+    #: How much a candidate move's cut of the thief's ground is worth against a
+    #: step of raw closing distance. Chasing alone does not work and that is the
+    #: point of this archetype: measured, a pursuer that knows the thief's exact
+    #: cell and simply walks toward it catches our evader **0 times in 12** - two
+    #: equal-speed agents on open ground never meet. Captures come from taking
+    #: the room away, so that is what this one spends its move on.
+    CUT_WEIGHT = 0.6
+
+    def __init__(self, *, squeeze_within: int = 3) -> None:
+        self.squeeze_within = squeeze_within
+
+    def _quarry(self, view: BrainView) -> Cell:
+        return view.opp_fix if view.opp_fix is not None else view.belief.argmax()
+
+    def _decide_move(self, view: BrainView) -> Decision:
+        quarry = self._quarry(view)
+        here = view.own_pos
+        reach = [c for c in view.board.neighbors4(here) if view.board.is_open(c)]
+        # Certain capture beats everything else on the board.
+        if quarry in reach and len(view.opp_cells) == 1:
+            return Decision(move=_step_toward(here, quarry))
+        left = view.barrier_quota - view.barriers_used
+        theirs = bfs_distances(view.board, quarry)
+        if left > 0 and theirs.get(here, FAR) <= self.squeeze_within:
+            # Close its doors from the outside in: the exit that costs it the
+            # most room, provided we can still get at it afterwards.
+            exits = [c for c in view.board.neighbors4(quarry)
+                     if view.board.is_open(c) and c in reach and c != here]
+            if exits and len(view.board.open_neighbors(quarry)) > 1:
+                def room(cell: Cell) -> int:
+                    trial = view.board.clone()
+                    trial.add_barrier(cell)
+                    return len(bfs_distances(trial, quarry))
+
+                return Decision(move="STAY", barrier=min(exits, key=room))
+        return self._pick_move(view)
+
+    def _pick_move(self, view: BrainView) -> Decision:
+        quarry = self._quarry(view)
+        theirs = bfs_distances(view.board, quarry)
+        far = view.board.size * view.board.size
+
+        def key(move: str) -> tuple[float, float]:
+            pos = target_of(view.own_pos, move)
+            if not view.board.is_open(pos):
+                return (FAR, 0.0)
+            mine = bfs_distances(view.board, pos)
+            cut = sum(1 for cell, d in theirs.items() if mine.get(cell, far) <= d)
+            return (theirs.get(pos, FAR) - self.CUT_WEIGHT * cut, view.rng.random())
+
+        # A pursuer that stands still is not pursuing. The Voronoi term is not
+        # monotone in distance - the middle of the board owns more cells than a
+        # square nearer the thief does - so left free it picks STAY forever, and
+        # camping is the same pathology our own police was measured out of.
+        moves = [m for m in view.board.legal_moves(view.own_pos) if m != "STAY"]
+        return Decision(move=min(moves or ["STAY"], key=key))
+
+
+def _step_toward(here: Cell, there: Cell) -> str:
+    if there[0] < here[0]:
+        return "N"
+    if there[0] > here[0]:
+        return "S"
+    return "E" if there[1] > here[1] else "W"
+
+
 class Scripted(BrainBase):
     """Replays one recorded move sequence, in order, every sub-game.
 

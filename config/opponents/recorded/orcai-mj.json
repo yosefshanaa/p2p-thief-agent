@@ -1,0 +1,699 @@
+{
+ "team": "orcai-mj",
+ "sources": [
+  "matches/ahk-yosi-vs-orcai-mj-counted",
+  "matches/police-ahk-yosi-vs-orcai-mj-thief-20260812T163413",
+  "matches/thief-ahk-yosi-vs-orcai-mj-20260812T163411"
+ ],
+ "samples": 218,
+ "states": {
+  "thief": 11,
+  "police": 41
+ },
+ "holdout_agreement": {
+  "thief": 1.0,
+  "police": 0.8667
+ },
+ "roles": {
+  "thief": [
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     1,
+     0
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     1,
+     1
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 9
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     2,
+     1
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 9
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     3,
+     1
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 9
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     3,
+     2
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 9
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     3,
+     3
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 9
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 9
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 9
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "N",
+    "move": "S",
+    "weight": 18
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "S",
+    "move": "N",
+    "weight": 9
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     0,
+     1
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 3
+   }
+  ],
+  "police": [
+   {
+    "pos": [
+     1,
+     0
+    ],
+    "pursuer": [
+     3,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 6
+   },
+   {
+    "pos": [
+     2,
+     0
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 9
+   },
+   {
+    "pos": [
+     3,
+     0
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     3,
+     1
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 9
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 7
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     1,
+     0
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 5
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     0
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 4
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 6
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "weight": 2
+   }
+  ]
+ }
+}

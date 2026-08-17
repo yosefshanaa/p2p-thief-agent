@@ -36,6 +36,21 @@ class BrainView:
     trust: float
     map_area: str
     rng: random.Random
+    #: Cells the opponent could be standing on right now, read off its own
+    #: published scent field by inverting the negotiated model (see
+    #: :mod:`..domain.tracking`). Empty until two fields have been served, and
+    #: empty again whenever the fix cannot be pinned uniquely - never a guess.
+    #: One cell means we know exactly where it is; five means we know where it
+    #: was one step ago, which is still a different game from the argmax
+    #: estimator this replaces (right 11% of the time on the played archive).
+    opp_cells: tuple[Cell, ...] = ()
+    #: The fix itself - the cell the opponent provably stood on when it wrote
+    #: the field, ``opp_fix_lag`` steps ago. ``opp_cells`` is this spread over
+    #: the lag; a brain that wants to model *how* it moved needs the origin.
+    opp_fix: Cell | None = None
+    opp_fix_lag: int = 0
+    #: Where a straight-running opponent would be next, from two exact fixes.
+    opp_lead: Cell | None = None
     #: Did this opponent agree that an enclosed thief is captured (book 3.4)?
     #: When they did not, completing an enclosure is a self-inflicted loss: the
     #: evader is sealed into a pocket we cannot enter either, and the sub-game

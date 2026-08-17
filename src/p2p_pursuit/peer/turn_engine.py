@@ -133,20 +133,30 @@ class TurnEngine(EngineState):
 
         The claim is independently checkable rather than taken on trust: barrier
         placements are public and truthful by rule, and the opponent's own signed
-        log reveals where it stood, so the audit can confirm both halves.
+        log reveals where it stood, so the audit can confirm both halves - which
+        is exactly why the cell has to be *right*. Naming it by the scent
+        argmax was unsound: on the played archive that argmax is the emitter's
+        cell 11% of the time (the field saturates and ties), so a top-left cell
+        that our own barriers happened to seal would have been claimed as an
+        enclosure while the thief ran free elsewhere - a false claim, in a
+        record the opponent audits. The tracker's fix is exact or absent.
         """
-        scent = self._last_opp_scent()
-        if not scent:
-            return None
-        top = max(max(row) for row in scent)
-        if top < ENCLOSURE_SCENT_MIN:
-            return None  # too stale to name a cell, so too stale to claim one
-        size = self.board.size
-        cell = max(((r, c) for r in range(size) for c in range(size)),
-                   key=lambda p: scent[p[0]][p[1]])
-        if self.board.is_open(cell) and self.board.is_enclosed(cell):
-            return cell
-        return None
+        cells = self.opp_tracker.possible(self.board)
+        if not cells:
+            # No fix yet (fewer than two served fields). The argmax is only
+            # sound while the field is still sparse, which is exactly then.
+            scent = self._last_opp_scent()
+            if not scent or max(max(row) for row in scent) < ENCLOSURE_SCENT_MIN:
+                return None
+            size = self.board.size
+            cells = [max(((r, c) for r in range(size) for c in range(size)),
+                         key=lambda p: scent[p[0]][p[1]])]
+        # With a lagged fix the thief may be on any of a few cells; claiming an
+        # enclosure means claiming it cannot move, so every candidate has to be
+        # enclosed before the claim is honest. In practice a cell is enclosed
+        # only when its neighbours are barred, which collapses the set anyway.
+        enclosed = [c for c in cells if self.board.is_open(c) and self.board.is_enclosed(c)]
+        return enclosed[0] if len(enclosed) == len(cells) == 1 else None
 
     def _enclosure_claim(self, cell: Cell) -> dict:
         return self._seal_event(
@@ -186,6 +196,11 @@ class TurnEngine(EngineState):
             self.board.add_barrier(barrier)
             if self.role == THIEF and barrier == self.own_pos:
                 events.append(self._barrier_capture(barrier))
+        # Read their cell off the field they just published, before anything
+        # downstream needs it. Their own barrier is already on our board, so the
+        # continuity scan cannot propose a cell they could not be standing in.
+        if pub.get("scent"):
+            self.opp_tracker.observe(pub["scent"], self.board)
         if self.end is None:
             self._update_belief(pub)
         if self.end is None and pub.get("claim") and self.role == THIEF:
