@@ -87,6 +87,14 @@ class ReferenceBridge:
             self._apply_side_channels(parts)
         return {"ok": True}
 
+    #: Turn to judge the scent channel on. NOT turn 1: a lagged trail is
+    #: legitimately empty on the opening move - gal-roy1 send theirs lag-1, so
+    #: their first turn carries `{}` by design. Sampling turn 1 reported "NO
+    #: smell_grid" against a peer that does send one, which is worse than not
+    #: checking: it is evidence pointing the wrong way. Their trail is populated
+    #: from turn 2, so that is the first turn whose emptiness would mean anything.
+    SCENT_NOTE_TURN = 2
+
     def _note_scent_channel(self, message: dict, sub_game: int) -> None:
         """Say once per sub-game whether their turns carry a pheromone field.
 
@@ -99,11 +107,18 @@ class ReferenceBridge:
         """
         if sub_game == self._scent_note_for:
             return
+        try:
+            step = int(message.get("step", 0))
+        except (TypeError, ValueError):
+            step = 0
+        if step < self.SCENT_NOTE_TURN:
+            return
         self._scent_note_for = sub_game
         cells = len(message.get("smell_grid") or {})
-        log.info("sub-game %s: their turns %s", sub_game,
-                 f"carry a smell_grid ({cells} cells)" if cells else
-                 "carry NO smell_grid - our belief runs on hints alone")
+        log.info("sub-game %s: their turn %s %s", sub_game, step,
+                 f"carries a smell_grid ({cells} cell{'' if cells == 1 else 's'})"
+                 if cells else
+                 "carries NO smell_grid - our belief runs on hints alone")
 
     def on_submit_audit(self, payload: dict) -> dict:
         """Their revealed log: audited on their terms, then filed where the rest
