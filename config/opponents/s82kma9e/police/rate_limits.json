@@ -1,0 +1,16 @@
+{
+  "rate_limits": {
+    "version": "1.00",
+    "services": {
+      "gmail": {
+        "requests_per_minute": 30,
+        "requests_per_hour": 500,
+        "concurrent_max": 2,
+        "retry_after_seconds": 5,
+        "max_retries": 3,
+        "queue_depth": 100,
+        "daily_quota": 50
+      }
+    }
+  }
+}

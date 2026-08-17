@@ -1,0 +1,48 @@
+{
+  "report_type": "declaration",
+  "game_uid": "84b0d0c0-4974-dad2-5a44-0f0d235f1b9b",
+  "game_id": "ahk-yosi-vs-s82kma9e",
+  "game_number": 4,
+  "config_sha256": "691a12db876d0f88e81472dc9d87dd951306f651840f94b2c3b06ce5b440d431",
+  "scent_model_sha256": "81ebee59640e80eae8ca9ee5f86abd26e7edf5cdbb27d15925cb6ee45ca6ddf4",
+  "token_cap": 200000,
+  "started_at": "2026-08-16T23:44:07+00:00",
+  "ended_at": "2026-08-16T23:47:47+00:00",
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8802/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Darwin 25.5.0",
+        "machine": "arm64",
+        "python": "3.13.13",
+        "cpu_cores": 11,
+        "ram_gb": "unknown",
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46"
+    },
+    "opponent": {
+      "group_id": "s82kma9e",
+      "group_name": "s82kma9e",
+      "members": [],
+      "repos": {
+        "cop": "https://github.com/Imreec/copthief-league-protocol",
+        "thief": "https://github.com/Imreec/copthief-league-protocol"
+      },
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "2933ef7afbb11a843b10d0d0b06c1aef61500e55f7df6173e8799375edc5f0e2"
+}

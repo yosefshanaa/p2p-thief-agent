@@ -22,6 +22,7 @@ from typing import Any
 
 from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, record_sub_game
 from ..domain.rules import THIEF
+from ..domain.scoring import SURVIVAL
 from . import interop_codec as codec
 from .transport import LinkError
 
@@ -50,6 +51,11 @@ class ReferenceBridge:
         self.reveal_self_checks: dict[int, list[str]] = {}
         #: Their series digest, once an envelope passes the §10.3 gate.
         self.peer_consensus_sha: str | None = None
+        #: Did the turn we just sent already carry the terminal win claim? If so
+        #: the `event` that follows it in the same package has nothing left to
+        #: deliver, and repeating the turn to say so is the bug this flag exists
+        #: to prevent (see `_terminal_win_claim`).
+        self._win_claim_sent = False
 
     # -- inbound: their pushes into our server -------------------------------
     def on_negotiate(self, message: dict) -> dict:
@@ -242,15 +248,43 @@ class ReferenceBridge:
         return {"ack": True, "locked": True}
 
     def reveal(self, pub: dict, timeout: float | None = None) -> dict:
+        win = self._owed_win_claim or self._terminal_win_claim()
         message = codec.to_turn_message(
             pub, commit_hash=self._commit_hash,
-            claim_response=self._owed_claim_response, win_claim=self._owed_win_claim)
+            claim_response=self._owed_claim_response, win_claim=win)
         self._commit_hash = None
         self._owed_claim_response = self._owed_win_claim = None
+        self._win_claim_sent = win is not None
         self._last_turn = message
         self._last_turn_sub_game = self.service.engine.sub_game
         self.link.receive_turn(message, timeout=timeout)
         return {"ok": True, "events": []}
+
+    def _terminal_win_claim(self) -> dict | None:
+        """The survival declaration belongs on the step that earns it.
+
+        `next_package` seals the survival claim while it builds the same package
+        as the reveal (turn_engine.py), so by the time we are called the engine
+        has already finished the sub-game - the claim is knowable *before* the
+        first send, not only when the `event` arrives afterwards.
+
+        That ordering is the whole point. Their inbox keys on (step, commit) and
+        absorbs a later message with the same pair as an HTTP redelivery, so a
+        claim stamped onto a resend of an already-delivered step is never
+        adjudicated. Measured live 2026-08-17 vs s82kma9e: our correctly-shaped
+        `{"type": "survival"}` rode a second copy of step 35 sent 0.2 s after the
+        first, their receiver absorbed it silently, and their police then waited
+        its full 180 s turn deadline over a survival we had already declared -
+        which desynchronised the series and voided three sub-games.
+        """
+        engine = self.service.engine
+        if engine.role != THIEF or engine.end is None:
+            return None
+        if engine.end.ending != SURVIVAL:
+            return None
+        if engine.my_steps < engine.shared.survival_threshold:
+            return None
+        return {"type": "survival"}
 
     def event(self, envelope: dict, timeout: float | None = None) -> dict:
         """Our sealed events have no standalone message; they ride the next turn.
@@ -276,6 +310,12 @@ class ReferenceBridge:
             # for survival, so sending one here reads as the wrong ending.
             self._owed_claim_response = {"claim": list(engine.own_pos), "caught": True}
             self._flush_terminal(timeout, hint="You got me.")
+        elif self._win_claim_sent:
+            # The reveal in this same package already carried it. Their sender
+            # builds the claim into the step that earns it and sends that once;
+            # repeating the turn to restate it is exactly what their inbox
+            # discards as a redelivery.
+            self._win_claim_sent = False
         else:
             # Survival, or a police-side enclosure claim - which this dialect
             # cannot express, so it stays on the win-claim path it has always

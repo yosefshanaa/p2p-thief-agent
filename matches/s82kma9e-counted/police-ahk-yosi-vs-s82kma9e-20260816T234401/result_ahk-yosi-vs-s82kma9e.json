@@ -1,0 +1,234 @@
+{
+  "report_type": "game_result",
+  "game_uid": "84b0d0c0-4974-dad2-5a44-0f0d235f1b9b",
+  "game_id": "ahk-yosi-vs-s82kma9e",
+  "generated_at": "2026-08-16T23:47:47+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "s82kma9e",
+      "group_name": "s82kma9e",
+      "members": [],
+      "repos": {
+        "cop": "https://github.com/Imreec/copthief-league-protocol",
+        "thief": "https://github.com/Imreec/copthief-league-protocol"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [1, 3] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 5,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "s82kma9e": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "s82kma9e": 5
+      }
+    },
+    {
+      "index": 2,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "s82kma9e": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "s82kma9e": 5
+      }
+    },
+    {
+      "index": 3,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [1, 3] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 5,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "s82kma9e": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "s82kma9e": 5
+      }
+    },
+    {
+      "index": 4,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "s82kma9e": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "s82kma9e": 5
+      }
+    },
+    {
+      "index": 5,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [1, 3] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 5,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "s82kma9e": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "s82kma9e": 5
+      }
+    },
+    {
+      "index": 6,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "948feb1266bbf93149609e524f8ec494fd000f46",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "s82kma9e": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "s82kma9e": 5
+      }
+    }
+  ],
+  "totals": {
+    "police": 75,
+    "thief": 45
+  },
+  "my_role": "police",
+  "my_total": 75,
+  "opponent_total": 45,
+  "series_winner": "police",
+  "tokens_used": 6474,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 90,
+      "s82kma9e": 30
+    },
+    "sub_games_won": {
+      "ahk-yosi": 6,
+      "s82kma9e": 0
+    },
+    "ties": 0,
+    "winner_group": "ahk-yosi",
+    "series_tie": false
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-s82kma9e.json",
+    "configs": [
+      "config_ahk-yosi-vs-s82kma9e_g01.json",
+      "config_ahk-yosi-vs-s82kma9e_g02.json",
+      "config_ahk-yosi-vs-s82kma9e_g03.json",
+      "config_ahk-yosi-vs-s82kma9e_g04.json",
+      "config_ahk-yosi-vs-s82kma9e_g05.json",
+      "config_ahk-yosi-vs-s82kma9e_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-s82kma9e_g01.json",
+      "log_ahk-yosi-vs-s82kma9e_g02.json",
+      "log_ahk-yosi-vs-s82kma9e_g03.json",
+      "log_ahk-yosi-vs-s82kma9e_g04.json",
+      "log_ahk-yosi-vs-s82kma9e_g05.json",
+      "log_ahk-yosi-vs-s82kma9e_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "s82kma9e": {
+        "cop": "https://github.com/Imreec/copthief-league-protocol",
+        "thief": "https://github.com/Imreec/copthief-league-protocol"
+      }
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 4,
+    "s82kma9e": 1
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": true,
+    "s82kma9e": false
+  },
+  "mutual_signature": "aeac44178058ab133e353493ac2b58233da6a2563d2ea3f053b410dc9b055a82",
+  "result_sha256": "d83524e8e4aa0aa3d7b4f2396af0ad8a4006a0683e93933493731232582d3a39"
+}

@@ -16,6 +16,7 @@ from p2p_pursuit.domain.scent import (
     CENTER_INTENSITY,
     DECAY_RATE,
     REGISTERED_V3,
+    SUBTRACTIVE_CHEBYSHEV_V1,
     ScentField,
     scent_model_document,
 )
@@ -72,3 +73,103 @@ def test_registered_clamps_to_the_focal_cap() -> None:
     for _ in range(30):
         field.advance((3, 3))
     assert field.grid[3][3] == CENTER_INTENSITY
+
+
+# -- s82kma9e's kit model ----------------------------------------------------
+# Their two published fields ARE the specification. They were sent as the answer
+# to our "what is your actual kernel?" question on 2026-08-17, after a friendly
+# in which we ran unlocked because we could not reproduce their physics.
+THEIR_FIELD_AFTER_EMIT_AT_33 = [
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.0],
+    [0.0, 0.2, 0.5, 0.5, 0.5, 0.2, 0.0],
+    [0.0, 0.2, 0.5, 0.8, 0.5, 0.2, 0.0],
+    [0.0, 0.2, 0.5, 0.5, 0.5, 0.2, 0.0],
+    [0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.0],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+]
+THEIR_FIELD_AFTER_MOVE_TO_34 = [
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.2],
+    [0.0, 0.1, 0.4, 0.5, 0.5, 0.5, 0.2],
+    [0.0, 0.1, 0.4, 0.7, 0.8, 0.5, 0.2],
+    [0.0, 0.1, 0.4, 0.5, 0.5, 0.5, 0.2],
+    [0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.2],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+]
+
+
+def test_subtractive_chebyshev_reproduces_their_two_golden_fields() -> None:
+    """Both fields, from one continuous run - the second depends on the first."""
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    assert fld.serve_for_step((3, 3)) == THEIR_FIELD_AFTER_EMIT_AT_33
+    assert fld.serve_for_step((3, 4)) == THEIR_FIELD_AFTER_MOVE_TO_34
+
+
+def test_their_freshest_cell_is_neither_ours_nor_the_registered_models() -> None:
+    """0.81 (book) vs 0.9 (registered) vs 0.8 (theirs): the number that names
+    the model. Getting this wrong is a silent disagreement, not an error."""
+    peaks = {}
+    for model in (BOOK_V1, REGISTERED_V3, SUBTRACTIVE_CHEBYSHEV_V1):
+        fld = ScentField(size=7, model=model)
+        fld.serve_for_step((3, 3))
+        peaks[model] = fld.max_value()
+    assert peaks[BOOK_V1] == pytest.approx(0.81)
+    assert peaks[REGISTERED_V3] == pytest.approx(0.9)
+    assert peaks[SUBTRACTIVE_CHEBYSHEV_V1] == pytest.approx(0.8)
+
+
+def test_their_rings_are_flat_where_ours_are_graded() -> None:
+    """The difference that survives our peak-normalised belief update, and so
+    the only one that actually moves where we search."""
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    served = fld.serve_for_step((3, 3))
+    ring1 = [served[3][2], served[3][4], served[2][3], served[4][3],
+             served[2][2], served[4][4]]
+    assert set(ring1) == {0.5}, "a Chebyshev ring is flat, diagonals included"
+
+    # Ours serves BEFORE its own emission, so the second step is the first one
+    # that carries a field at all.
+    ours = ScentField(size=7, model=BOOK_V1)
+    ours.serve_for_step((3, 3))
+    ours_served = ours.serve_for_step((3, 3))
+    assert ours_served[3][2] != ours_served[2][2], "ours grades by offset"
+
+
+def test_their_max_merge_does_not_accumulate_on_a_revisited_cell() -> None:
+    """Emission max-merges rather than adds, so standing still cannot pile up
+    past the cap - and the current cell stays uniquely maximal, which is what
+    keeps our belief argmax on their true position."""
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    for _ in range(5):
+        fld.serve_for_step((3, 3))
+    assert fld.grid[3][3] == pytest.approx(0.8)
+    assert fld.max_value() == pytest.approx(0.8)
+
+
+def test_their_model_locks_to_its_own_hash() -> None:
+    """Rule #23: the lock must distinguish all three, or it locks nothing."""
+    hashes = {scent_model_sha256(m)
+              for m in (BOOK_V1, REGISTERED_V3, SUBTRACTIVE_CHEBYSHEV_V1)}
+    assert len(hashes) == 3
+
+
+def test_their_lock_document_is_adopted_byte_for_byte() -> None:
+    """s82kma9e's canonical lock, agreed 2026-08-17 for the counted match.
+
+    The physics were already identical; the schema was not, and a lock that
+    hashes a different object locks nothing. This pins THEIR hash, so any tidy-up
+    of the field names breaks the counted handshake here instead of at kickoff.
+    """
+    assert scent_model_sha256(SUBTRACTIVE_CHEBYSHEV_V1) == (
+        "81ebee59640e80eae8ca9ee5f86abd26e7edf5cdbb27d15925cb6ee45ca6ddf4")
+
+
+def test_the_lock_example_is_what_the_model_actually_does() -> None:
+    """The document is only worth hashing if it describes the running code."""
+    doc = scent_model_document(SUBTRACTIVE_CHEBYSHEV_V1)
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    served = fld.serve_for_step(tuple(doc["example"]["emit_center"]))
+    for key, value in doc["example"]["after_one_decay"].items():
+        r, c = (int(x) for x in key.split(","))
+        assert served[r][c] == pytest.approx(value)

@@ -110,6 +110,81 @@ def test_commit_is_held_back_and_folded_into_the_turn_message():
     assert peer.turns[0]["sender"] == "police"
 
 
+def _surviving_thief_engine():
+    """A thief whose 35th step has just ended the sub-game by survival.
+
+    `next_package` seals the survival claim while it builds the same package as
+    the reveal, so the engine is already finished when the bridge is asked to
+    send that turn - which is what lets the claim ride the first send.
+    """
+    import types
+
+    engine = _FakeEngine(role="thief")
+    engine.my_steps = 35
+    engine.shared = types.SimpleNamespace(survival_threshold=35)
+    engine.end = types.SimpleNamespace(ending="survival", winner="thief",
+                                       cause="survived 35 steps")
+    return engine
+
+
+def test_survival_rides_the_step_that_earns_it_not_a_second_copy():
+    """Regression, measured live vs s82kma9e 2026-08-17.
+
+    Their inbox keys on (step, commit) and absorbs a later message carrying the
+    same pair as an HTTP redelivery. We used to send step 35 bare and then
+    restate it with `win_claim` attached, so the declaration was never
+    adjudicated: their police waited its full 180 s turn deadline over a
+    survival we had already declared, and the resulting drift voided three
+    sub-games. The claim must be on the first and only send of that step.
+    """
+    engine = _surviving_thief_engine()
+    bridge, _, peer = _bridge(service=_FakeService(engine))
+
+    bridge.commit({"hash": "b" * 64})
+    bridge.reveal(_reveal(role="thief", step=35))
+
+    assert len(peer.turns) == 1, "the step that ends the sub-game is sent once"
+    assert peer.turns[0]["win_claim"] == {"type": "survival"}
+    assert peer.turns[0]["step"] == 35
+
+    # The engine's survival event arrives next in the very same package. It has
+    # nothing left to deliver, and must not restate an already-delivered step.
+    bridge.event({"public": {"kind": "survival_claim"}})
+    assert len(peer.turns) == 1, "no duplicate step 35 for their inbox to absorb"
+
+
+def test_a_mid_game_thief_turn_carries_no_win_claim():
+    """The guard is the finished sub-game, not the role: an unfinished thief
+    turn must stay bare, or every step would declare victory."""
+    import types
+
+    engine = _FakeEngine(role="thief")
+    engine.my_steps, engine.end = 12, None
+    engine.shared = types.SimpleNamespace(survival_threshold=35)
+    bridge, _, peer = _bridge(service=_FakeService(engine))
+
+    bridge.commit({"hash": "b" * 64})
+    bridge.reveal(_reveal(role="thief", step=12))
+    assert peer.turns[0]["win_claim"] is None
+
+
+def test_a_captured_thief_does_not_announce_survival():
+    """Reaching the step count and *being caught* on it are different endings;
+    only the survival ending may ride as a survival win claim."""
+    import types
+
+    engine = _FakeEngine(role="thief")
+    engine.my_steps = 35
+    engine.shared = types.SimpleNamespace(survival_threshold=35)
+    engine.end = types.SimpleNamespace(ending="capture", winner="police",
+                                       cause="landed on the thief")
+    bridge, _, peer = _bridge(service=_FakeService(engine))
+
+    bridge.commit({"hash": "b" * 64})
+    bridge.reveal(_reveal(role="thief", step=35))
+    assert peer.turns[0]["win_claim"] is None
+
+
 def test_owed_claim_answer_rides_the_following_turn_then_clears():
     bridge, _, peer = _bridge()
     bridge.event({"public": {"kind": "capture_answer", "claim_cell": [1, 2],

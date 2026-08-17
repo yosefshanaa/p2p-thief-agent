@@ -1,0 +1,39 @@
+version = "1.00"
+
+[game]
+group_name = "sparring-ahk-yosi"
+group_id = "sparring-ahk-yosi"
+sub_game_number = 1
+members = ["213314859", "325811255"]
+repos = { cop = "https://github.com/yosefshanaa/p2p-police-agent", thief = "https://github.com/yosefshanaa/p2p-thief-agent" }
+
+[network]
+my_port = 8802                                # MY FastMCP server port (police convention)
+opponent_url = "http://127.0.0.1:8801/mcp"    # the only thing I know about the opponent
+turn_timeout_seconds = 300
+# Wall-clock patience for the opening handshake and each per-sub-game
+# re-handshake, on top of the short retry burst. An opponent whose peer
+# bounces behind a healthy tunnel otherwise takes our peer down with it:
+# measured vs orcai-mj 2026-08-13, four technical losses, no real games.
+handshake_budget_sec = 180
+rehandshake_budget_sec = 300
+
+# [strategy]  -- optional: point at YOUR brain subclass (else the shipped brain runs)
+# police_class = "p2p_pursuit.strategy.police_brain:PoliceBrain"
+
+[trash_talk]
+provider = "openai"       # template (0 tokens, default) | openai | ollama | claude_api | claude_cli
+every_n_steps = 3        # judicious LLM use: real banter, ~1/3 the calls (RUNBOOK 3c)
+
+[llm]
+model = "gpt-5.6-luna"    # verified live 2026-08-01 (gpt-5.4 also works)
+# Endpoint override. ollama: default http://localhost:11434 (under WSL a
+# Windows-side Ollama is NOT on localhost - use the host IP from
+# `grep nameserver /etc/resolv.conf`). openai: blank = api.openai.com,
+# or set an OpenAI-compatible gateway. API KEYS NEVER GO HERE - .env only.
+base_url = ""
+step_deadline_seconds = 30
+
+[email]
+recipient = "rmisegal+uoh26finalgame@gmail.com"
+mode = "send"            # draft (dev) | send (league)
