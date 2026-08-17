@@ -33,7 +33,14 @@ def cmd_peer(args: argparse.Namespace) -> int:
     runtime = sdk.create_peer(args.role, Path(args.config_dir) if args.config_dir else None,
                               out_dir=Path(args.out), seed=args.seed, counted=args.counted,
                               prior_counted_games=args.prior_counted, num_games=args.games)
-    runtime.attach(sdk.make_link(runtime.peer.opponent_url))
+    # Sub-game 1 is played in our natural role, so the first endpoint we push to
+    # is the one holding the other one. `opponent_url_for` is a no-op unless the
+    # URL carries `{role}`, and `series_protocol.take_role` re-targets it at
+    # every alternation boundary.
+    from .shared.config import opponent_url_for
+
+    their_role = THIEF if role == POLICE else POLICE
+    runtime.attach(sdk.make_link(opponent_url_for(runtime.peer.opponent_url, their_role)))
     runtime.start_server()
     if not runtime.connect():
         return 2
