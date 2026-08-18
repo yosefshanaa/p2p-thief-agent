@@ -20,7 +20,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from p2p_pursuit.infra.interop_codec import interop_identity
+from p2p_pursuit.domain import protocol
+from p2p_pursuit.domain.crypto import REFERENCE, seal
+from p2p_pursuit.infra.interop_codec import interop_identity, reference_records
 from p2p_pursuit.shared.config import load_role
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
@@ -68,3 +70,30 @@ def test_the_step_zero_record_is_sealed_cached_and_shaped_as_they_require():
     assert '"type": "system_spec"' in source
     assert '"step": 0' in source
     assert "self._system_specs[sub_game] = sealed" in source, "must be cached"
+
+
+def test_every_auxiliary_record_has_the_generic_step_their_audit_requires():
+    """F002 failed only on our thief rounds because capture answers exposed
+    ``at_step`` but their structural verifier indexes every payload by ``step``.
+
+    The alias must be present *before sealing*. Adding it while building the
+    audit package would change the payload after its live commitment and turn a
+    schema mismatch into an actual hash mismatch.
+    """
+    records = [
+        protocol.capture_answer_record(
+            role="thief", sub_game=2, at_step=7,
+            claim_cell=(5, 5), answer=False),
+        protocol.captured_event_record(
+            role="thief", sub_game=2, at_step=8, cause="barrier"),
+        protocol.survival_claim_record(
+            role="thief", sub_game=2, steps=35),
+    ]
+
+    for payload in records:
+        expected = payload.get("at_step", payload.get("steps"))
+        assert payload["step"] == expected
+        sealed, commit = seal(payload, REFERENCE)
+        revealed = reference_records([sealed], [commit])[0]
+        assert revealed["payload"]["step"] == expected
+        assert {"payload", "nonce", "commit"} <= revealed.keys()
