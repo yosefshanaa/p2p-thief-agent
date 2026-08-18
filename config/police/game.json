@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2",
-  "agreed_between": ["ahk-yosi", "TBD"],
+  "agreed_between": ["ahk-yosi", "uoh-ay26"],
   "board_and_agents": {
     "grid_size": 7,
     "num_agents": 2,
