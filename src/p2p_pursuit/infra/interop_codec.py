@@ -23,6 +23,7 @@ from typing import Any
 
 from ..domain.crypto import reference_commit, verify_reference_record
 from ..domain.rules import POLICE, THIEF
+from ..shared import sysinfo
 
 log = logging.getLogger(__name__)
 
@@ -98,7 +99,16 @@ def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any],
     us, so omitting it does not mean "unknown" on their side - it means they
     invent a number on our behalf. Both spellings are sent: ours so a native
     reader is unaffected, theirs so a reference reader is correct.
+
+    ``git_commit_hash`` is the same courtesy for the commit. uoh-ay26 gate their
+    negotiation on a **top-level** field of exactly that name holding 40
+    lowercase hex, and refuse the offer without it; the step-0 `system_spec`
+    record we already seal spells the same value `github_commit`, which is what
+    amireman reads. Neither spelling is more correct, so both go out - the cost
+    is one key and the alternative is a refusal at negotiation for a value we
+    were always willing to publish.
     """
+    commit = sysinfo.git_commit()
     return {
         "group_id": peer.group_id,
         "group_name": peer.group_name,
@@ -108,6 +118,8 @@ def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any],
         "llm_model": peer.llm_model or "template",
         "counted_games_played": counted_games_played,
         "prior_counted_games": counted_games_played,
+        "git_commit_hash": commit,
+        "github_commit": commit,
         "spec": {**spec, "cpu_model": spec.get("machine", ""),
                  "gpu_type": spec.get("gpu", "none")},
     }
