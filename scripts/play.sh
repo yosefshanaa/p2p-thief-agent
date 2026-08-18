@@ -160,6 +160,25 @@ if [ "$counted" = "no" ] && [ "$mode" = "send" ] && [ "$recipient" = "$LECTURER"
     echo "          P2P_EMAIL_RECIPIENT at your own address, then re-run." >&2
     exit 3
 fi
+# A counted match signs `git_commit_hash` into every sub-game's Step-0 record,
+# and sysinfo reads `git rev-parse HEAD` with no dirty-tree detection - so an
+# uncommitted working tree declares a commit that does NOT describe the code
+# that played. That is a signed claim the opponent can fetch and fail to
+# reproduce, which is the same class of error as a stale agreed_between.
+# Friendlies only warn: they exist precisely to be run mid-fix.
+if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+    if [ "$counted" = "yes" ]; then
+        echo "REFUSING: the working tree is dirty, so Step-0 would declare" >&2
+        echo "          $(git rev-parse --short HEAD 2>/dev/null) while running something else." >&2
+        echo "          Commit (or stash) before a counted match:" >&2
+        git status --short >&2
+        exit 5
+    fi
+    echo "  WARNING     working tree is dirty - Step-0 will declare"
+    echo "              $(git rev-parse --short HEAD 2>/dev/null), which is not what will run"
+    echo
+fi
+
 if [ "$counted" = "yes" ]; then
     echo "*** COUNTED MATCH. One per pair, sealed once both reports are filed."
     echo "*** Report goes to: $recipient"

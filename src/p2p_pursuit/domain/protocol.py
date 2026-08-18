@@ -48,7 +48,22 @@ def step_record(
     hint: str,
     scent: list[list[float]],
 ) -> dict[str, Any]:
-    """The full record that gets sealed for one step (nonce added by crypto.seal)."""
+    """The full record that gets sealed for one step (nonce added by crypto.seal).
+
+    ``state`` and ``position`` are the reference family's names for where the
+    mover ended up, and both are carried alongside our own ``pos_after``.
+
+    They are not decoration. Every reference peer whose logs we hold publishes
+    one or both - gal-roy1 a bare ``[3, 4]``, amireman the string
+    ``"grid=7;self=[4, 3]"``, s82kma9e both - and a validator that reconstructs
+    the trajectory reads ``state``. Ours had neither, so uoh-ay26's audit saw
+    ``state: None`` on every police step of a sub-game that otherwise played
+    perfectly, could not verify continuity, and disabled mutual sign-off. Three
+    earlier opponents never checked, which is why a missing field survived four
+    counted matches: an omission only fails against the peer that looks.
+
+    Duplicating a value we already send is cheap; being unverifiable is not.
+    """
     return {
         "kind": KIND_STEP,
         "role": role,
@@ -56,6 +71,8 @@ def step_record(
         "step": step,
         "pos_before": list(pos_before),
         "pos_after": list(pos_after),
+        "state": list(pos_after),
+        "position": list(pos_after),
         "move": move,
         "barrier": list(barrier) if barrier else None,
         "intent": intent,

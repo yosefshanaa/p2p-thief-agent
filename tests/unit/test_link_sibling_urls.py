@@ -71,3 +71,46 @@ def test_every_candidate_failing_raises_linkerror() -> None:
     link = Recording(f"{BASE}/cop/mcp", dead=("/cop/mcp", "/mcp"))
     with pytest.raises(LinkError):
         link.negotiate({"a": 1})
+
+
+# -- retargeting at a role boundary -------------------------------------------
+def test_retarget_moves_the_candidates_not_just_the_label():
+    """The bug this method exists for, measured live against uoh-ay26.
+
+    `self.url` is read for error messages only; every call walks
+    `self.candidates`. Role alternation assigned `link.url` directly, so
+    sub-game 2 logged "pushing to .../cop/mcp" and then sent nine POSTs to
+    .../theif/mcp - and reported that 502 as a failure "against" the cop URL it
+    had never contacted.
+    """
+    from p2p_pursuit.infra.mcp_client import McpLink
+
+    link = McpLink("https://theif.uohay26game.com/mcp")
+    link.retarget("https://cop.uohay26game.com/mcp")
+    assert link.url == "https://cop.uohay26game.com/mcp"
+    assert link.candidates == ["https://cop.uohay26game.com/mcp"]
+    assert not any("theif" in c for c in link.candidates), \
+        "the previous opponent's door is not a fallback for the new one"
+
+
+def test_retarget_rebuilds_sibling_candidates_for_the_new_url():
+    from p2p_pursuit.infra.mcp_client import McpLink
+
+    link = McpLink("http://host:6000/cop/mcp")
+    link.retarget("http://host:6000/thief/mcp")
+    assert link.candidates == ["http://host:6000/thief/mcp", "http://host:6000/mcp"]
+
+
+def test_the_boundary_hook_uses_retarget_when_the_link_offers_it():
+    from types import SimpleNamespace
+
+    from p2p_pursuit.infra.mcp_client import McpLink
+    from p2p_pursuit.peer.series_protocol import retarget_link
+
+    doors = {"police": "https://cop.uohay26game.com/mcp",
+             "thief": "https://theif.uohay26game.com/mcp"}
+    link = McpLink(doors["thief"])
+    rt = SimpleNamespace(peer=SimpleNamespace(opponent_url="", opponent_doors=doors),
+                         link=link, natural_role="police")
+    retarget_link(rt, "thief", lambda *_: None)      # we are thief -> they hold cop
+    assert link.candidates == [doors["police"]], "the transport must follow the label"
