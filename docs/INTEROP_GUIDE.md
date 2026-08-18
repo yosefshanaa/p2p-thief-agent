@@ -142,7 +142,7 @@ other and we should find out now.** Send us yours and we will reproduce it befor
 Our committed `game.json` currently hashes to:
 
 ```
-c31d30330c68fb4459b42a625fbf5b20ae11a8c63568d8dd7817359d6f5d74bb
+4654ace5f8cbb7aefadf79924c4b0f2e80f1e03869c34f494c5206498f4d63a0
 ```
 
 **That number is per-pairing, not per-repo, and yours will differ from ours.** `agreed_between`
