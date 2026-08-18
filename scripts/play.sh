@@ -134,7 +134,15 @@ recipient="$(printf '%s\n' "$eff" | sed -n 2p)"
 [ -n "$mode" ] || { echo "cannot resolve the email mode - refusing to guess" >&2; exit 2; }
 
 echo "=== contract: $opponent ==="
-echo "  opponent    $P2P_OPPONENT_URL"
+# Under `set -u` a bare $P2P_OPPONENT_URL is fatal for a door-per-role
+# contract, which sets no single URL at all - and the banner is the last
+# thing that runs before the peer starts, so it took the launch with it.
+if [ -n "${P2P_OPPONENT_COP_URL:-}${P2P_OPPONENT_THIEF_URL:-}" ]; then
+    echo "  opponent    cop=${P2P_OPPONENT_COP_URL:-<none>}"
+    echo "              thief=${P2P_OPPONENT_THIEF_URL:-<none>}"
+else
+    echo "  opponent    ${P2P_OPPONENT_URL:-<none>}"
+fi
 echo "  runner      $RUNNER"
 echo "  dialect     ${P2P_DIALECT:-native}   alternate=${P2P_ALTERNATE_ROLES:-false}  rehandshake=${P2P_HANDSHAKE_PER_SUB_GAME:-false}"
 echo "  scent       ${P2P_SCENT_MODEL:-book_v1}   doctrine=${P2P_DOCTRINE:-<default>}"
