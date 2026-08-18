@@ -45,7 +45,13 @@ def retarget_link(rt: Any, my_role: str, log_fn: Any) -> None:
     link = getattr(rt.link, "link", rt.link)
     if link is None or getattr(link, "url", None) == wanted:
         return
-    link.url = wanted
+    # Must go through the link's own retarget: assigning `.url` moves only the
+    # label the error messages use, while every call walks `.candidates`.
+    retarget = getattr(link, "retarget", None)
+    if callable(retarget):
+        retarget(wanted)
+    else:
+        link.url = wanted
     log_fn(f"[{rt.natural_role}] pushing to {wanted} (they hold the other role now)")
 
 

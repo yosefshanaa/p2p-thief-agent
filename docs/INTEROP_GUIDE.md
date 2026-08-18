@@ -120,12 +120,18 @@ commit  = 2d5faf71c42626d681a5727c2e7940af4c8e21e7f59f3acd6e063ae654bcee0a
 
 ### Golden vector — a real step record
 
+> **Changed 2026-08-18.** The record now also carries `state` and `position` — the
+> reference family's names for where the mover ended up, duplicating our own
+> `pos_after`. A validator that reconstructs the trajectory reads `state`, and ours
+> carried neither, so uoh-ay26's audit saw `state: null` on every step and could not
+> verify continuity. If you hold an older copy of this vector, use the one below.
+
 ```
 payload (canonical form, exactly these bytes):
-{"barrier":null,"hint":"north side","intent":"lie","kind":"step","move":"E","pos_after":[3,4],"pos_before":[3,3],"role":"thief","scent":[[0.0,0.0],[0.0,0.81]],"step":1,"sub_game":1,"sub_game_number":1}
+{"barrier":null,"hint":"north side","intent":"lie","kind":"step","move":"E","pos_after":[3,4],"pos_before":[3,3],"position":[3,4],"role":"thief","scent":[[0.0,0.0],[0.0,0.81]],"state":[3,4],"step":1,"sub_game":1,"sub_game_number":1}
 
 nonce  = abababababababababababababababab
-commit = a963512dd17cb3b86f6fe1d9027d1b03de14cdbd791f4c809d98e8b4ff9836a0
+commit = 9213349e8d9ae511506f224cb2d8662c095e17d506b06cf594e092b6c5bbbf60
 ```
 
 **If you reproduce both, our audits will bind. If you do not, neither side can verify the

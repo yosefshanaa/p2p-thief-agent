@@ -43,6 +43,23 @@ class McpLink:
         self.url = url
         self.candidates = [url] + [u for u in self.candidates if u != url]
 
+    def retarget(self, url: str) -> None:
+        """Point this link at a different peer entirely, candidates and all.
+
+        `self.url` is only ever read for error messages; every actual call walks
+        `self.candidates`. So assigning `link.url` alone - which is what role
+        alternation used to do - moved the label and left the transport dialling
+        the previous opponent's door. Measured live against uoh-ay26: sub-game 2
+        logged "pushing to .../cop/mcp" and then sent nine POSTs to
+        .../theif/mcp, whose 502 was reported as a failure "against" the cop URL
+        it had never contacted.
+
+        The candidate list is rebuilt rather than appended to: the old door is
+        not a fallback for the new one, it is a different agent.
+        """
+        self.url = url
+        self.candidates = sibling_urls(url)
+
     def _invoke(self, url: str, tool: str, args: dict[str, Any],
                 timeout: float | None) -> dict:
         """One tool call against one URL. The only place the transport lives."""

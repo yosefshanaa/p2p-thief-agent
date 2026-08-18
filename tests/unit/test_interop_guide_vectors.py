@@ -44,7 +44,11 @@ TERMS = {
 
 STEP_RECORD = {
     "kind": "step", "role": "thief", "sub_game": 1, "sub_game_number": 1, "step": 1,
-    "pos_before": [3, 3], "pos_after": [3, 4], "move": "E", "barrier": None,
+    "pos_before": [3, 3], "pos_after": [3, 4],
+    # The reference family's spelling of pos_after, carried for validators that
+    # reconstruct the trajectory from `state` - see protocol.step_record.
+    "state": [3, 4], "position": [3, 4],
+    "move": "E", "barrier": None,
     "intent": "lie", "hint": "north side", "scent": [[0.0, 0.0], [0.0, 0.81]],
 }
 
@@ -59,8 +63,9 @@ def test_canonical_json_is_what_the_guide_says_it_is():
     assert _canon(STEP_RECORD) == canonical_bytes(STEP_RECORD)
     assert _canon(STEP_RECORD).decode() == (
         '{"barrier":null,"hint":"north side","intent":"lie","kind":"step","move":"E",'
-        '"pos_after":[3,4],"pos_before":[3,3],"role":"thief",'
-        '"scent":[[0.0,0.0],[0.0,0.81]],"step":1,"sub_game":1,"sub_game_number":1}')
+        '"pos_after":[3,4],"pos_before":[3,3],"position":[3,4],"role":"thief",'
+        '"scent":[[0.0,0.0],[0.0,0.81]],"state":[3,4],"step":1,"sub_game":1,'
+        '"sub_game_number":1}')
 
 
 def test_the_trivial_commit_golden_vector():
@@ -70,7 +75,7 @@ def test_the_trivial_commit_golden_vector():
 
 
 def test_the_step_record_commit_golden_vector():
-    expected = "a963512dd17cb3b86f6fe1d9027d1b03de14cdbd791f4c809d98e8b4ff9836a0"
+    expected = "9213349e8d9ae511506f224cb2d8662c095e17d506b06cf594e092b6c5bbbf60"
     assert reference_commit(STEP_RECORD, NONCE) == expected
     assert hashlib.sha256(_canon(STEP_RECORD) + b"|" + NONCE.encode()).hexdigest() == expected
 
