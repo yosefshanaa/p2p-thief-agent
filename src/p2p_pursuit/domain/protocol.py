@@ -84,11 +84,19 @@ def step_record(
 def capture_answer_record(
     *, role: str, sub_game: int, at_step: int, claim_cell: Cell, answer: bool
 ) -> dict[str, Any]:
-    """The thief's cryptographically bound truthful answer to a Capture Claim (#21)."""
+    """The thief's cryptographically bound truthful answer to a Capture Claim (#21).
+
+    ``at_step`` is our semantic name: it identifies the step whose claim is
+    being answered.  Reference-family audit readers require *every* sealed
+    payload to expose the generic ``step`` key, including auxiliary records.
+    Keep both names in the committed payload so either verifier can index it
+    without dropping a live commitment from the reveal.
+    """
     return {
         "kind": KIND_CAPTURE_ANSWER,
         "role": role,
         **_sub_game_keys(sub_game),
+        "step": at_step,
         "at_step": at_step,
         "claim_cell": list(claim_cell),
         "answer": answer,
@@ -101,6 +109,7 @@ def captured_event_record(*, role: str, sub_game: int, at_step: int, cause: str)
         "kind": KIND_CAPTURED_EVENT,
         "role": role,
         **_sub_game_keys(sub_game),
+        "step": at_step,
         "at_step": at_step,
         "cause": cause,
     }
@@ -108,7 +117,7 @@ def captured_event_record(*, role: str, sub_game: int, at_step: int, cause: str)
 
 def survival_claim_record(*, role: str, sub_game: int, steps: int) -> dict[str, Any]:
     return {"kind": KIND_SURVIVAL_CLAIM, "role": role,
-            **_sub_game_keys(sub_game), "steps": steps}
+            **_sub_game_keys(sub_game), "step": steps, "steps": steps}
 
 
 def record_sub_game(record: dict[str, Any]) -> int | None:
