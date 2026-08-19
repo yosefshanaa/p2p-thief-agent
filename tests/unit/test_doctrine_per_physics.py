@@ -71,16 +71,21 @@ def test_the_thief_half_moved_where_the_physics_hurt_it() -> None:
     serves after emitting, so its fix is the pursuer's cell *now* rather than one
     step ago, and exact machinery displaces the diffuse kind.
 
-    So corner discipline goes **up** (0.244 -> 0.409) and the strike term goes
-    **up** (8.13 -> 9.14), while `stay_penalty`, `w_territory` and `w_trap` fall
-    to zero - hedges against uncertainty that no longer exists.
+    What survived a third search is corner discipline going **up** (0.244 ->
+    0.304): the field leaks harder here and the position is exact, so the edge is
+    genuinely more expensive. What did not survive is everything else - see the
+    note below the assertion.
     """
     book, sub = params.active(PAIRS[BOOK_V1]), params.active(PAIRS[SUBTRACTIVE_V1])
     assert sub.corner_penalty > book.corner_penalty, "the edge stays more expensive"
-    assert sub.w_strike > book.w_strike, "and a lag-0 fix makes the strike map sharper"
-    assert sub.stay_penalty <= book.stay_penalty, (
-        "the blanket hold penalty is a proxy for uncertainty, and there is less "
-        "of it here - if this ever rises again, the reasoning above is wrong")
+
+    # `w_strike` and `stay_penalty` were asserted here too and BOTH flipped on the
+    # next search - w_strike 9.14 -> 7.93 (now below the book vector), stay_penalty
+    # 0.00 -> 0.17 (now above it). Neither reversal has a mechanism behind it, so
+    # they were reading noise as structure and pinning them only guaranteed a test
+    # edit after every re-tune. Corner discipline is the one ordering with a reason
+    # - the field leaks harder here and the position is exact - and the one that
+    # has survived three independent searches.
 
 
 def test_a_contract_selects_both_together_or_neither() -> None:

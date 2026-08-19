@@ -90,6 +90,11 @@ REVERSE = {"N": "S", "S": "N", "E": "W", "W": "E"}
 
 
 class PoliceBrain(BrainBase):
+    #: Open neighbours we refuse to drop below when placing a barrier. Two is
+    #: "can still choose", one is a corridor, zero is a tomb - and the pursuer
+    #: is the side that must keep moving.
+    OWN_EXITS_FLOOR = 2
+
     def __init__(self, doctrine: Doctrine | None = None) -> None:
         self.p = doctrine or active()
         self.claim_threshold = self.p.claim_threshold
@@ -192,6 +197,17 @@ class PoliceBrain(BrainBase):
         trial = view.board.clone()
         trial.add_barrier(tuple(barrier))
         after = {c for c in cells if trial.is_open(c) and trial.is_enclosed(c)}
+        # Never wall ourselves in. `still_connected` asks whether we can still
+        # REACH the quarry, which passes right up until the turn the quarry
+        # steps out of the component we just sealed ourselves into - and says
+        # nothing about our own room to manoeuvre. Measured live vs uoh-ay26:
+        # standing on (3,3) we barred (2,3), (3,2) and (3,4) on three
+        # consecutive turns, spending three moves standing still while the thief
+        # walked from distance 2 to unreachable. Fifteen barriers bought 31
+        # turns with no path to it at all, and not one capture chance in three
+        # sub-games. A pursuer that cannot move cannot pursue.
+        if len(trial.open_neighbors(view.own_pos)) < self.OWN_EXITS_FLOOR:
+            return True
         pockets = after - before
         if not pockets:
             return False

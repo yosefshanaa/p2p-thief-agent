@@ -65,12 +65,14 @@ class ThiefBrain(BrainBase):
         self._prev_fresh: Cell | None = None
         self._sub_game: int | None = None
         self._strike: dict[Cell, float] = {}
+        self._prev_cell: Cell | None = None
 
     def _pick_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
             self._sub_game, self._last_move, self._run_len = view.sub_game, None, 0
             self._prev_peak = self._fresh = self._prev_fresh = None
             self._strike = {}
+            self._prev_cell = None
         self._track_trail(view)
         # Where the pursuer is now, and therefore which cells it can take on its
         # next move - the cells this thief must not be standing on. Both come
@@ -143,6 +145,12 @@ class ThiefBrain(BrainBase):
                 s -= self.p.stay_penalty  # re-emission concentrates our trail (never camp)
             if chased and move == self._last_move and self._run_len >= 2:
                 s -= self.p.juke_penalty  # juke under close pursuit: straight flight is lethal
+            # ...but a juke is a SIDESTEP, not a step backwards. Without this the
+            # two terms conspire: taxing a repeated move while leaving the return
+            # free makes A->B->A the cheapest sequence there is, and the thief
+            # dithers on one cell while a monotone pursuer closes on it.
+            if pos == self._prev_cell:
+                s -= self.p.backtrack_penalty
             # Corner discipline for the WHOLE game, scaled by how many barriers
             # the pursuer still holds. It used to switch off at half-time, which
             # invited edge-hugging in exactly the phase where a police with an
@@ -165,6 +173,7 @@ class ThiefBrain(BrainBase):
         best = max(moves, key=score)
         self._run_len = self._run_len + 1 if best == self._last_move else 1
         self._last_move = best
+        self._prev_cell = view.own_pos
         self._prev_peak = peak
         return Decision(move=best)
 
