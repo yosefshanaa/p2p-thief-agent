@@ -104,6 +104,23 @@ class Doctrine:
     #: Mirror of `flee_bias`: how much more likely the pursuer is to take a cell
     #: one step *nearer* to us. Below 1.0 because a pursuer closes.
     chase_bias: float = 0.55
+    #: Penalty on stepping back onto the cell we just left. The police learned
+    #: this in v4 - 28% of its moves were A->B->A step-backs - and the thief
+    #: never did, while `juke_penalty` actively pushes the other way by taxing a
+    #: repeated move. Measured against uoh-ay26: our thief oscillated around
+    #: (5,5) for ten straight turns, STAY / off / back / STAY / off / back, while
+    #: their police walked a monotone staircase from distance 7 to 0 - and on the
+    #: final turn stepped back ONTO (5,5) as the police arrived there. The same
+    #: cell, the same way, in all three thief sub-games.
+    #:
+    #: DEFAULT 0 - the diagnosis is evidence, the remedy is not. The arena cannot
+    #: see this failure at all (our thief survives it 100% while the real team
+    #: took it 3 times out of 3), so it cannot validate a fix for it either; asked
+    #: anyway, it prefers 0.0 to every positive value by about a sub-game. So the
+    #: term ships addressable and off, rather than shipping a guess that the only
+    #: measurement available says is worse. Turn it on when a sparring partner
+    #: exists that can actually punish an oscillating evader.
+    backtrack_penalty: float = 0.0
     #: Penalty on ending our move inside the pursuer's next-step reach. This is
     #: the term the thief never had: across the archive our thief finished its
     #: move inside that reach 43 times in 35 sub-games and was taken 14 times,
@@ -171,6 +188,12 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "juke_range": (1, 6, True),
     "thief_fresh_min": (0.30, 0.80, False),  # same dead-threshold cap as the police's
     "chase_bias": (0.20, 1.20, False),
+    # Floor below zero deliberately: the default is 0 and the invariant is that
+    # every default sits STRICTLY inside its box, so the search can move in both
+    # directions. A negative value is meaningful rather than a fudge - it says
+    # returning to the cell you just left is actively preferred, which is what an
+    # evader shadowing a fixed patrol route would want.
+    "backtrack_penalty": (-2.0, 5.0, False),
     "w_strike": (0.0, 10.0, False),
 }
 
