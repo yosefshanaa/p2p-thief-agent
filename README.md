@@ -340,9 +340,9 @@ or an opponent (§16).
 | 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 418 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-CI on every push. Five counted league matches have been played and reported — three won, one
-tied, one lost, all 30 sub-games audited clean — which clears the book's ≥2-against-different-teams
+**Quality gate:** 541 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+CI on every push. Six counted league matches have been played and reported — three won, one
+tied, two lost, all 36 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
 [`docs/TODO.md`](docs/TODO.md) §8–9, and the submission repos are already split, public and green.
 
@@ -593,7 +593,7 @@ Times are read from the artifacts themselves (`started_at` / `ended_at` on the s
 declaration), never from file mtimes, and are shown in **UTC** — the team plays in
 Asia/Jerusalem, UTC+3 in August.
 
-### Counted league matches — 5 of 10 played
+### Counted league matches — 6 of 10 played
 
 | # | Opponent | Series points `ahk-yosi` – them | Winner | League bonus | Final points `ahk-yosi` – them | Started (UTC) | Ended (UTC) | Match archive |
 |---:|---|:---:|---|:---:|:---:|---|---|---|
@@ -602,7 +602,8 @@ Asia/Jerusalem, UTC+3 in August.
 | 3 | [`saedshki`](https://github.com/Saed-Abdalgani/Final-project_police_thief_p2p) | **85 – 45** <br>(5 – 1) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **95 – 45** | 2026-08-16 17:26:28 | 2026-08-16 17:30:45 | [`saedshki-counted/`](matches/saedshki-counted) |
 | 4 | [`s82kma9e`](https://github.com/Imreec/copthief-league-protocol) | **90 – 30** <br>(**6 – 0**) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **100 – 30** | 2026-08-16 23:44:07 | 2026-08-16 23:47:47 | [`s82kma9e-counted/`](matches/s82kma9e-counted) |
 | 5 | [`gal-roy1`](https://github.com/galbb12/orch-models-final-cop) *(private)* | 35 – 75 <br>(1 – 5) | `gal-roy1` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-17 17:34:07 | 2026-08-17 17:40:37 | [`gal-roy1-counted/`](matches/gal-roy1-counted) |
-| | **5 opponents** | **345 – 265** <br>(19 – 11) | **3 wins · 1 tie · 1 loss** | **+32** to us <br>**+10** to them | **377 – 277** | | | |
+| 6 | [`uoh-ay26`](https://github.com/aishadahesh/uoh-ay26-final-project-cop) | 35 – 75 <br>(1 – 5) | `uoh-ay26` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-19 17:03:46 | 2026-08-19 17:22:59 | [`uoh-ay26-counted/`](matches/uoh-ay26-counted) |
+| | **6 opponents** | **380 – 340** <br>(20 – 16) | **3 wins · 1 tie · 2 losses** | **+32** to us <br>**+20** to them | **412 – 362** | | | |
 
 *¹ That series predates the timing fix (`da8856a`), so its declaration carries `ended_at: null`;
 the time shown is `generated_at` from the sealed result — the moment the report was signed,
