@@ -25,27 +25,49 @@ replaces:
 from __future__ import annotations
 
 from .board import Board, Cell
-from .scent import BOOK_V1, SUBTRACTIVE_V1
+from .scent import BOOK_V1
 from .scent_locate import changed, fix_lag, locate_emitter
 
-#: Models whose served field's ``argmax`` already IS the emitter's cell, so
-#: inverting adds nothing and costs coverage.
-#:
-#: `subtractive_chebyshev_v1` merges emission by **max** and decays by
-#: subtraction, so the freshest cell stands alone at the ceiling and the peak is
-#: exact - while that same max-merge makes an emitter that STAYS produce a
-#: transition no centre uniquely explains, which the inverse correctly reports
-#: as "no fix". Measured on the played uoh-ay26 friendly: the inverse was right
-#: 93 times, silent 33, and wrong never - and all 33 silences were the opponent
-#: standing still, where the argmax was right every time. 74% against 100%, for
-#: information that was already free.
-#:
-#: The additive models are the opposite case and the reason the inverse exists:
-#: emission adds and clamps, a whole region pins at the cap, and `book_v1`'s
-#: argmax is right 1 time in 9.
-ARGMAX_IS_EXACT = frozenset({SUBTRACTIVE_V1})
-
 Field = list[list[float]]
+
+
+def unique_peak(scent: Field, size: int) -> Cell | None:
+    """The emitter's own cell, when the served field names it outright.
+
+    A served field is one of two shapes, and which one it is decides whether
+    inverting it is worth anything:
+
+    * **Saturated.** ``book_v1`` and ``registered_v3`` add emission and clamp at
+      a cap, so after a few steps a whole region sits *at* the cap - measured on
+      our own implementation, 6 cells tied at the maximum by step 4 and 15 by
+      step 12. ``max`` then returns whichever tied cell row-major order reaches
+      first, which is a bias toward the top-left corner, and the estimator this
+      replaced was right 1 time in 9. These fields must be inverted.
+    * **Peaked.** ``subtractive_chebyshev_v1`` merges by max and decays by
+      subtraction, so the freshest cell stands alone - 1 cell at the maximum on
+      every step of the same trace. So does a *memoryless snapshot*: a peer that
+      transmits only the current kernel rather than an accumulated field. In both
+      cases the peak IS the emitter and inverting is strictly worse, because a
+      stationary emitter produces a transition no centre uniquely explains and
+      the inverse correctly reports "no fix".
+
+    Keying this on the *field* rather than on the negotiated model matters, and
+    it is the difference between winning and losing a match. uoh-ay26 negotiated
+    `subtractive_chebyshev_v1` and served a bare 5x5 kernel in absolute board
+    coordinates - 25 cells inland, 16 clipped - with no history at all. Replayed
+    against that wire format our inverse fits 2 turns in 10; we played all six
+    sub-games of that friendly effectively blind and lost 6-0. Nothing stops the
+    next opponent doing the same under `book_v1`, which is our own default, and
+    a model-keyed test would blind us again on a format we have already seen.
+    """
+    best = max(((r, c) for r in range(size) for c in range(size)),
+               key=lambda cell: scent[cell[0]][cell[1]])
+    top = scent[best[0]][best[1]]
+    if top <= 0.0:
+        return None
+    tied = sum(1 for r in range(size) for c in range(size)
+               if scent[r][c] >= top - 1e-9)
+    return best if tied == 1 else None
 
 
 class OpponentTracker:
@@ -65,17 +87,16 @@ class OpponentTracker:
         if not scent or not any(any(row) for row in scent):
             return None
         previous, self._last_field = self._last_field, [row[:] for row in scent]
-        if self.model in ARGMAX_IS_EXACT:
+        found = unique_peak(scent, self.size)
+        if found is not None:
             # Deliberately BEFORE the changed() gate. That gate exists because a
             # transition is the evidence the inverse consumes, so an unchanged
-            # field carries none. The argmax consumes the field itself, and an
+            # field carries none. A peak consumes the field itself, and an
             # emitter that stands still is exactly what produces an unchanged
             # field once its surroundings have bottomed out - so gating here
             # would blind us precisely when the opponent is stationary, which is
             # when it is easiest to catch. 33 of 126 fixes on the played
-            # friendly were lost this way.
-            found = max(((r, c) for r in range(self.size) for c in range(self.size)),
-                        key=lambda cell: scent[cell[0]][cell[1]])
+            # friendly were lost that way.
             if not board.is_open(found):
                 return None
             self.previous_fix, self.fix = self.fix, found

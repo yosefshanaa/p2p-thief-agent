@@ -63,7 +63,9 @@ def take_role(rt: Any, n: int, log_fn: Any) -> None:
     """
     if not rt.peer.alternate_roles:
         return
-    role = role_for(rt.natural_role, n)
+    # Through the engine so any drift correction already adopted is respected;
+    # reading the raw schedule here would undo it at the next boundary.
+    role = rt.engine.role_for_sub_game(n)
     if role != rt.engine.role:
         rt.engine.set_role(role)
         rt.service.my_handshake["role"] = role
@@ -108,11 +110,15 @@ def _adopt_complementary_role(rt: Any, n: int, theirs: dict[str, Any],
     their_role = theirs.get("role")
     if their_role not in (POLICE, THIEF) or their_role != rt.engine.role:
         return
-    wanted = THIEF if their_role == POLICE else POLICE
-    log_fn(f"[{rt.role}] sub-game {n}: they also claim {their_role!r}; taking "
-           f"{wanted!r} instead of forfeiting - their index has drifted from ours")
-    rt.engine.set_role(wanted)
-    rt.engine.begin_sub_game(n)
+    log_fn(f"[{rt.role}] sub-game {n}: they also claim {their_role!r}; taking the "
+           f"other side instead of forfeiting - their index has drifted from ours")
+    # Through the engine, which corrects the schedule OFFSET. Setting the role
+    # and then re-entering the sub-game does not work and used to be what this
+    # did: `begin_sub_game` re-derives the role from the index, so the adoption
+    # was reverted on the very next line and we went on to *announce* a role we
+    # were not playing - the announced-thief-played-police deadlock that
+    # `begin_sub_game` documents.
+    wanted = rt.engine.adopt_complementary_role(n)
     rt.service.my_handshake["role"] = wanted
     payload["role"] = wanted
     # Their index drifted, so the agent holding the other role changed with it.

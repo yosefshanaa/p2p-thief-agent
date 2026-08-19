@@ -75,6 +75,10 @@ class Doctrine:
     #: sub-games of the counted match vs gal-roy1, the gap sat at 2 for 45 of 102
     #: turns, reached 1 exactly 3 times, and produced no capture chance at all.
     w_cut: float = 0.35
+    #: How far below the best a move may score and still be drawn at random -
+    #: the police's half of the mixed policy (see :mod:`.mixing`). In cells of
+    #: BFS distance, because that is the leading term of its move score.
+    police_mix_margin: float = 0.0
     # -- thief: a weighted score over one-step candidates
     w_mobility: float = 0.5
     w_mobility2: float = 0.25
@@ -127,6 +131,43 @@ class Doctrine:
     #: including both losses to gal-roy1, where it stepped to a cell orthogonally
     #: adjacent to a pursuer whose exact cell its own scent feed was carrying.
     w_strike: float = 4.0
+    #: The thief's half of the mixed policy (see :mod:`.mixing`), in units of its
+    #: weighted move score. This is the term that answers "we played the same
+    #: game six times": our evader is a pure function of the view, and replayed
+    #: against one pursuer it produced six identical trajectories, so an opponent
+    #: that beats it once beats it in every remaining sub-game of the match.
+    #:
+    #: DEFAULT 0, on the measurement rather than on principle. Against our own
+    #: police over 40 seeds, survival is 0/40 at margins 0, 0.15, 0.40 and 1.00,
+    #: and mean steps survived FALLS from 15.0 to 14.3 to 12.8. Mixing defeats
+    #: *prediction*, and under `subtractive_chebyshev_v1` no competent opponent
+    #: has to predict us: the field we are required to publish has a unique peak
+    #: on our own cell, so it can simply look. There is nothing for
+    #: unpredictability to buy when the pursuer has your coordinates, and on a
+    #: grid a pursuer with an exact fix catches an evader by construction.
+    #:
+    #: Where it WOULD have a mechanism is a lag-1 physics like `book_v1`, whose
+    #: fix is one step stale and spread over about four cells - and there our
+    #: thief already survives everything, so the gain is unmeasurable from above
+    #: instead of from below. Addressable, off, and honestly labelled.
+    mix_margin: float = 0.0
+    #: Weight on how many escape routes survive our NEXT move, not this one.
+    #: `w_strike` refuses a cell the pursuer can take; this refuses a cell whose
+    #: every exit the pursuer can take the turn after. The distinction is the
+    #: whole difference between being chased and being cut off, and it is the
+    #: only way our thief loses in the lab: it survives every archetype in the
+    #: pool and is taken by our own police, which does not chase it - it takes
+    #: the ground away. `w_mobility` counts doors and cannot see this, because
+    #: it counts a door the pursuer is standing behind.
+    #:
+    #: DEFAULT 0, and the measurement says it cannot be otherwise. Swept over
+    #: 0.15/0.3/0.6/1.0/2.0 against 40 seeds: survival against our own police is
+    #: 0% at EVERY weight, and 100% against every other archetype at every
+    #: weight. The term is inert, and the reason is structural rather than a
+    #: missing weight - see `mix_margin`. It stays addressable because the day
+    #: the pool contains a pursuer that cuts *imperfectly* is the day it has
+    #: something to say.
+    w_safe2: float = 0.0
 
 
 #: Fields the offline search is NOT allowed to touch, and why.
@@ -173,6 +214,11 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "pounce_floor": (0.02, 0.60, False),
     "flee_bias": (0.80, 4.00, False),
     "w_cut": (0.0, 2.0, False),
+    # Floors below zero for the same reason as `backtrack_penalty`: 0 is the
+    # "off" value and every default must sit STRICTLY inside its box, so the
+    # search can reach the off state from either side. Anything <= 0 runs the
+    # incumbent selection untouched.
+    "police_mix_margin": (-0.5, 2.0, False),
     "w_mobility": (0.0, 2.0, False),
     "w_mobility2": (0.0, 1.5, False),
     "w_territory": (0.0, 1.0, False),
@@ -195,6 +241,8 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     # evader shadowing a fixed patrol route would want.
     "backtrack_penalty": (-2.0, 5.0, False),
     "w_strike": (0.0, 10.0, False),
+    "mix_margin": (-0.5, 3.0, False),
+    "w_safe2": (-0.5, 4.0, False),
 }
 
 #: Which half of the vector each role reads. Spelled out rather than derived
@@ -203,7 +251,8 @@ SPACE: dict[str, tuple[float, float, bool]] = {
 #: defaults while reverting them in the thief's file.
 POLICE_KEYS = ("peak_window", "gap_window", "kill_shot_ratio", "seal_ratio",
                "seal_distance", "endgame_reserve", "belief_floor", "police_fresh_min",
-               "claim_threshold", "pounce_floor", "flee_bias", "w_cut")
+               "claim_threshold", "pounce_floor", "flee_bias", "w_cut",
+               "police_mix_margin")
 THIEF_KEYS = tuple(k for k in SPACE if k not in POLICE_KEYS)
 
 

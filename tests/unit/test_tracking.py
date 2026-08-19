@@ -33,11 +33,18 @@ def feed(model: str, walk: list[tuple[int, int]]) -> tuple[OpponentTracker, list
 
 def test_it_tracks_a_whole_walk_exactly():
     tracker, fixes = feed(BOOK_V1, WALK)
-    # The first served field is all zeros (book_v1 serves before emitting) and
-    # the second is the first evidence, so fixes begin at index 2.
-    assert fixes[:2] == [None, None]
-    assert fixes[2:] == WALK[1:len(fixes) - 1]
-    assert tracker.fixes == len(fixes) - 2
+    # The first served field is all zeros (book_v1 serves before emitting), so
+    # there is no fix on it and never can be. Every field after it yields one.
+    #
+    # This used to begin at index 2, because the inverse needs a *transition* and
+    # the second field is only the first piece of evidence. It now begins at
+    # index 1: after a single emission the field still has a unique maximum, and
+    # a unique maximum names the emitter outright (`tracking.unique_peak`), so
+    # the second field answers the question on its own. One turn earlier is one
+    # turn of a six-sub-game match played sighted instead of blind.
+    assert fixes[0] is None
+    assert fixes[1:] == WALK[:len(fixes) - 1]
+    assert tracker.fixes == len(fixes) - 1
 
 
 def test_a_repeated_field_yields_no_fix_and_leaves_the_last_one_standing():
@@ -162,3 +169,59 @@ def test_a_view_with_no_fix_still_drives_both_brains():
                          steps_remaining=35, survival_threshold=35, trust=0.5,
                          map_area="New York", rng=random.Random(0))
         assert ours(role).decide(view).move in ("N", "S", "E", "W", "STAY")
+
+
+# -- the wire format that blinded us, under every model we may negotiate -------
+#
+# uoh-ay26 negotiated `subtractive_chebyshev_v1` and then served a bare 5x5
+# Chebyshev kernel in absolute board coordinates with NO accumulated history:
+# 25 non-zero cells inland, 16 clipped at (1,1), which is exactly what our own
+# match log recorded on their turn 2 of every sub-game. Our forward model
+# produces a decayed field over the whole board, so replaying it never fits
+# theirs and the inverse reports "no fix" - measured, 2 fits in 10 turns. We
+# played all six sub-games of that friendly effectively blind and lost 6-0.
+#
+# The remedy is keyed on the FIELD rather than on the negotiated model, because
+# the model is what they declared and the field is what they sent.
+
+def kernel_snapshot(centre: tuple[int, int]) -> list[list[float]]:
+    """Their wire format: the current kernel only, rings 0.9 / 0.6 / 0.3."""
+    rings = {0: 0.9, 1: 0.6, 2: 0.3}
+    return [[rings.get(max(abs(r - centre[0]), abs(c - centre[1])), 0.0)
+             for c in range(SIZE)] for r in range(SIZE)]
+
+
+def test_a_memoryless_kernel_is_readable_under_every_model():
+    """Whatever we negotiated, a peer that sends only its current kernel is
+    telling us exactly where it is - and we must not answer "no fix"."""
+    from p2p_pursuit.domain.scent import MODELS
+
+    board = Board(SIZE)
+    for model in sorted(MODELS):
+        tracker = OpponentTracker(SIZE, model)
+        seen = [tracker.observe(kernel_snapshot(cell), board) for cell in WALK]
+        assert all(f is not None for f in seen), f"{model} went blind: {seen}"
+        # `possible()` is what the brains consume - every cell it could be on
+        # now - so that, not the raw fix, is what has to contain the truth.
+        for cell, fix in zip(WALK, seen, strict=True):
+            assert fix is not None
+            board_now = Board(SIZE)
+            tracker_at = OpponentTracker(SIZE, model)
+            for prefix in WALK[:WALK.index(cell) + 1]:
+                tracker_at.observe(kernel_snapshot(prefix), board_now)
+            assert cell in tracker_at.possible(board_now), f"{model} lost {cell}"
+
+
+def test_a_saturated_field_is_never_read_off_its_peak():
+    """The other half of the same rule. An additive model clamps at a cap, so a
+    whole region ties at the maximum and `max` just returns the first one in
+    row-major order - a top-left bias that was right 1 time in 9. Those fields
+    must be inverted, and `unique_peak` must decline them."""
+    from p2p_pursuit.domain.tracking import unique_peak
+
+    field = ScentField(SIZE, model=BOOK_V1)
+    served = [field.serve_for_step(cell) for cell in WALK]
+    # Late in the walk the book field is saturated; the peak must be refused.
+    assert unique_peak(served[-1], SIZE) is None
+    # ...while a single emission still names its own centre.
+    assert unique_peak(served[1], SIZE) == WALK[0]

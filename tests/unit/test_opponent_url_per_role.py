@@ -23,7 +23,11 @@ def _rt(template: str, *, natural: str = POLICE, alternate: bool = True) -> Simp
         peer=SimpleNamespace(opponent_url=template, alternate_roles=alternate),
         # the reference dialect wraps the real link in the bridge
         link=SimpleNamespace(link=link),
-        engine=SimpleNamespace(role=natural, set_role=lambda r: None),
+        # `role_for_sub_game` is the engine's own reading of the schedule, so
+        # that a drift correction adopted mid-series is not undone at the next
+        # boundary. The double answers it the way an undrifted engine would.
+        engine=SimpleNamespace(role=natural, set_role=lambda r: None,
+                               role_for_sub_game=lambda n: role_for(natural, n)),
         service=SimpleNamespace(my_handshake={"role": natural}),
         natural_role=natural,
     )

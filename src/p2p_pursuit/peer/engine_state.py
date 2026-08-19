@@ -45,6 +45,13 @@ class EngineState:
         #: role played in sub-game n is derived from it, never from whatever the
         #: previous sub-game happened to leave behind.
         self.natural_role = role
+        #: Correction to the sub-game index the alternation schedule is read
+        #: from. Zero for every match that runs cleanly. It becomes 1 when the
+        #: opponent's index has drifted from ours - a sub-game they abandoned
+        #: and we did not, or the reverse - which makes `role_for` hand both
+        #: peers the SAME role and turns every other sub-game into a technical
+        #: loss. See `adopt_complementary_role`.
+        self.role_offset = 0
         self.other = THIEF if role == POLICE else POLICE
         # Which digest composition seals our records (RUNBOOK 3b): negotiated
         # per match, so an unmodified reference peer can audit us on its terms.
@@ -86,6 +93,42 @@ class EngineState:
         self.other = THIEF if role == POLICE else POLICE
         self.brain = self._brain_for(role)
 
+    def role_for_sub_game(self, n: int) -> str:
+        """The role the schedule owes sub-game ``n``, drift correction included.
+
+        One place, because two callers reading the schedule with different
+        corrections is the same desynchronisation this exists to repair.
+        """
+        from .series_protocol import role_for
+
+        return role_for(self.natural_role, n + self.role_offset)
+
+    def adopt_complementary_role(self, n: int) -> str:
+        """Their index has drifted from ours: take the other side, permanently.
+
+        Both peers derive their role from a sub-game index, so once the two
+        indices disagree the roles collide - and they collide on EVERY
+        subsequent sub-game of the same parity, which is why one abandoned
+        sub-game has repeatedly taken a whole match with it. Measured across the
+        archive: 10 sub-games ended "both peers claim role X", never as the first
+        failure of a match and always after one.
+
+        Correcting the *offset* rather than this one sub-game's role is what
+        makes it stick. Flipping only the current role leaves the schedule
+        drifted, so the next sub-game re-derives the colliding role and we are
+        back where we started two turns later.
+        """
+        self.role_offset ^= 1
+        # Set explicitly and enter through `start_sub_game`, NOT through
+        # `begin_sub_game`. The latter re-derives the role from the schedule and
+        # only when alternation is enabled on *this engine's* config, so relying
+        # on it makes the adoption conditional on a flag that has nothing to do
+        # with whether the two indices have drifted. The offset is still
+        # corrected, so every later boundary that does re-derive stays aligned.
+        self.set_role(THIEF if self.role == POLICE else POLICE)
+        self.start_sub_game(n)
+        return self.role
+
     def begin_sub_game(self, n: int) -> None:
         """Enter sub-game ``n`` playing the role we owe it.
 
@@ -99,9 +142,7 @@ class EngineState:
         into a turn timeout. This is the one place the two steps are ordered.
         """
         if self.peer.alternate_roles:
-            from .series_protocol import role_for
-
-            role = role_for(self.natural_role, n)
+            role = self.role_for_sub_game(n)
             if role != self.role:
                 self.set_role(role)
         self.start_sub_game(n)

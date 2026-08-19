@@ -40,7 +40,9 @@ def test_a_sparse_smell_grid_still_gives_an_exact_fix():
     fixes = track(BOOK_V1, their_turns(BOOK_V1, WALK))
     found = [f for f in fixes if f is not None]
     assert found, "no fix survived the round trip through their dialect"
-    assert found == WALK[1:1 + len(found)], f"got {found}"
+    # From WALK[0], not WALK[1]: a single-emission field has a unique peak and
+    # needs no transition to be read. See test_tracking for the same shift.
+    assert found == WALK[:len(found)], f"got {found}"
 
 
 def test_the_round_trip_is_lossless_for_every_model():

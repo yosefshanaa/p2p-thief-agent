@@ -98,6 +98,12 @@ def score(doctrine: Doctrine, pool: dict[str, Member], seeds: tuple[int, ...],
     report = Score()
     for name, member in pool.items():
         earned = played = 0
+        # A stateful member is built ONCE for the whole seed sequence, so the
+        # sequence reads as one match rather than as N unrelated first meetings.
+        # That is not a detail of bookkeeping: it is the only way this objective
+        # can represent an opponent who has already seen the candidate play, and
+        # without it `replayer` is just a slower `interceptor`.
+        kept = member.make(POLICE) if member.stateful else None
         for index, seed in enumerate(seeds):
             # Half the seeds under each claim regime - see CLAIM_REGIMES. Keyed
             # off the seed's position so every candidate in a generation meets
@@ -114,7 +120,7 @@ def score(doctrine: Doctrine, pool: dict[str, Member], seeds: tuple[int, ...],
                 report.captures_as_police += ending == CAPTURE
             if THIEF in roles and POLICE in member.roles:
                 ending, _, thief_pts = sub_game(
-                    shared, member.make(POLICE), ours(THIEF, doctrine),
+                    shared, kept or member.make(POLICE), ours(THIEF, doctrine),
                     seed + 500_000, claiming)
                 earned, played = earned + thief_pts, played + 1
                 report.thief_sub_games += 1

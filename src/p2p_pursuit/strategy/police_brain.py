@@ -51,6 +51,7 @@ from ..domain.board import Cell, target_of
 from ..domain.brains_base import BrainBase, BrainView
 from ..domain.hints import region_of
 from ..domain.rules import Decision
+from .mixing import choose
 from .params import Doctrine, active
 from .pathing import bfs_distances, still_connected
 from .predict import spread
@@ -394,7 +395,7 @@ class PoliceBrain(BrainBase):
         moves = list(view.board.legal_moves(view.own_pos))
         if self._last_move == "STAY":
             moves = [m for m in moves if m != "STAY"] or moves
-        best = min(moves, key=score)
+        best = choose(moves, score, self.p.police_mix_margin, view.rng, prefer=min)
         self._last_move = best
         return Decision(move=best)
 
