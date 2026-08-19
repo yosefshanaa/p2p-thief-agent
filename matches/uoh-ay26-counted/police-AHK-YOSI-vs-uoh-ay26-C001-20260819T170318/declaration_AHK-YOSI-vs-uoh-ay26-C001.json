@@ -1,0 +1,51 @@
+{
+  "report_type": "declaration",
+  "game_uid": "b52fe9be-0003-6a11-4824-3f4caa135491",
+  "game_id": "AHK-YOSI-vs-uoh-ay26-C001",
+  "game_number": 6,
+  "config_sha256": "a7933121447441e1c7bca2962ce92e26374f1b5eb62355d441b9b0aa7a40e7f8",
+  "scent_model_sha256": "81ebee59640e80eae8ca9ee5f86abd26e7edf5cdbb27d15925cb6ee45ca6ddf4",
+  "token_cap": 200000,
+  "started_at": "2026-08-19T17:03:46+00:00",
+  "ended_at": "2026-08-19T17:22:59+00:00",
+  "teams": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "mcp_url": "http://0.0.0.0:8801/mcp",
+      "llm_model": "gpt-5.6-luna",
+      "hardware": {
+        "os": "Linux 6.6.87.2-microsoft-standard-WSL2",
+        "machine": "x86_64",
+        "python": "3.13.14",
+        "cpu_cores": 12,
+        "ram_gb": 7.6,
+        "gpu": "none"
+      },
+      "code_version": "1.00",
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3"
+    },
+    "opponent": {
+      "group_id": "uoh-ay26",
+      "group_name": "uoh-ay26",
+      "members": [
+        "Aisha Abu Dahesh",
+        "Yousef Asadi"
+      ],
+      "repos": {
+        "cop": "https://github.com/aishadahesh/uoh-ay26-final-project-cop",
+        "thief": "https://github.com/aishadahesh/uoh-ay26-final-project-thief"
+      },
+      "code_version": ""
+    }
+  },
+  "declaration_sha256": "fd3c2f1905b62900d9073c0064d1e662126baac459d7ae3d1350a008f39b7e39"
+}

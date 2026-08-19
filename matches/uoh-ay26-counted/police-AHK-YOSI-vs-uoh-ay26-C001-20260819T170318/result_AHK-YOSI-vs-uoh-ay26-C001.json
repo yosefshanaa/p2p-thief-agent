@@ -1,0 +1,327 @@
+{
+  "report_type": "game_result",
+  "game_uid": "b52fe9be-0003-6a11-4824-3f4caa135491",
+  "game_id": "AHK-YOSI-vs-uoh-ay26-C001",
+  "generated_at": "2026-08-19T17:22:59+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "uoh-ay26",
+      "group_name": "uoh-ay26",
+      "members": [
+        "Aisha Abu Dahesh",
+        "Yousef Asadi"
+      ],
+      "repos": {
+        "cop": "https://github.com/aishadahesh/uoh-ay26-final-project-cop",
+        "thief": "https://github.com/aishadahesh/uoh-ay26-final-project-thief"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "uoh-ay26": "thief"
+      },
+      "result": "survival",
+      "winner_group": "uoh-ay26",
+      "score": {
+        "ahk-yosi": 5,
+        "uoh-ay26": 10
+      }
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "captured at [5, 5]",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 34,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "uoh-ay26": "police"
+      },
+      "result": "capture",
+      "winner_group": "uoh-ay26",
+      "score": {
+        "ahk-yosi": 5,
+        "uoh-ay26": 20
+      }
+    },
+    {
+      "index": 3,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "uoh-ay26": "thief"
+      },
+      "result": "survival",
+      "winner_group": "uoh-ay26",
+      "score": {
+        "ahk-yosi": 5,
+        "uoh-ay26": 10
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "captured at [5, 5]",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 34,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "uoh-ay26": "police"
+      },
+      "result": "capture",
+      "winner_group": "uoh-ay26",
+      "score": {
+        "ahk-yosi": 5,
+        "uoh-ay26": 20
+      }
+    },
+    {
+      "index": 5,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survival at 35 steps (unsealed claim)",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "uoh-ay26": "thief"
+      },
+      "result": "survival",
+      "winner_group": "uoh-ay26",
+      "score": {
+        "ahk-yosi": 5,
+        "uoh-ay26": 10
+      }
+    },
+    {
+      "index": 6,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "ba2b810b63feccc31d09cce64cd018c5b40936f3",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "uoh-ay26": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "uoh-ay26": 5
+      }
+    }
+  ],
+  "totals": {
+    "police": 60,
+    "thief": 50
+  },
+  "my_role": "police",
+  "my_total": 60,
+  "opponent_total": 50,
+  "series_winner": "police",
+  "tokens_used": 10998,
+  "mutual_agreement": false,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 35,
+      "uoh-ay26": 75
+    },
+    "sub_games_won": {
+      "ahk-yosi": 1,
+      "uoh-ay26": 5
+    },
+    "ties": 0,
+    "winner_group": "uoh-ay26",
+    "series_tie": false
+  },
+  "links": {
+    "declaration": "declaration_AHK-YOSI-vs-uoh-ay26-C001.json",
+    "configs": [
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g01.json",
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g02.json",
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g03.json",
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g04.json",
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g05.json",
+      "config_AHK-YOSI-vs-uoh-ay26-C001_g06.json"
+    ],
+    "logs": [
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g01.json",
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g02.json",
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g03.json",
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g04.json",
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g05.json",
+      "log_AHK-YOSI-vs-uoh-ay26-C001_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "uoh-ay26": {
+        "cop": "https://github.com/aishadahesh/uoh-ay26-final-project-cop",
+        "thief": "https://github.com/aishadahesh/uoh-ay26-final-project-thief"
+      }
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 6,
+    "uoh-ay26": 1
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "uoh-ay26": true
+  },
+  "mutual_signature": "9d7abc03950923d3740a24fcff2327291316afdb931f98197c59930542031f22",
+  "series_consensus": {
+    "document": {
+      "game_id": "AHK-YOSI-vs-uoh-ay26-C001",
+      "game_uid": "b52fe9be-0003-6a11-4824-3f4caa135491",
+      "sub_games": [
+        {
+          "sub_game_number": 1,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "police",
+            "uoh-ay26": "thief"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "uoh-ay26": 10
+          },
+          "winner_group": "uoh-ay26"
+        },
+        {
+          "sub_game_number": 2,
+          "result": "capture",
+          "roles": {
+            "ahk-yosi": "thief",
+            "uoh-ay26": "police"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "uoh-ay26": 20
+          },
+          "winner_group": "uoh-ay26"
+        },
+        {
+          "sub_game_number": 3,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "police",
+            "uoh-ay26": "thief"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "uoh-ay26": 10
+          },
+          "winner_group": "uoh-ay26"
+        },
+        {
+          "sub_game_number": 4,
+          "result": "capture",
+          "roles": {
+            "ahk-yosi": "thief",
+            "uoh-ay26": "police"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "uoh-ay26": 20
+          },
+          "winner_group": "uoh-ay26"
+        },
+        {
+          "sub_game_number": 5,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "police",
+            "uoh-ay26": "thief"
+          },
+          "score": {
+            "ahk-yosi": 5,
+            "uoh-ay26": 10
+          },
+          "winner_group": "uoh-ay26"
+        },
+        {
+          "sub_game_number": 6,
+          "result": "survival",
+          "roles": {
+            "ahk-yosi": "thief",
+            "uoh-ay26": "police"
+          },
+          "score": {
+            "ahk-yosi": 10,
+            "uoh-ay26": 5
+          },
+          "winner_group": "ahk-yosi"
+        }
+      ]
+    },
+    "consensus_sha": "0164e641da0f7a2df867e7969fdfff380e9cb17da9e4f752e99a485c3253e110",
+    "peer_consensus_sha": "0164e641da0f7a2df867e7969fdfff380e9cb17da9e4f752e99a485c3253e110",
+    "sha_match": true,
+    "confirmed": true
+  },
+  "result_sha256": "ce2ed8524aa4283bd51a70d4d800f14111020ef3ac03a236daf52d585e56136c"
+}
