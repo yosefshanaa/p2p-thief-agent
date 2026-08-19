@@ -340,7 +340,7 @@ or an opponent (§16).
 | 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
-**Quality gate:** 541 tests, coverage 93% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
+**Quality gate:** 541 tests, coverage 94% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
 CI on every push. Six counted league matches have been played and reported — three won, one
 tied, two lost, all 36 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
