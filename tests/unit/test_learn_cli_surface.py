@@ -32,7 +32,13 @@ def test_review_is_wired_and_reports(capsys):
     assert main(["learn", "review", "--matches", str(MATCHES)]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["sub_games"] >= 80
-    assert payload["inverse_right"] == payload["fixes"]
+    # Never *wrong*, and only rarely silent - see the same distinction in
+    # test_archive_review. The archive holds 15 transitions the inverter
+    # declines, all of them our own STAY after our own STAY, where a
+    # stationary emitter leaves the two served fields without a unique
+    # difference to solve.
+    assert payload["inverse_wrong"] == 0
+    assert payload["inverse_right"] / payload["fixes"] > 0.99
     assert payload["argmax_right"] < payload["fixes"] // 4
 
 

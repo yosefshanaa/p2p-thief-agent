@@ -46,13 +46,30 @@ def test_the_police_conversion_gap_that_reordered_the_doctrine(archive):
 
 
 def test_the_estimator_that_was_replaced_and_the_one_that_replaced_it(archive):
-    """The single measurement the whole of v6 turns on."""
+    """The single measurement the whole of v6 turns on.
+
+    The claim to pin is *never wrong*, not *never silent*, and the archive drew
+    the distinction itself. This asserted equality until the C001 series against
+    uoh-ay26 was filed, which added 15 transitions the inverter declines: all of
+    them our own STAY followed by our own STAY, where a stationary emitter
+    deposits twice on one cell and the two served fields no longer carry a
+    unique difference to solve. It returns None there rather than guessing, and
+    `tracking.unique_peak` is built to do exactly that.
+
+    A silence costs the belief fallback for one turn. A wrong fix would send the
+    police to the wrong square with full confidence, which is the failure the
+    inverter exists to end - so that is the number held at zero, across every
+    sub-game, every opponent and all three negotiated models.
+    """
     assert archive.fixes > 1500
     assert archive.argmax_right / archive.fixes < 0.20, (
         "argmax of the served field was the position estimate both brains used")
-    assert archive.inverse_right == archive.fixes, (
-        f"inverting the model missed {archive.fixes - archive.inverse_right} of "
-        f"{archive.fixes} transitions - it is meant to be exact")
+    assert archive.inverse_wrong == 0, (
+        f"inverting the model named the WRONG cell {archive.inverse_wrong} times - "
+        "a confident wrong fix is worse than no fix")
+    assert archive.inverse_right / archive.fixes > 0.99, (
+        f"inverting was silent on {archive.fixes - archive.inverse_right} of "
+        f"{archive.fixes} transitions - it is meant to answer nearly always")
 
 
 def test_the_thief_died_where_the_broken_estimator_pointed_it(archive):
