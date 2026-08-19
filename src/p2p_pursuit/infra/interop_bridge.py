@@ -424,6 +424,7 @@ class ReferenceBridge:
         records = codec.reference_records(
             [spec, *package["records"]], [spec_hash, *package.get("hashes", [])])
         self._self_check(records, package, n)
+        self.note_tracker_coverage(n)
         self.link.submit_audit(
             {"sender": package["role"],
              "sub_game": n,
@@ -450,6 +451,26 @@ class ReferenceBridge:
             log.info("sub-game %s: reveal self-check OK - %d records bind %d live "
                      "commitments", n, len(records), len(package.get("hashes", [])))
         self.reveal_self_checks[n] = violations
+
+    def note_tracker_coverage(self, sub_game: int) -> None:
+        """How many turns of this sub-game we actually knew where they were.
+
+        Our evasion rests entirely on that number: measured under the kit's
+        physics, our thief survives a homing pursuer 100% of the time with a fix
+        and 20.8% without one. After losing three thief sub-games to uoh-ay26 at
+        the same cell we could not tell which case we had been in, because a
+        peer's sealed records carry its moves and not its scent - so the field we
+        inverted at the time is not in the archive and the question was
+        unanswerable after the fact. It is answerable at the time, so it is
+        answered here.
+        """
+        tracker = getattr(self.service.engine, "opp_tracker", None)
+        if tracker is None:
+            return
+        turns = max(self.service.engine.opp_steps, 1)
+        log.info("sub-game %s: tracker had a fix on %s of %s of their turns%s",
+                 sub_game, tracker.fixes, turns,
+                 "" if tracker.fixes else " - WE PLAYED IT BLIND")
 
     def _system_spec_record(self, sub_game: int) -> tuple[dict[str, Any], str]:
         """The step-0 record naming the code that played this sub-game.
