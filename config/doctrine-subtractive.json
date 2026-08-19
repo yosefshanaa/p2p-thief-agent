@@ -29,5 +29,6 @@
   "thief_truth_rate": 0.15,
   "lie_candidates": 3,
   "chase_bias": 0.493082,
-  "w_strike": 7.926941
+  "w_strike": 7.926941,
+  "backtrack_penalty": 2.0
 }
