@@ -69,6 +69,12 @@ class Review:
     barriers_placed: int = 0
     argmax_right: int = 0
     inverse_right: int = 0
+    #: Transitions where inverting named the WRONG cell, as opposed to declining
+    #: to name one. The distinction is the whole value of the estimator: a wrong
+    #: fix sends the police to the wrong square, a declined one falls back to the
+    #: belief. Over the whole archive this is zero, and `inverse_right` falls
+    #: short of `fixes` only by the silences.
+    inverse_wrong: int = 0
     fixes: int = 0
     death_cells: Counter = field(default_factory=Counter)
     per_match: dict[str, dict] = field(default_factory=dict)
@@ -135,8 +141,9 @@ def review_log(log: dict, into: Review) -> None:
                    key=lambda cell: b["scent"][cell[0]][cell[1]])
         into.fixes += 1
         into.argmax_right += peak == truth
-        into.inverse_right += locate_emitter(
-            a["scent"], b["scent"], size=SIZE, model=model) == truth
+        found = locate_emitter(a["scent"], b["scent"], size=SIZE, model=model)
+        into.inverse_right += found == truth
+        into.inverse_wrong += found is not None and found != truth
 
     board = Board(SIZE)
     far = SIZE * SIZE

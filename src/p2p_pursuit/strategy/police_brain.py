@@ -41,6 +41,34 @@ step away and 11 of them ended on its cell. Twenty-seven were spent placing a
 barrier instead - forfeiting the move, from a cell adjacent to the thief. So the
 order of business is now pounce, then squeeze, then barrier, then pursue, and
 pursuit aims at where the thief will be rather than where it was.
+
+v7 is one division, and it is the only reason the league table reads the way it
+does. `_pursue` scores a cell as ``d - w_cut * cut``. `d` is the distance to the
+quarry and spans 0..12 on this board; `cut` was a raw count of cells we reach no
+later than the thief and spans 0..49. The searched weight was 0.96, so a cell of
+territory outscored a step of pursuit twelve times over - and the cell that owns
+the most territory is the middle of the board. The doctrine that came out of the
+search was therefore *stand in the middle of the board*, which every sparring
+partner in the pool rewarded with a 100% capture rate because every one of them
+eventually walks into a stationary pursuer.
+
+Two teams did not. Replaying the sealed C001 archive through the raw term
+reproduces the police's play move for move: it predicts STAY on 54 of 102 turns,
+and the police played STAY on 54 of 102 turns - 48 with no barrier to show for
+it - while the gap sat at 2 and 3 for whole sub-games. 0 captures in 6 counted
+police sub-games across two matches, and 90 points, which is both losses.
+Dividing `cut` by the board area makes it the tie-break the docstring always
+said it was: the same term now predicts STAY on none of those 102 turns and
+closes the gap on all of them.
+
+The lab could not have found this, so `learn.opponents.Evader` was added to make
+it findable: an evader that inverts our published field and refuses any cell the
+pursuer can reach in one. Against the shipped police it survives 40 of 40, which
+is the live result; against the fixed one, roughly three in four. Two things were
+tried on top and measured *worse* over 200 seeds, so neither shipped: a safe-set
+endgame that overrode the pursuit at close range (25.5% -> 23.0% at range 3 and
+21.0% at range 5, monotone in how often it fired), and every barrier variant in
+`test_police_pursuit`.
 """
 
 from __future__ import annotations
@@ -82,7 +110,26 @@ from .squeeze import squeeze_play, squeeze_target
 # are therefore a rare, decisive kill shot only.
 #
 # `gap_window` is turns of no closure before we switch from chasing to
-# squeezing, and it is knife-edge: 2 -> 6%, 3 -> 76%, 4 -> 92%, 5 -> 26%.
+# squeezing, and it is knife-edge - but the edge is in a different place under
+# each physics, and both readings below are against `evader`, the only sparring
+# partner that can tell a pursuer from a camper:
+#
+#     subtractive   2 -> 0%   3 -> 0%   4 -> 0%   6 -> 31%   8 -> 29%
+#     book_v1                 3 -> 13%                       8 ->  7%
+#
+# Under subtractive the fix is exact, so chasing works and switching to the
+# squeeze early throws the sub-game away. Under book_v1 the fix lags a turn,
+# chasing a stale cell never closes, and the squeeze is worth reaching sooner.
+# The two doctrines therefore disagree on this key by design, and a search that
+# is allowed to move it under one physics must not be copied to the other.
+#
+# It is also the key that made a re-search actively harmful. Searching the
+# police half under subtractive after the v7 rescale returned `gap_window` 3 -
+# worth 0% against `evader` - while gaining nothing on the pooled objective
+# (14.493 against 14.619 on hold-out), because `evader` is one member in twenty
+# and the other nineteen reward anything. That vector was measured and dropped;
+# the shipped subtractive doctrine is unchanged. The same search under book_v1
+# improved every measure and was adopted.
 
 OPPOSITE = {"north": "south", "south": "north", "east": "west", "west": "east",
             "northeast": "southwest", "southwest": "northeast",
@@ -381,11 +428,30 @@ class PoliceBrain(BrainBase):
             near = view.belief.mass_in({
                 (pos[0] + dr, pos[1] + dc) for dr in (-2, -1, 0, 1, 2) for dc in (-2, -1, 0, 1, 2)
             })
+            # Territory is a FRACTION of the board, never a raw cell count, and
+            # the difference decided the league. Counted raw, `cut` ranges over
+            # 0..49 while `d` ranges over 0..12, so at the searched weight of
+            # 0.96 one cell of territory outscored one step of pursuit twelve
+            # times over - and the cell that owns the most board is the middle
+            # of it. Replayed from the counted match against uoh-ay26, step 10,
+            # police (3,3) and thief (2,4):
+            #
+            #     STAY  d=2 cut=40  ->  -36.38   <- chosen
+            #     N     d=1 cut=28  ->  -25.87
+            #
+            # Closing the gap was worth 1 point and standing still was worth
+            # 11.5, so the police stood still: 17 of 34 turns in that sub-game,
+            # and 0 captures in 6 sub-games across two counted matches. The
+            # search space for `w_cut` is (0, 2), which is only meaningful
+            # against a normalised quantity; the raw count made the same number
+            # mean "ignore the thief". Divided by the board area it is what the
+            # docstring always claimed it was - a tie-break between equally
+            # close cells, taking the one that also owns more ground.
             cut = 0.0
             if theirs:
                 mine = bfs_distances(view.board, pos)
                 cut = sum(1 for cell, theirs_d in theirs.items()
-                          if mine.get(cell, far) <= theirs_d)
+                          if mine.get(cell, far) <= theirs_d) / far
             return (d - self.p.w_cut * cut, reversing, -near, view.rng.random())
 
         # Ambush is legitimate; camping is not. One STAY can pay - an evader may

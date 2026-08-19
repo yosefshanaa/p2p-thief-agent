@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from p2p_pursuit.domain.rules import POLICE, THIEF
 from p2p_pursuit.learn import arena, population
-from p2p_pursuit.strategy.params import Doctrine, active
+from p2p_pursuit.strategy.params import Doctrine
 
 SEEDS = tuple(range(9000, 9012))
 
@@ -37,30 +37,37 @@ def test_a_sub_game_plays_the_regime_it_is_given():
     assert loud[0] in ("capture", "survival")
 
 
-def test_claiming_every_turn_is_what_makes_the_thief_catchable():
-    """The measurement that motivated the split, kept where it can be re-run.
+def test_claiming_every_turn_helps_the_thief_not_the_police():
+    """The regime matters, and it matters the other way round.
 
-    Measured against a **fixed reference thief** - the shipped defaults - not
-    against whatever `config/doctrine.json` currently holds. The claim here is
-    about the *objective*, and an objective test that reads the tuned file
-    starts failing exactly when the tuning succeeds: the current thief survives
-    both regimes outright, which says something about the thief and nothing at
-    all about whether the regime matters.
+    This test used to assert the opposite - that claiming every turn is what
+    makes the thief catchable - on the reasoning that a claim is how a landing
+    becomes a capture. Both halves of that are true and the conclusion was still
+    backwards, because a claim names the cell the *claimant* is standing on, and
+    `turn_engine._answer_claim` collapses the answering side's belief to a delta
+    there. Claiming every turn therefore publishes the police's exact position
+    on every single turn, for free.
+
+    Measured against `learn.opponents.Evader` over 100 hold-out seeds, police
+    capture rate: under `book_v1` 35% claiming-when-it-matters against 0%
+    claiming-always, and under subtractive 21% against 23% - free there only
+    because the thief can already invert our served field. gal-roy1 was played
+    on `book_v1` with `P2P_ALWAYS_CLAIM=true` and converted 0 of 3; every
+    counted match played without it converted 3 of 3. See
+    `tests/unit/test_police_pursuit.py`.
+
+    What survives unchanged is the reason the arena plays *both* regimes: the
+    league is genuinely split on the term, and the two produce materially
+    different games. That is what is asserted here, in the direction the
+    evidence actually points.
     """
     pool = population.build(("mirror", "barrier", "hound", "interceptor"))
     reference = Doctrine()
     quiet = _survival(reference, pool, always_claim=False)
     loud = _survival(reference, pool, always_claim=True)
-    assert loud < quiet, (
-        f"survival {loud:.0%} claiming vs {quiet:.0%} not claiming - if these "
-        f"were equal the regime would not matter and this split would be noise")
-
-
-def test_the_tuned_thief_is_the_reason_this_test_needs_a_fixed_reference():
-    """Pin the improvement that broke the earlier form of the test above."""
-    pool = population.build(("mirror", "barrier", "hound", "interceptor"))
-    assert _survival(active(), pool, always_claim=True) >= \
-        _survival(Doctrine(), pool, always_claim=True)
+    assert loud > quiet, (
+        f"thief survival {loud:.0%} against a police that claims every turn vs "
+        f"{quiet:.0%} against one that does not - the leak should favour the thief")
 
 
 def test_the_split_is_the_same_for_every_candidate_in_a_generation():

@@ -156,6 +156,75 @@ class Camper(BrainBase):
                                                 view.rng.random())))
 
 
+class Evader(BrainBase):
+    """The evader that actually beat us: an exact fix, and territory to stand on.
+
+    Every other thief here reads the *belief* for the pursuer's cell, and the
+    belief is a weak estimate - which is how the lab police converted 760 of 760
+    sub-games while our live police went 0 for 6 against the two teams that
+    evade for real. Those two held the gap at 2 and 3 for whole sub-games, which
+    is not something a blind evader can do. So this one inverts the pursuer's
+    own published field, exactly as our police inverts ours.
+
+    Given the fix, the doctrine is two rules and neither is "run away":
+
+    * **Never be catchable next turn.** We move first; a cell the pursuer can
+      reach in one step is a cell we are captured on. That single constraint,
+      and not distance, is what holds a gap open indefinitely.
+    * **Among safe cells, keep the most doors.** Not distance, and - measured -
+      not territory either: on an open board the count of cells you reach
+      before the pursuer is monotone in distance from it, so a territory rule
+      is a distance rule wearing a disguise, and both walk into the corner the
+      pursuer is herding you toward. Ranking raw mobility first, centrality
+      second, territory last is what actually holds. Against the police as it
+      played the counted matches: territory-first is caught 40/40, mobility
+      first 0/40.
+
+    The result is the standoff from the archive rather than a chase: it sits at
+    the edge of the pursuer's reach, in the open, and refuses to be herded.
+    """
+
+    def __init__(self, *, w_room: float = 1.0) -> None:
+        self.w_room = w_room
+
+    def hunter(self, view: BrainView) -> Cell | None:
+        """The pursuer's cell, from the fix if we have one and the belief if not."""
+        if view.opp_fix is not None and not view.opp_fix_lag:
+            return view.opp_fix
+        if len(view.opp_cells) == 1:
+            return view.opp_cells[0]
+        peak = view.belief.argmax()
+        return peak if view.belief.grid[peak[0]][peak[1]] > 0.0 else None
+
+    def _pick_move(self, view: BrainView) -> Decision:
+        moves = view.board.legal_moves(view.own_pos)
+        hunter = self.hunter(view)
+        if hunter is None:
+            return Decision(move=view.rng.choice(moves))
+        theirs = bfs_distances(view.board, hunter)
+
+        def score(move: str) -> tuple:
+            pos = target_of(view.own_pos, move)
+            gap = theirs.get(pos, FAR)
+            mine = bfs_distances(view.board, pos)
+            # Cells we reach strictly before the pursuer does. This is the
+            # quantity a corner takes away, which is why it needs no corner rule.
+            room = sum(1 for cell, ours_d in mine.items()
+                       if ours_d < theirs.get(cell, FAR))
+            # Lexicographic, and every distance-like quantity ranks BELOW
+            # mobility. From (5,6) with the pursuer on (4,5), the roomier and
+            # further cell is the corner (6,6), and two turns later the corner
+            # is a coffin - which is how a distance- or territory-led evader is
+            # caught 40 times in 40. Doors first, then the middle of the board,
+            # then ground: 0 in 40 against the same pursuer.
+            centre = (view.board.size - 1) / 2
+            edge = abs(pos[0] - centre) + abs(pos[1] - centre)
+            return (gap >= 2, len(view.board.open_neighbors(pos)), -edge,
+                    self.w_room * room, view.rng.random())
+
+        return Decision(move=max(moves, key=score))
+
+
 class Interceptor(BrainBase):
     """A police that inverts the scent field, as we now do - the one to fear.
 

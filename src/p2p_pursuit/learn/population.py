@@ -24,6 +24,7 @@ from ..strategy.params import REPO_ROOT, Doctrine
 from .opponents import (
     BarrierHappy,
     Camper,
+    Evader,
     Greedy,
     Holder,
     Interceptor,
@@ -83,6 +84,9 @@ BUILTIN: dict[str, Member] = {
     # half of the objective is measuring a game the league is not playing.
     "sniper": Member(lambda role: Sniper(), roles=(POLICE,)),
     "holder": Member(lambda role: Holder(), roles=(THIEF,)),
+    #: The only pool member that evades the way the teams who beat us evade.
+    #: Added after a 100% lab capture rate coexisted with 0/6 on the wire.
+    "evader": Member(lambda role: Evader(), roles=(THIEF,)),
     "camper": Member(lambda role: Camper(), roles=(THIEF,)),
     "mirror": Member(ours),
 }
