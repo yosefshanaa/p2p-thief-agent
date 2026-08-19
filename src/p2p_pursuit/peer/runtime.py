@@ -105,7 +105,8 @@ class PeerRuntime:
             identity=interop_identity(
                 self.peer, mcp_url=f"http://0.0.0.0:{self.peer.my_port}/mcp",
                 spec=sysinfo.collect(),
-                counted_games_played=self.prior_counted_games))
+                counted_games_played=self.prior_counted_games),
+            runtime=self)
 
     def start_server(self) -> None:
         serve_in_thread(self.service, host="0.0.0.0", port=self.peer.my_port,

@@ -29,6 +29,8 @@ from .opponents import (
     Interceptor,
     Momentum,
     RandomWalker,
+    Replayer,
+    Sniper,
 )
 
 Factory = Callable[[str], BrainBase]
@@ -45,6 +47,11 @@ class Member:
 
     make: Factory
     roles: tuple[str, ...] = BOTH
+    #: Does this archetype carry state *between* sub-games? A stateful member is
+    #: built once for the whole seed sequence instead of freshly per seed, which
+    #: is the only way the objective can express "the same team, later in the
+    #: same match". Everything else in the pool meets each candidate cold.
+    stateful: bool = False
 
 
 def ours(role: str, doctrine: Doctrine | None = None) -> BrainBase:
@@ -67,6 +74,14 @@ BUILTIN: dict[str, Member] = {
     # scored a flat 10.00 against our evader, so the objective was blind and the
     # search zeroed `corner_penalty` for want of anything that punished a corner.
     "interceptor": Member(lambda role: Interceptor(), roles=(POLICE,)),
+    # The pool's only member with a memory, and the only one that can see the
+    # failure that lost us the uoh-ay26 friendly 6-0: a deterministic evader
+    # walking into the same trap cell in every sub-game of a match.
+    "replayer": Member(lambda role: Replayer(), roles=(POLICE,), stateful=True),
+    # 87% of our archived thief deaths are barrier kills and nothing else in the
+    # pool plays one at the evader's actual cell. Without this member the thief
+    # half of the objective is measuring a game the league is not playing.
+    "sniper": Member(lambda role: Sniper(), roles=(POLICE,)),
     "holder": Member(lambda role: Holder(), roles=(THIEF,)),
     "camper": Member(lambda role: Camper(), roles=(THIEF,)),
     "mirror": Member(ours),

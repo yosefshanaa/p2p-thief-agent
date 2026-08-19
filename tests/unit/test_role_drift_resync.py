@@ -104,3 +104,75 @@ def test_complementary_roles_are_left_alone(runtime):
 
     assert series_protocol.rehandshake_if_needed(runtime, 3, lambda m: None) is True
     assert runtime.engine.role == mine, "no drift, nothing to adopt"
+
+
+def test_the_correction_survives_the_next_boundary(runtime):
+    """A drift is permanent until somebody resyncs, so the fix must be too.
+
+    Correcting only the current sub-game's role leaves the schedule itself
+    drifted: the next boundary re-derives from our own index and hands us the
+    colliding role again, so the series alternates between playing and
+    forfeiting. The archive shows exactly that shape - collisions on 3 AND 5,
+    on 2 AND 4 - never one alone.
+    """
+    engine = runtime.engine
+    engine.peer = type(engine.peer)(**{**engine.peer.__dict__, "alternate_roles": True})
+    engine.begin_sub_game(3)
+    took = engine.adopt_complementary_role(3)
+
+    for n in (4, 5, 6):
+        engine.begin_sub_game(n)
+        took = THIEF if took == POLICE else POLICE
+        assert engine.role == took, (
+            f"sub-game {n} re-derived the drifted role; the correction did not stick")
+
+
+def test_the_starting_cell_follows_the_adopted_role(runtime):
+    engine = runtime.engine
+    engine.begin_sub_game(3)
+    engine.adopt_complementary_role(3)
+    shared = engine.shared
+    expected = shared.cop_start if engine.role == POLICE else shared.thief_start
+    assert tuple(engine.own_pos) == tuple(expected)
+
+
+def test_an_inbound_turn_that_claims_our_role_is_survived_not_forfeited(runtime):
+    """The path with no recovery at all until now: a peer that does not
+    re-handshake per sub-game announces its drift by *playing*, not by
+    negotiating."""
+    from p2p_pursuit.infra.interop_bridge import ReferenceBridge
+
+    engine = runtime.engine
+    engine.peer = type(engine.peer)(**{**engine.peer.__dict__, "alternate_roles": True})
+    engine.begin_sub_game(3)
+    mine = engine.role
+    bridge = ReferenceBridge(runtime.service, None, grid_size=engine.shared.grid_size,
+                             terms={}, identity={})
+
+    answer = bridge.on_receive_turn({"sender": mine, "step": 1, "smell_grid": {},
+                                     "commit": "", "hint": ""})
+
+    assert engine.end is None, "a recoverable collision must not file a technical loss"
+    assert engine.role != mine, "we must take the other side"
+    assert answer.get("ok") is not False
+
+
+def test_a_collision_after_we_have_moved_is_still_a_loss(runtime):
+    """Swapping role mid-sub-game would discard steps we have already sealed and
+    sent, which is an audit failure - the same technical loss by a longer route."""
+    from p2p_pursuit.infra.interop_bridge import ReferenceBridge
+
+    engine = runtime.engine
+    engine.peer = type(engine.peer)(**{**engine.peer.__dict__, "alternate_roles": True})
+    engine.begin_sub_game(3)
+    engine.my_steps = 4                      # we are already committed to this one
+    mine = engine.role
+    bridge = ReferenceBridge(runtime.service, None, grid_size=engine.shared.grid_size,
+                             terms={}, identity={})
+
+    answer = bridge.on_receive_turn({"sender": mine, "step": 5, "smell_grid": {},
+                                     "commit": "", "hint": ""})
+
+    assert answer == {"ok": False, "error": "role collision"}
+    assert engine.end is not None and engine.end.ending == "technical_loss"
+    assert engine.role == mine

@@ -60,32 +60,36 @@ def test_the_two_doctrines_are_actually_different_vectors() -> None:
     assert len(differing) >= 10, f"only {differing} differ - was the search actually run?"
 
 
-def test_the_thief_half_moved_where_the_physics_hurt_it() -> None:
-    """Under subtractive decay the thief is in more danger, and pays for caution.
+def test_neither_doctrine_lets_the_search_zero_out_corner_discipline() -> None:
+    """Both physics punish the edge. Which punishes it *more* is no longer pinned.
 
-    v7 asserted this as `stay_penalty` and `corner_penalty` both rising, on the
-    reasoning that a subtractive field leaks the thief's trail more brightly.
-    Half of that survived the v8 re-search and half inverted, for a reason worth
-    recording: the leak is now **total under both models** - the field is
-    invertible either way - and the only difference is the *lag*. Subtractive
-    serves after emitting, so its fix is the pursuer's cell *now* rather than one
-    step ago, and exact machinery displaces the diffuse kind.
+    This test asserted `sub.corner_penalty > book.corner_penalty` for three
+    searches, on the reasoning that subtractive leaks the thief's exact cell
+    while book_v1's argmax was right 1 time in 9 - so the edge was more
+    expensive under subtractive, where the pursuer knows where you are.
 
-    What survived a third search is corner discipline going **up** (0.244 ->
-    0.304): the field leaks harder here and the position is exact, so the edge is
-    genuinely more expensive. What did not survive is everything else - see the
-    note below the assertion.
+    That reasoning has been removed by its own fix. `tracking.unique_peak` now
+    recovers the emitter under book_v1 as exactly as under subtractive (12/12
+    against a native field, where it used to be 10/12 and 0/12 against a kernel
+    snapshot), so the two models no longer differ in whether the position is
+    known - only in the one-step lag. The asymmetry the ordering rested on is
+    gone, and the next search duly put book's corner discipline ABOVE
+    subtractive's (0.631 against 0.304). Two earlier assertions in this test
+    flipped the same way and were retired for the same reason: an ordering
+    without a live mechanism behind it is noise, and pinning it only guarantees
+    a test edit after every re-tune.
+
+    What is worth pinning is the thing that actually broke once. With no pool
+    member able to punish a corner, a thief search drove `corner_penalty` to
+    0.001 - and 54 of 54 of our archived thief deaths are on the outer two
+    rings. So: both doctrines must still carry real corner discipline, whichever
+    of them carries more.
     """
-    book, sub = params.active(PAIRS[BOOK_V1]), params.active(PAIRS[SUBTRACTIVE_V1])
-    assert sub.corner_penalty > book.corner_penalty, "the edge stays more expensive"
-
-    # `w_strike` and `stay_penalty` were asserted here too and BOTH flipped on the
-    # next search - w_strike 9.14 -> 7.93 (now below the book vector), stay_penalty
-    # 0.00 -> 0.17 (now above it). Neither reversal has a mechanism behind it, so
-    # they were reading noise as structure and pinning them only guaranteed a test
-    # edit after every re-tune. Corner discipline is the one ordering with a reason
-    # - the field leaks harder here and the position is exact - and the one that
-    # has survived three independent searches.
+    for model, path in sorted(PAIRS.items()):
+        doctrine = params.active(path)
+        assert doctrine.corner_penalty > 0.05, (
+            f"{model} has effectively no corner discipline "
+            f"({doctrine.corner_penalty}) - has the pool stopped punishing the edge?")
 
 
 def test_a_contract_selects_both_together_or_neither() -> None:

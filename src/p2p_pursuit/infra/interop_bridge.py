@@ -33,8 +33,13 @@ class ReferenceBridge:
     """One match's worth of translation between the two dialects."""
 
     def __init__(self, service: Any, link: Any, *, grid_size: int,
-                 terms: dict[str, Any], identity: dict[str, Any]) -> None:
+                 terms: dict[str, Any], identity: dict[str, Any],
+                 runtime: Any = None) -> None:
         self.service, self.link = service, link
+        #: The runtime, when one owns us - needed only to re-point the outbound
+        #: link after a role swap. Optional so the bridge stays constructible on
+        #: its own in tests.
+        self.runtime = runtime
         self.grid_size, self.terms, self.identity = grid_size, terms, identity
         self.agreements: queue.Queue = queue.Queue()
         self._commit_hash: str | None = None
@@ -73,9 +78,10 @@ class ReferenceBridge:
         engine = self.service.engine
         if message.get("sender") == engine.role:
             with self.service.locked():
-                engine.declare_technical(
-                    engine.other, f"both peers claim role {engine.role!r}")
-            return {"ok": False, "error": "role collision"}
+                if not self._resolve_role_collision(engine):
+                    engine.declare_technical(
+                        engine.other, f"both peers claim role {engine.role!r}")
+                    return {"ok": False, "error": "role collision"}
         self._note_scent_channel(message, engine.sub_game)
         parts = codec.from_turn_message(message, sub_game=engine.sub_game,
                                         grid_size=self.grid_size)
@@ -86,6 +92,43 @@ class ReferenceBridge:
         if parts["claim_response"] or parts["win_claim"]:
             self._apply_side_channels(parts)
         return {"ok": True}
+
+    def _resolve_role_collision(self, engine: Any) -> bool:
+        """Take the other side rather than forfeit the sub-game. True if we did.
+
+        The re-handshake path has done this since the orcai-mj post-mortem, but
+        a peer configured with `handshake_per_sub_game` off never takes that
+        path - its first sign of a drifted index is a turn that names our own
+        role, and this handler forfeited on the spot. Ten sub-games in the
+        archive end "both peers claim role X", and not one of them is the first
+        failure of its match: they are all the *second*, where one abandoned
+        sub-game desynchronised the two indices and every later sub-game of the
+        same parity collided. That is how a single 502 has repeatedly taken a
+        whole six-game series.
+
+        Only before we have committed anything to this sub-game. Swapping role
+        mid-sub-game would re-enter it and discard steps we have already sealed
+        and sent, turning a recoverable collision into an audit failure, which
+        is the same technical loss by a longer route.
+        """
+        # Read defensively: a series that does not alternate has no schedule to
+        # be drifted and must still forfeit, which is also what an engine that
+        # cannot answer these should do.
+        if not getattr(getattr(engine, "peer", None), "alternate_roles", False):
+            return False
+        adopt = getattr(engine, "adopt_complementary_role", None)
+        if not callable(adopt) or getattr(engine, "my_steps", 0):
+            return False
+        took = adopt(engine.sub_game)
+        self.service.my_handshake["role"] = took
+        log.info("sub-game %s: they claim our role; taking %r instead of "
+                 "forfeiting - their index has drifted from ours",
+                 engine.sub_game, took)
+        if self.runtime is not None:
+            from ..peer.series_protocol import retarget_link
+
+            retarget_link(self.runtime, took, lambda m: log.info("%s", m))
+        return True
 
     #: Turn to judge the scent channel on. NOT turn 1: a lagged trail is
     #: legitimately empty on the opening move - gal-roy1 send theirs lag-1, so

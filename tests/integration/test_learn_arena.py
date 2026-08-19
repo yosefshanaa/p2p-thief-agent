@@ -22,20 +22,55 @@ def pool():
     return population.build(("random", "greedy", "holder"))
 
 
-def trajectory(pool_member, role: str, seed: int = 90) -> tuple[str, ...]:
-    """The moves one archetype actually plays, from a fixed opening."""
+def trajectory(pool_member, role: str, seed: int = 90, against=None) -> tuple[str, ...]:
+    """The moves one archetype actually plays, from a fixed opening.
+
+    A ``stateful`` member is measured on its SECOND sub-game, because its first
+    is not where its behaviour lives: `replayer` is defined entirely by what it
+    does with a memory of the sub-game before, and on a cold start it correctly
+    plays its parent's game. Measuring the cold start would either fail a
+    de-duplication test it does not actually violate, or - worse - be silenced by
+    giving the archetype a pointless opening quirk to tell it apart by. The
+    objective plays it 23 sub-games warm to 1 cold, so warm is the honest sample.
+    """
     from p2p_pursuit.peer.local_match import play_sub_game
     from p2p_pursuit.peer.turn_engine import TurnEngine
 
     shared = arena.default_shared()
     brains = {role: pool_member.make(role)}
+    if against is not None:
+        brains[POLICE if role == THIEF else THIEF] = against
     brains.setdefault(POLICE, population.ours(POLICE))
     brains.setdefault(THIEF, population.ours(THIEF))
-    police = TurnEngine(POLICE, shared, arena.QUIET, brain=brains[POLICE], seed=seed)
-    thief = TurnEngine(THIEF, shared, arena.QUIET, brain=brains[THIEF], seed=seed + 1)
-    play_sub_game(police, thief)
-    mine = police if role == POLICE else thief
-    return tuple(r["move"] for r in mine.my_records if "move" in r)
+
+    def once() -> TurnEngine:
+        police = TurnEngine(POLICE, shared, arena.QUIET, brain=brains[POLICE], seed=seed)
+        thief = TurnEngine(THIEF, shared, arena.QUIET, brain=brains[THIEF], seed=seed + 1)
+        play_sub_game(police, thief)
+        return police if role == POLICE else thief
+
+    if getattr(pool_member, "stateful", False):
+        once()
+    return tuple(r["move"] for r in once().my_records if "move" in r)
+
+
+def fingerprint(pool_member, role: str) -> tuple:
+    """How an archetype plays against SEVERAL counterparties, not just one.
+
+    A pursuer's behaviour is a function of the evader it faces, so one sample
+    cannot tell two archetypes apart that differ only in a situation the sample
+    never reaches. `sniper` bars the cell the evader is standing on, which our
+    own thief never allows - it refuses to end a move inside the pursuer's reach
+    - so against that one counterparty it is indistinguishable from its parent
+    and against a naive one it is not. Sampling a single opponent would either
+    fail this test for a member that is genuinely distinct, or push someone to
+    give the archetype a cosmetic quirk purely to be told apart by, which would
+    be worse than the duplicate it was hiding.
+    """
+    from p2p_pursuit.learn.opponents import RandomWalker
+
+    others = (None, RandomWalker())
+    return tuple(trajectory(pool_member, role, against=o) for o in others)
 
 
 def test_a_sub_game_ends_and_pays_the_configured_table(pool):
@@ -99,7 +134,7 @@ def test_no_two_archetypes_play_the_same_game_on_the_same_side():
         for name, member in population.build().items():
             if role not in member.roles:
                 continue
-            moves = trajectory(member, role)
+            moves = fingerprint(member, role)
             assert moves not in seen, f"{name} plays {seen[moves]}'s game as {role}"
             seen[moves] = name
 

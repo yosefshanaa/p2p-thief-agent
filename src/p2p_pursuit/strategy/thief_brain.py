@@ -43,6 +43,7 @@ from ..domain.board import Cell, target_of
 from ..domain.brains_base import BrainBase, BrainView
 from ..domain.hints import region_of
 from ..domain.rules import Decision
+from .mixing import choose
 from .params import Doctrine, active
 from .pathing import bfs_distances, scent_centroid
 from .predict import spread, strike_zone
@@ -122,6 +123,7 @@ class ThiefBrain(BrainBase):
             if projected is not None and dist.get(projected, 99) <= 2:
                 s -= self.p.w_lead_risk  # he is heading here: do not be here when he arrives
             s += self.p.w_mobility * len(view.board.open_neighbors(pos))
+            s += self.p.w_safe2 * self._safe_exits(view, pos)
             s += self.p.w_mobility2 * self._mobility2(view, pos)
             # Room we own, and the trap gradient when it collapses. Openness
             # counts doors; this counts the space behind them that the pursuer
@@ -170,7 +172,7 @@ class ThiefBrain(BrainBase):
         moves = list(view.board.legal_moves(view.own_pos))
         if self._last_move == "STAY":
             moves = [m for m in moves if m != "STAY"] or moves
-        best = max(moves, key=score)
+        best = choose(moves, score, self.p.mix_margin, view.rng, prefer=max)
         self._run_len = self._run_len + 1 if best == self._last_move else 1
         self._last_move = best
         self._prev_cell = view.own_pos
@@ -224,6 +226,29 @@ class ThiefBrain(BrainBase):
     #: would wall off thirteen cells, a quarter of the board, and leave the
     #: thief with nowhere that scores at all.
     CLOSED = 0.5
+
+    def _safe_exits(self, view: BrainView, pos: Cell) -> int:
+        """How many ways out of ``pos`` the pursuer cannot also be standing on.
+
+        Counted one ply further out than :meth:`_danger_at`. That term asks
+        whether the pursuer can take the cell we are about to occupy; this asks
+        whether, having occupied it, we will have anywhere to go - the pursuer
+        moves once more before our next move resolves, so the cells it can
+        reach in ``lag + 2`` are the ones our exits must avoid.
+
+        This is the quantity a cut-off collapses and a chase does not.
+        `w_mobility` counts open neighbours, which scores a pocket as roomy
+        right up to the turn its mouth closes, and every archetype in the pool
+        that merely chases fails to catch this thief at all. The one pursuer
+        that beats it is our own police, whose whole method is to take the
+        ground rather than close the distance.
+        """
+        exits = [pos, *view.board.open_neighbors(pos)]
+        if view.opp_fix is None:
+            return len(exits)
+        theirs = bfs_distances(view.board, view.opp_fix)
+        reach = view.opp_fix_lag + 2
+        return sum(1 for cell in exits if theirs.get(cell, 99) > reach)
 
     def _escape_room(self, view: BrainView, pos: Cell) -> int:
         """Cells reachable from ``pos`` without walking through the pursuer.
