@@ -10,11 +10,21 @@ archive is the audit trail for five counted matches.
 from __future__ import annotations
 
 import hashlib
+import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
-from p2p_pursuit.learn.review import death_corner_share, format_review, review
+from p2p_pursuit.learn.counterfactual import replay, served_fields
+from p2p_pursuit.learn.review import (
+    _model_of,
+    _our_steps,
+    death_corner_share,
+    format_review,
+    review,
+)
+from p2p_pursuit.strategy.params import active
 
 MATCHES = Path("matches")
 
@@ -101,3 +111,68 @@ def _digest(root: Path) -> str:
             sha.update(path.name.encode())
             sha.update(str(path.stat().st_size).encode())
     return sha.hexdigest()
+
+
+def test_the_reconstruction_the_counterfactual_rests_on(archive):
+    """The opponent's served field is not archived. Ours is - so check on ours.
+
+    Every claim :mod:`~p2p_pursuit.learn.counterfactual` makes depends on being
+    able to rebuild a served field from the trajectory that emitted it, because
+    that is the only way the tracker can be shown what it would really have
+    seen. The archive stores our own fields and our own cells, so the
+    reconstruction is checkable against ground truth on exactly the operation it
+    will be trusted for.
+    """
+    checked = mismatched = 0
+    for path in sorted(MATCHES.rglob("log_*.json")):
+        log = json.loads(path.read_text(encoding="utf-8"))
+        if log.get("report_type") != "sub_game_log":
+            continue
+        ours = _our_steps(log)
+        scented = [s for s in ours if s["scent"]]
+        if len(scented) < 3:
+            continue
+        rebuilt = served_fields({s["step"]: s["after"] for s in ours}, _model_of(scented))
+        for step in scented:
+            checked += 1
+            mismatched += rebuilt[step["step"]] != step["scent"]
+    assert checked > 2000, f"only {checked} served fields to check against"
+    assert mismatched == 0, f"{mismatched} of {checked} rebuilt fields differ from the archive"
+
+
+def test_the_two_pathologies_the_review_named_are_gone(archive):
+    """The 11-of-76 is a fact about the doctrine of the day, not about this one.
+
+    The review counts what was played: 27 of the misses forfeited the move to a
+    barrier from a cell adjacent to the thief, and 15 stood still. Re-deciding
+    the same 76 states with the shipped vector, both are zero and conversions
+    have more than doubled. Pinned so that a fixed defect cannot be rediscovered
+    from its own scar - and asserted against `archive` so the two counts are
+    always read off the same set of logs.
+    """
+    now = replay(active(Path("config/doctrine.json")), MATCHES)
+    assert now.chances == archive.chances, "the two tools disagree about what a chance is"
+    assert archive.lost_to_barrier == 27 and archive.lost_standing_still == 15
+    assert now.lost_to_barrier == 0, "still trading a capture for a wall"
+    assert now.lost_standing_still == 0, "still standing still beside the thief"
+    assert now.converted >= 2 * archive.converted
+
+
+def test_the_capture_term_is_what_took_the_remainder(archive):
+    """`w_pounce` earns its place on this measurement, so this is the measurement.
+
+    The floor cannot be lowered to collect these - the pounce returns, so a
+    lower floor stops the pursuit running at all - and the term is the
+    alternative. Compared on the same states rather than against a remembered
+    number, because the rest of the vector has moved since it was tuned.
+    """
+    shipped = active(Path("config/doctrine.json"))
+    assert shipped.w_pounce > 0, "shipped with the term off"
+    without = replay(replace(shipped, w_pounce=0.0), MATCHES)
+    assert replay(shipped, MATCHES).converted > without.converted
+
+
+def test_the_counterfactual_does_not_touch_a_single_byte_either():
+    before = _digest(MATCHES)
+    replay(active(Path("config/doctrine.json")), MATCHES)
+    assert _digest(MATCHES) == before

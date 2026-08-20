@@ -11,6 +11,7 @@
   "police_truth_rate": 0.2,
   "pounce_floor": 0.405792,
   "flee_bias": 3.819089,
+  "w_pounce": 1.0,
   "w_cut": 0.229754,
   "w_mobility": 1.177039,
   "w_mobility2": 0.124681,
