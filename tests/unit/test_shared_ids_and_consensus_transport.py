@@ -21,9 +21,9 @@ the score 70-50 - and `confirmed: false` on both, for two independent reasons.
 from __future__ import annotations
 
 import dataclasses
+from pathlib import Path
 
 from p2p_pursuit.report import consensus
-from p2p_pursuit.shared.config import PeerConfig
 
 #: `consensus_row` reads the runtime's own row shape - `index` and `ending` -
 #: and renames them into the signed document's `sub_game_number` and `result`.
@@ -71,25 +71,34 @@ def test_the_row_order_of_the_two_peers_does_not_change_the_digest():
     assert a == b
 
 
-def test_a_match_that_signs_a_mutual_document_adopts_the_shared_ids():
-    """The fix, as the condition rather than as its consequence.
+def test_every_dialect_adopts_the_shared_ids(tmp_path):
+    """The fix, exercised through the method rather than restated beside it.
 
-    `_adopt_shared_ids` must run whenever the series will be signed, whichever
-    dialect carries it. Asserted against the predicate the method uses, so it
-    keeps meaning something if the method is refactored.
+    This test used to re-implement `_adopt_shared_ids`'s gate as a local
+    expression and assert against that, which is why it passed for as long as
+    the gate was wrong: it asserted `not adopts("native", False)` - a native
+    match files under its own id - and the gate and the test agreed with each
+    other and not with the peer, whose `mutual_signature` is written into every
+    result whatever dialect carried it. So it now drives real runtimes, and all
+    four combinations must land on the same derived pair.
+
+    See `tests/unit/test_shared_game_ids.py` for the rest of the rule, including
+    what happens when the opponent will not name itself.
     """
-    from p2p_pursuit.peer.runtime import REFERENCE
+    from p2p_pursuit.domain.game_ids import reference_game_id
+    from p2p_pursuit.peer.runtime import PeerRuntime
 
-    def adopts(dialect: str, series_consensus: bool) -> bool:
-        peer = dataclasses.replace(PeerConfig(raw={}, group_name="t", group_id="t"),
-                                   interop_dialect=dialect,
-                                   series_consensus=series_consensus)
-        return not (peer.interop_dialect != REFERENCE and not peer.series_consensus)
-
-    assert adopts(REFERENCE, False), "every reference match, as before"
-    assert adopts(REFERENCE, True)
-    assert adopts("native", True), "the case that could not confirm"
-    assert not adopts("native", False), "a native match still files under its own id"
+    base = Path(__file__).resolve().parent.parent.parent / "config" / "police"
+    derived = set()
+    for dialect in ("native", "reference"):
+        for consensus_on in (False, True):
+            rt = PeerRuntime("police", base, out_dir=tmp_path, seed=1)
+            rt.peer = dataclasses.replace(rt.peer, interop_dialect=dialect,
+                                          series_consensus=consensus_on)
+            rt._adopt_shared_ids({"group_id": "uoh-other"})
+            derived.add((rt.game_id, rt.game_uid))
+    assert len(derived) == 1, f"the dialect still changes the ids: {derived}"
+    assert next(iter(derived))[0] == reference_game_id("ahk-yosi", "uoh-other")
 
 
 def test_the_verifier_reads_both_shapes_a_reveal_arrives_in():

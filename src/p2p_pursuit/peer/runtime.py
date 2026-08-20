@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any
 
 from ..domain import negotiation
-from ..domain.crypto import REFERENCE
 from ..domain.game_ids import (
+    UNKNOWN_GROUP,
     make_game_id,
     new_game_uid,
     reference_game_id,
@@ -58,7 +58,7 @@ class PeerRuntime:
         #: the peer's terms comparison on the one run meant to prove they agree.
         self.signed_num_games = self.peer.signed_num_games or self.num_games
         self.game_uid = new_game_uid()
-        self.game_id = make_game_id(self.peer.group_id or "us", "opponent")
+        self.game_id = make_game_id(self.peer.group_id or "us", UNKNOWN_GROUP)
         self._out_root = out_dir
         #: Distinguishes two runs against the same opponent; see `_adopt_shared_ids`.
         self._run_stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
@@ -206,33 +206,42 @@ class PeerRuntime:
         """Re-derive the game ids the way a reference-family peer does.
 
         Ours are minted in `__init__`, before the opponent's slug is known: the
-        id carries a timestamp and the placeholder "opponent", and the uid is
-        random. Both are fine for a match where each side files under its own id
-        - and impossible for a *mutual* signature, whose first key is `game_id`.
-        The derived pair comes from the agreed terms and the two slugs, so both
-        peers reach the same value without exchanging it.
+        id carries a timestamp and a placeholder, and the uid is random. Both
+        are fine for a match where each side files under its own id, and
+        impossible for a *mutual* signature, whose first key is `game_id`.
+        `make_game_id` stamps to the second, so two peers agree only when their
+        clocks land in the same second - 1.5% of construction pairs inside one
+        process, and never across two machines started minutes apart. The
+        derived pair has no clock term: it comes from the agreed terms and the
+        two slugs, so both peers reach it without exchanging it.
 
-        The gate is what needs the shared pair, not which dialect we speak.
-        This used to return early on anything but `reference`, on the reasoning
-        that a native match files under its own id - true, and beside the point
-        the moment `series_consensus` is also on. That pairing is legal, it is
-        what two kit-built peers would agree, and it could not confirm: each side
-        stamps its own timestamp into `game_id` and its own random `game_uid`,
-        which are the first two keys of the consensus document, so the digests
-        differ by construction. Found by playing a full six-sub-game series
-        between two of our own peers over real HTTP - twelve `Verified OK`
-        audits, both sides agreeing the score, and `confirmed: false` on both.
-        `P2P_GAME_ID` was silently ignored on that path for the same reason.
+        The gate is knowing who the opponent is - not which dialect we speak,
+        and not whether we asked for a consensus digest. Both narrower gates
+        have been here. Dialect first, on the reasoning that a native match
+        files under its own id: true of the *directory*, and beside the point
+        for the document, since `mutual_signature` is written into every result
+        we file. Then dialect-or-consensus, which fixed the pairing that could
+        not confirm - two kit-built peers, twelve `Verified OK` audits, both
+        sides agreeing the score, and `confirmed: false` on both. That still
+        left the plain native match signing a document the opponent cannot
+        reproduce, and it went unnoticed only because every opponent so far
+        happens to speak the reference dialect.
 
-        Safe to rebind here: this runs after the handshake and before the first
-        artifact is written.
+        An *unknown* slug is a stop rather than a placeholder: deriving against
+        "opponent" agrees with nobody while discarding the locally-unique pair
+        we already hold. Safe to rebind either way - this runs after the
+        handshake and before the first artifact is written.
         """
-        if self.peer.interop_dialect != REFERENCE and not self.peer.series_consensus:
-            return
         from ..infra.interop_codec import interop_terms
 
-        their_gid = (theirs or {}).get("group_id") or "opponent"
         my_gid = self.peer.group_id or "us"
+        their_gid = (theirs or {}).get("group_id") or ""
+        if not their_gid or their_gid == UNKNOWN_GROUP:
+            _log(f"[{self.role}] opponent sent no group_id; keeping our own "
+                 f"{self.game_id} / {self.game_uid}. Both are locally minted, so "
+                 "`mutual_signature` will differ from theirs however well the "
+                 "series agrees.")
+            return
         terms = interop_terms(self.shared, num_games=self.signed_num_games)
         # A mutually agreed label replaces the derived id when both teams set the
         # same one. It is a top-level key of the consensus object, so an override
