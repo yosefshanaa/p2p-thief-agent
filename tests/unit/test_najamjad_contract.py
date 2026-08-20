@@ -336,3 +336,28 @@ def test_a_door_with_only_stale_agreements_times_out_rather_than_hanging() -> No
     bridge.agreements.put({"sub_game_number": 1})
     with pytest.raises(LinkError, match="never sent its agreement"):
         bridge._agreement_for(3, timeout=0.2)
+
+
+def test_the_counted_contract_mails_the_lecturer_and_the_friendly_never_does() -> None:
+    """The one line that differs between the two files, and the only one that
+    cannot be got wrong twice: a friendly filed to the lecturer reads as THE
+    counted encounter, and the book allows exactly one per pair."""
+    friendly = _env_of("config/opponents/najamjad.env")
+    counted = _env_of("config/opponents/najamjad-counted.env")
+    lecturer = "rmisegal+uoh26finalgame@gmail.com"
+
+    assert friendly["P2P_EMAIL_RECIPIENT"] == "apexmediamind@gmail.com"
+    assert counted["P2P_EMAIL_RECIPIENT"] == lecturer
+    assert counted["P2P_EMAIL_MODE"] == friendly["P2P_EMAIL_MODE"] == "send"
+
+
+def test_the_two_contracts_agree_on_everything_except_the_recipient() -> None:
+    """A counted series must be played on the terms the warm-up proved. Any
+    other drift between these two files is a setting that was never rehearsed.
+    """
+    friendly = _env_of("config/opponents/najamjad.env")
+    counted = _env_of("config/opponents/najamjad-counted.env")
+    differing = {k for k in set(friendly) | set(counted)
+                 if friendly.get(k) != counted.get(k)}
+    assert differing == {"P2P_EMAIL_RECIPIENT"}, (
+        f"unrehearsed drift between friendly and counted: {sorted(differing)}")
