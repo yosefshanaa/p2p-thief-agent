@@ -147,6 +147,26 @@ class EngineState:
                 self.set_role(role)
         self.start_sub_game(n)
 
+    def reoffer_sub_game(self, n: int) -> None:
+        """Re-enter sub-game ``n``, discarding the attempt that abandoned.
+
+        For a peer that re-offers a failed window under its own number rather
+        than advancing past it (`PeerConfig.window_reoffers`). Everything the
+        attempt built is thrown away; only the index survives.
+
+        The ledger eviction is the whole subtlety, and it has to happen in this
+        order. `freeze_audit` is write-ONCE per index, and `start_sub_game`
+        freezes on the way in - so the abandoned attempt seals itself under
+        ``n`` before the reset, and a later `freeze_audit` for the replay finds
+        ``n`` already present and silently keeps the failed one. We would then
+        reveal an empty package for a sub-game we really played, which is a
+        failed audit and a technical loss with no visible cause. Popping *after*
+        `begin_sub_game` discards the corpse and leaves the index free for the
+        replay to claim.
+        """
+        self.begin_sub_game(n)
+        self.audit_ledger.pop(n, None)
+
     def start_sub_game(self, n: int) -> None:
         # Seal the outgoing sub-game's reveal before its records are wiped. A
         # boundary can be crossed by our own series loop OR by an inbound

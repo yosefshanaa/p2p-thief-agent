@@ -25,6 +25,7 @@ from ..domain.crypto import reference_commit, verify_reference_record
 from ..domain.game_ids import UNKNOWN_GROUP
 from ..domain.rules import POLICE, THIEF
 from ..shared import sysinfo
+from ..shared.config import WIRE_ROLE_NAMES
 
 log = logging.getLogger(__name__)
 
@@ -85,7 +86,8 @@ def grid_to_scent(grid: dict[str, Any], size: int) -> Matrix:
 
 
 def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any],
-                     counted_games_played: int = 0) -> dict[str, Any]:
+                     counted_games_played: int = 0,
+                     public_doors: dict[str, str] | None = None) -> dict[str, Any]:
     """Our group identity in the shape their declaration builder demands.
 
     Their ``group_block`` indexes ``mcp_servers``, ``llm_model`` and ``spec``
@@ -108,14 +110,27 @@ def interop_identity(peer: Any, *, mcp_url: str, spec: dict[str, Any],
     amireman reads. Neither spelling is more correct, so both go out - the cost
     is one key and the alternative is a refusal at negotiation for a value we
     were always willing to publish.
+
+    ``mcp_servers`` is the address an opponent dials us back on, and it is worth
+    more care than it looks. ``mcp_url`` is what the process can see - the
+    address it *binds*, which behind a tunnel is `0.0.0.0:<port>` and reachable
+    by nobody. Publishing it named one unreachable door for both roles while we
+    in fact run two processes on two ports, so a peer whose handshake recovery
+    re-sends its agreement "to the address your identity declares" (najamjad
+    §3.1) dials a loopback address twice and reads us as offline. `public_doors`
+    carries the real per-role URLs when the deployment knows them; the bind
+    address remains the fallback, which is honest for a local match.
     """
     commit = sysinfo.git_commit()
+    doors = {WIRE_ROLE_NAMES.get(role, role): url
+             for role, url in (public_doors or {}).items() if url}
     return {
         "group_id": peer.group_id,
         "group_name": peer.group_name,
         "members": list(peer.members),
         "repos": dict(peer.repos),
-        "mcp_servers": {"cop": mcp_url, "thief": mcp_url},
+        "mcp_servers": {"cop": doors.get("cop", mcp_url),
+                        "thief": doors.get("thief", mcp_url)},
         "llm_model": peer.llm_model or "template",
         "counted_games_played": counted_games_played,
         "prior_counted_games": counted_games_played,

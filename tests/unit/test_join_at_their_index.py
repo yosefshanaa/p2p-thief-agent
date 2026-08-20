@@ -47,7 +47,10 @@ def test_a_missing_or_malformed_index_changes_nothing(runtime):
 
 def test_the_series_loop_starts_where_we_joined(runtime, monkeypatch):
     played: list[int] = []
-    monkeypatch.setattr(runtime, "play_sub_game", played.append)
+    # `play_window` is the loop's unit, not `play_sub_game`: a window may be
+    # played more than once when it is re-offered under its own number, and what
+    # this test is about is which indices the loop visits at all.
+    monkeypatch.setattr(runtime, "play_window", played.append)
     monkeypatch.setattr("p2p_pursuit.peer.runtime_reports.finish_sub_game",
                         lambda rt, n, log: {"index": n})
     monkeypatch.setattr(runtime, "build_result", lambda: {})

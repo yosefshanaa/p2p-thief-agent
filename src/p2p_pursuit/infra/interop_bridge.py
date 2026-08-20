@@ -17,6 +17,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import queue
+import time
 from datetime import UTC, datetime
 from typing import Any
 
@@ -301,13 +302,48 @@ class ReferenceBridge:
         return {"ok": bool(self.link.list_tools(timeout=timeout))}
 
     def handshake(self, payload: dict, timeout: float | None = None) -> dict:
-        """Push our signed agreement, then wait for theirs on the inbox."""
+        """Push our signed agreement, then take theirs for THIS window off the inbox."""
         self.link.negotiate(self._signed(), timeout=timeout)
+        theirs = self._agreement_for(self.service.engine.sub_game, timeout or 60)
+        return codec.handshake_from_agreement(theirs, mine=payload, terms=self.terms)
+
+    def _agreement_for(self, n: int, timeout: float) -> dict:
+        """Their agreement for window ``n``, discarding ones already settled.
+
+        The inbox is a FIFO and this used to take whatever was oldest, which is
+        wrong against any peer that retries - and retrying into a busy peer is
+        normal, specified behaviour, not a fault. A peer running two processes
+        against our one hands us the same problem from the other direction: its
+        police handshakes window N+1 at our single door while we are still mid
+        window N, and every one of its retries leaves another agreement behind.
+
+        Taking the oldest then consumes one stale agreement per boundary, for
+        the rest of the series: after a burst of k retries we open every later
+        window on an agreement k-1 windows out of date, and the queue never
+        drains. najamjad named this exact scenario before we dialled, on the
+        strength of a 2026-08-02 session where 58 negotiates arrived into one
+        game state - which was ours.
+
+        Only *older* agreements are dropped, never newer ones. A window we have
+        already settled cannot be re-opened by a late message, so discarding it
+        is free; but an agreement for a window ahead of us means their index has
+        drifted past ours, and that is recovered by adopting their side rather
+        than by ignoring them (`_adopt_complementary_role`). So it is put back.
+        """
+        deadline = time.monotonic() + timeout
         try:
-            theirs = self.agreements.get(timeout=timeout or 60)
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise queue.Empty
+                theirs = self.agreements.get(timeout=remaining)
+                mine = theirs.get("sub_game_number")
+                if mine is None or mine >= n:
+                    return theirs
+                log.info("discarding an agreement for sub-game %s while opening %s "
+                         "- that window is settled; their retry, not their fault", mine, n)
         except queue.Empty as exc:
             raise LinkError("opponent never sent its agreement") from exc
-        return codec.handshake_from_agreement(theirs, mine=payload, terms=self.terms)
 
     def _signed(self) -> dict:
         from ..domain.crypto import new_nonce, reference_commit
@@ -316,9 +352,20 @@ class ReferenceBridge:
         # `sub_game_number` rides outside `terms`, so it cannot disturb the
         # signature - but without it a peer that has advanced past us looks
         # identical to one in step, and the two series drift in silence.
+        #
+        # `sender` and `group_id` are at the TOP LEVEL and duplicated inside
+        # `identity` on purpose. Several peers bind the session on a top-level
+        # field and never look inside a nested block: najamjad §9.8 log
+        # `session.unauthenticated` and refuse to bind us, which is a refusal
+        # that looks exactly like an outage. Nesting the id was not wrong so
+        # much as unreadable, and the fix costs two keys. `sender` is our role
+        # rather than our slug because it also tells the receiver which of our
+        # two doors is speaking - their contract accepts either spelling.
         return {"terms": self.terms, "nonce": nonce,
                 "signature": reference_commit(self.terms, nonce),
                 "sub_game_number": self.service.engine.sub_game,
+                "sender": self.service.engine.role,
+                "group_id": self.identity.get("group_id", ""),
                 "identity": self.identity}
 
     def commit(self, msg: dict, timeout: float | None = None) -> dict:

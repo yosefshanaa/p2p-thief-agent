@@ -23,6 +23,7 @@ from ..domain.game_ids import (
     reference_game_id,
     reference_game_uid,
 )
+from ..domain.scoring import TECHNICAL_LOSS
 from ..infra.mcp_server import serve_in_thread, wait_until_up
 from ..shared.config import load_role
 from ..strategy.talk_llm import make_talk_provider
@@ -105,7 +106,8 @@ class PeerRuntime:
             identity=interop_identity(
                 self.peer, mcp_url=f"http://0.0.0.0:{self.peer.my_port}/mcp",
                 spec=sysinfo.collect(),
-                counted_games_played=self.prior_counted_games),
+                counted_games_played=self.prior_counted_games,
+                public_doors=self.peer.public_doors),
             runtime=self)
 
     def start_server(self) -> None:
@@ -283,7 +285,33 @@ class PeerRuntime:
                 return True
 
     # -- one sub-game over the wire -----------------------------------------
-    def play_sub_game(self, n: int) -> None:
+    def play_window(self, n: int) -> None:
+        """Play sub-game ``n``, re-offering it under its own number if it dies.
+
+        A window that abandons before it was played is offered again rather
+        than skipped, because a peer that re-offers and a peer that advances
+        desynchronise permanently: their window 3 meets our window 5 and both
+        guards refuse everything after. Only a *technical* ending re-offers - a
+        capture or a survival is a window that was played, however badly.
+
+        `window_reoffers` is 0 for every opponent that has not asked for this,
+        which makes the loop a single pass and this method a no-op wrapper.
+        """
+        for attempt in range(self.peer.window_reoffers + 1):
+            self.play_sub_game(n, renegotiate=attempt > 0)
+            end = self.engine.end
+            if end is None or end.ending != TECHNICAL_LOSS:
+                return
+            if attempt == self.peer.window_reoffers:
+                _log(f"[{self.role}] sub-game {n} abandoned ({end.cause}) and the "
+                     f"re-offer budget is spent; advancing")
+                return
+            _log(f"[{self.role}] sub-game {n} abandoned ({end.cause}); re-offering "
+                 f"it under the same number ({attempt + 1}/{self.peer.window_reoffers})")
+            with self.service.locked():
+                self.engine.reoffer_sub_game(n)
+
+    def play_sub_game(self, n: int, *, renegotiate: bool = False) -> None:
         from . import series_protocol
 
         # Role first (start_sub_game reads it), then reset onto this sub-game,
@@ -295,7 +323,8 @@ class PeerRuntime:
         # is timed including its own negotiation rather than from whenever the
         # engine object happened to be constructed.
         self.engine.mark_started()
-        if not series_protocol.rehandshake_if_needed(self, n, _log):
+        if not series_protocol.rehandshake_if_needed(self, n, _log,
+                                                     force=renegotiate):
             return
         engine = self.engine
         while engine.end is None:
@@ -331,7 +360,7 @@ class PeerRuntime:
         self.watchdog.start()
         try:
             for n in range(self.start_index, self.num_games + 1):
-                self.play_sub_game(n)
+                self.play_window(n)
                 self.sub_results.append(runtime_reports.finish_sub_game(self, n, _log))
             if self.peer.series_consensus:
                 self.series_consensus = runtime_reports.exchange_series_consensus(self, _log)
