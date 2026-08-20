@@ -60,7 +60,7 @@ class PeerRuntime:
         self.game_uid = new_game_uid()
         self.game_id = make_game_id(self.peer.group_id or "us", "opponent")
         self._out_root = out_dir
-        #: Distinguishes two runs against the same opponent; see `_adopt_reference_ids`.
+        #: Distinguishes two runs against the same opponent; see `_adopt_shared_ids`.
         self._run_stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
         self.out_dir = out_dir / f"{role}-{self.game_id}"
         handshake = negotiation.handshake_payload(
@@ -130,6 +130,26 @@ class PeerRuntime:
         if link is not None or self.link is None:
             self.attach(link)
         link = self.link
+        # A digest nobody can send is worse than no digest: it files
+        # `confirmed: false` on a series that agreed perfectly, and the lecturer's
+        # tooling reads that as a failed settlement. The whole consensus
+        # transport - `submit_consensus`, `wait_for_consensus`, and the envelope
+        # that rides the audit tool - lives on the reference bridge, and the
+        # bridge is only built for the reference dialect. Found by playing two of
+        # our own peers over real HTTP on `native` with consensus on: identical
+        # digests on both sides, twelve `Verified OK` audits, and
+        # `peer_consensus_sha: null` because there was no tool to carry it.
+        #
+        # Said out loud rather than fixed silently, because the honest repair is
+        # to give the native dialect its own consensus tool, and shipping that
+        # untested against a real peer would be the same mistake one layer down.
+        if self.peer.series_consensus and self.bridge is None:
+            _log(f"[{self.role}] WARNING: P2P_SERIES_CONSENSUS is on but the "
+                 f"{self.peer.interop_dialect} dialect has no tool to exchange it - "
+                 "the digest will be computed and filed, and `confirmed` will stay "
+                 "false however well the series agrees. Play the reference dialect, "
+                 "or set P2P_SERIES_CONSENSUS=false and settle by the per-sub-game "
+                 "audits alone.")
         if not wait_until_up(link):
             _log(f"[{self.role}] opponent never came up at {self.peer.opponent_url}")
             return False
@@ -147,7 +167,7 @@ class PeerRuntime:
                  f"{self.peer.handshake_budget_sec}s: {exc}")
             return False
         self.service.their_handshake = theirs
-        self._adopt_reference_ids(theirs)
+        self._adopt_shared_ids(theirs)
         self._join_at_their_index(theirs)
         problems = negotiation.check_compatibility(
             self.service.my_handshake, theirs, num_games=self.num_games)
@@ -182,20 +202,32 @@ class PeerRuntime:
              f"instead of {self.start_index} (they cannot replay what they settled)")
         self.start_index = declared
 
-    def _adopt_reference_ids(self, theirs: dict[str, Any]) -> None:
+    def _adopt_shared_ids(self, theirs: dict[str, Any]) -> None:
         """Re-derive the game ids the way a reference-family peer does.
 
         Ours are minted in `__init__`, before the opponent's slug is known: the
         id carries a timestamp and the placeholder "opponent", and the uid is
-        random. Both are fine for a native match, where each side files under its
-        own id - and impossible for a *mutual* signature, whose first key is
-        `game_id`. Theirs are derived from the agreed terms and the two slugs, so
-        both peers reach the same value without exchanging it.
+        random. Both are fine for a match where each side files under its own id
+        - and impossible for a *mutual* signature, whose first key is `game_id`.
+        The derived pair comes from the agreed terms and the two slugs, so both
+        peers reach the same value without exchanging it.
+
+        The gate is what needs the shared pair, not which dialect we speak.
+        This used to return early on anything but `reference`, on the reasoning
+        that a native match files under its own id - true, and beside the point
+        the moment `series_consensus` is also on. That pairing is legal, it is
+        what two kit-built peers would agree, and it could not confirm: each side
+        stamps its own timestamp into `game_id` and its own random `game_uid`,
+        which are the first two keys of the consensus document, so the digests
+        differ by construction. Found by playing a full six-sub-game series
+        between two of our own peers over real HTTP - twelve `Verified OK`
+        audits, both sides agreeing the score, and `confirmed: false` on both.
+        `P2P_GAME_ID` was silently ignored on that path for the same reason.
 
         Safe to rebind here: this runs after the handshake and before the first
         artifact is written.
         """
-        if self.peer.interop_dialect != REFERENCE:
+        if self.peer.interop_dialect != REFERENCE and not self.peer.series_consensus:
             return
         from ..infra.interop_codec import interop_terms
 
@@ -219,7 +251,7 @@ class PeerRuntime:
         self.out_dir = self._out_root / f"{self.role}-{self.game_id}-{self._run_stamp}"
         self.service.my_handshake["game_id"] = self.game_id
         self.service.my_handshake["game_uid"] = self.game_uid
-        _log(f"[{self.role}] reference ids adopted: {self.game_id} / {self.game_uid}")
+        _log(f"[{self.role}] shared ids adopted: {self.game_id} / {self.game_uid}")
 
     def _await_turn(self) -> bool:
         """Wait for the opponent's move, beating the watchdog in slices.

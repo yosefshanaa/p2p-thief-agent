@@ -12,7 +12,7 @@
   "pounce_floor": 0.262045,
   "flee_bias": 2.757147,
   "w_cut": 0.587455,
-  "police_mix_margin": 0.152236,
+  "police_mix_margin": 0.08,
   "w_mobility": 1.330075,
   "w_mobility2": 0.204678,
   "w_territory": 0.071189,

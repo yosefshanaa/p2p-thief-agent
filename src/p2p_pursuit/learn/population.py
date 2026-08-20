@@ -23,6 +23,7 @@ from ..domain.rules import POLICE, THIEF
 from ..strategy.params import REPO_ROOT, Doctrine
 from .opponents import (
     BarrierHappy,
+    Cager,
     Camper,
     Evader,
     Greedy,
@@ -70,6 +71,16 @@ BUILTIN: dict[str, Member] = {
     "hound": Member(lambda role: Greedy(flee=False, use_trail=True), roles=(POLICE,)),
     "noisy": Member(lambda role: Greedy(flee=role == THIEF, jitter=0.25)),
     "barrier": Member(lambda role: BarrierHappy(), roles=(POLICE,)),
+    #: The cage, not the kill shot - see `opponents.Cager`. Four of our
+    #: eight counted thief deaths were a barrier or an enclosure, and no
+    #: other pool police can produce one against an evader that keeps its
+    #: distance. Without it a thief search cannot see the way it loses.
+    "cager": Member(lambda role: Cager(), roles=(POLICE,)),
+    #: The same cage led by room rather than by gap, and the only member
+    #: of this pool that beats our shipped thief - 40 of 40 under
+    #: subtractive. It is to the thief search what `evader` is to the
+    #: police search: the opponent the objective could not previously see.
+    "constrictor": Member(lambda role: Cager(room_first=True), roles=(POLICE,)),
     # The pool's only pursuer that knows where the thief actually is. Added
     # after a thief search found nothing to learn: sixteen of seventeen members
     # scored a flat 10.00 against our evader, so the objective was blind and the
