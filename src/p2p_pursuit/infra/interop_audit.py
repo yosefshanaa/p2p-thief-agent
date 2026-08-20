@@ -96,11 +96,39 @@ def audit_sealed_log(log: dict[str, Any]) -> dict[str, Any]:
             mine.append(f"record {index}: role {record.get('role')!r}, we played {role!r}")
 
     theirs: list[str] = []
-    revealed = {record.get("commit") for record in log.get("opponent_records", [])
-                if isinstance(record, dict)}
-    for commit in log.get("opponent_hashes", []):
-        if log.get("opponent_records") and commit not in revealed:
-            theirs.append(f"commitment {commit[:16]}… was sent in play and is not revealed")
+    opponent = [record for record in log.get("opponent_records", [])
+                if isinstance(record, dict)]
+    # Two shapes arrive here, and only one of them carries its own commitment.
+    # A reference-family peer reveals `{payload, nonce, commit}` triples in its
+    # end-of-sub-game package, so presence of the commitment is the check. A
+    # peer on our own dialect reveals the sealed record itself, turn by turn,
+    # exactly as `my_records` holds ours - flat, with the nonce inside and no
+    # `commit` key at all. Looking only for that key made every native-dialect
+    # archive report all 35 of the opponent's commitments as unrevealed, which
+    # reads as tampering: measured on a full six-sub-game loopback between two
+    # of our own peers, `theirs_binds: false` on both sides of a series whose
+    # every sub-game had already audited `Verified OK` live.
+    #
+    # The flat branch is the stronger of the two, and is the one we already run
+    # against ourselves eight lines up: it re-derives the commitment from the
+    # record rather than trusting a `commit` field the revealer wrote.
+    if opponent and not any("commit" in record for record in opponent):
+        hashes = log.get("opponent_hashes", [])
+        if len(opponent) != len(hashes):
+            theirs.append(f"{len(opponent)} revealed records against "
+                          f"{len(hashes)} of their commitments")
+        for index, (record, commit) in enumerate(zip(opponent, hashes, strict=False)):
+            if commit_digest(record, dialect) != commit:
+                theirs.append(f"record {index}: does not reproduce the commitment they sent")
+            belongs = record_sub_game(record)
+            if belongs is not None and belongs != n:
+                theirs.append(f"record {index}: belongs to sub-game {belongs}, not {n}")
+    else:
+        revealed = {record.get("commit") for record in opponent}
+        for commit in log.get("opponent_hashes", []):
+            if opponent and commit not in revealed:
+                theirs.append(
+                    f"commitment {commit[:16]}… was sent in play and is not revealed")
 
     return {
         "sub_game": n, "role": role, "dialect": dialect,

@@ -158,11 +158,20 @@ def test_the_barrier_is_the_only_thing_that_ever_converts_against_an_evader(play
     Both halves are load-bearing and neither is sufficient. Territory at the
     right weight is what walks the police into barrier range; the barrier is
     what ends it. That is also why the answer to the camping bug was to divide
-    `cut` rather than to drop it - at w_cut = 0 the police converts nothing at
-    all, which is the same 0 the league gave us for the opposite reason.
+    `cut` rather than to drop it - at w_cut = 0 the police barely converts at
+    all, which is nearly the same 0 the league gave us for the opposite reason.
 
-    Twenty seeds here rather than 200, and only the two extremes, because this
-    is a regression guard rather than the measurement itself.
+    Two of those zeroes are no longer exactly zero, and the reason is worth
+    keeping. Turning the police's mixing on (`police_mix_margin`, 0.0 -> 0.05
+    here) lifts the pure chase from 0% to about 7%, because `Evader` refuses
+    cells the pursuer can reach *given where it is now* - a rule that assumes a
+    pursuer taking its best step. A pursuer that sometimes does not is a pursuer
+    that rule does not fully answer. So these are asserted as fractions of the
+    shipped pair rather than as absolutes: the claim being guarded is that
+    neither half alone comes close, not that either is inert.
+
+    Forty seeds here rather than 200, and only the two extremes, because this is
+    a regression guard rather than the measurement itself.
     """
     shared = default_shared()
     doctrine = played
@@ -174,13 +183,19 @@ def test_the_barrier_is_the_only_thing_that_ever_converts_against_an_evader(play
                      for i, seed in enumerate(seeds))
         return caught / len(list(seeds))
 
-    assert rate(dataclasses.replace(doctrine, w_cut=0.0)) == 0.0, (
-        "a pure distance chase converts nothing against an evader - territory is "
-        "what closes the gap to barrier range")
-    assert rate(dataclasses.replace(doctrine, belief_floor=1.1,
-                                    endgame_reserve=14)) == 0.0, (
-        "with every barrier path shut off the police cannot convert at all")
-    assert rate(doctrine) > 0.0, "and the shipped pair does"
+    shipped = rate(doctrine)
+    assert shipped > 0.0, "the shipped pair converts"
+
+    chase = rate(dataclasses.replace(doctrine, w_cut=0.0))
+    assert chase < shipped / 2, (
+        f"a pure distance chase converts {chase:.0%} against an evader, against "
+        f"{shipped:.0%} for the shipped pair - territory is what closes the gap "
+        "to barrier range")
+
+    walled_off = rate(dataclasses.replace(doctrine, belief_floor=1.1, endgame_reserve=14))
+    assert walled_off < shipped / 2, (
+        f"with every barrier path shut off the police converts {walled_off:.0%} "
+        f"against {shipped:.0%} - the barrier is what ends it")
 
 
 def test_claiming_every_turn_tells_the_thief_exactly_where_we_are(played):

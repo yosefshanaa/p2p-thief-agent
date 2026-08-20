@@ -16,8 +16,9 @@ played, split by seed.
 from __future__ import annotations
 
 from p2p_pursuit.domain.rules import POLICE, THIEF
+from p2p_pursuit.domain.scoring import CAPTURE
 from p2p_pursuit.learn import arena, population
-from p2p_pursuit.strategy.params import Doctrine
+from p2p_pursuit.learn.opponents import Evader
 
 SEEDS = tuple(range(9000, 9012))
 
@@ -56,18 +57,28 @@ def test_claiming_every_turn_helps_the_thief_not_the_police():
     counted match played without it converted 3 of 3. See
     `tests/unit/test_police_pursuit.py`.
 
-    What survives unchanged is the reason the arena plays *both* regimes: the
-    league is genuinely split on the term, and the two produce materially
-    different games. That is what is asserted here, in the direction the
-    evidence actually points.
+    Asserted on the police's conversion rather than on pool-wide thief survival,
+    which is where this test used to look. Survival across the pool moves by a
+    point or two between the regimes - one sub-game in forty-eight - so an
+    inequality on it flips on any unrelated change and says nothing either way.
+    The effect on the conversion path is not marginal at all, and it is the
+    number the five `P2P_ALWAYS_CLAIM=false` opponent configs rest on.
     """
-    pool = population.build(("mirror", "barrier", "hound", "interceptor"))
-    reference = Doctrine()
-    quiet = _survival(reference, pool, always_claim=False)
-    loud = _survival(reference, pool, always_claim=True)
-    assert loud > quiet, (
-        f"thief survival {loud:.0%} against a police that claims every turn vs "
-        f"{quiet:.0%} against one that does not - the leak should favour the thief")
+    shared = arena.default_shared()
+    seeds = range(9000, 9060)
+
+    def converts(always_claim: bool) -> float:
+        caught = sum(arena.sub_game(shared, population.ours(POLICE), Evader(),
+                                    seed, always_claim)[0] == CAPTURE
+                     for seed in seeds)
+        return caught / len(list(seeds))
+
+    quiet, loud = converts(False), converts(True)
+    assert loud == 0.0, (
+        f"a police that names its own cell every turn converts {loud:.0%} against "
+        "an evader: the claim hands over the one thing the evader needs")
+    assert quiet > 0.25, (
+        f"and one that claims only when it matters converts {quiet:.0%}")
 
 
 def test_the_split_is_the_same_for_every_candidate_in_a_generation():
@@ -78,18 +89,3 @@ def test_the_split_is_the_same_for_every_candidate_in_a_generation():
         "an odd split would weight one regime above the other by accident")
     assert regimes == [arena.CLAIM_REGIMES[i % len(arena.CLAIM_REGIMES)]
                        for i in range(len(SEEDS))], "the mapping must be pure"
-
-
-def _survival(doctrine, pool, *, always_claim: bool) -> float:
-    shared = arena.default_shared()
-    played = survived = 0
-    for member in pool.values():
-        if POLICE not in member.roles:
-            continue
-        for seed in SEEDS:
-            ending, _, _ = arena.sub_game(
-                shared, member.make(POLICE), population.ours(THIEF, doctrine),
-                seed + 500_000, always_claim)
-            played += 1
-            survived += ending == "survival"
-    return survived / max(played, 1)
