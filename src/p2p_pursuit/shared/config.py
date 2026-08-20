@@ -97,14 +97,48 @@ class PeerConfig:
     #: `opponent_url_for`. Empty for every peer that serves both roles at one
     #: address, which is most of them.
     opponent_doors: dict[str, str] = field(default_factory=dict)
+    #: *Our* public address per role we hold - the mirror of `opponent_doors`,
+    #: and the one an opponent reads back out of our identity block.
+    #:
+    #: It has to be configured because the process cannot discover it: we bind
+    #: `0.0.0.0:<port>` behind a tunnel, so the only address we can derive is a
+    #: loopback one that is useless to anybody else. We published exactly that
+    #: for months - `{"cop": "http://0.0.0.0:8801/mcp", "thief": same}` - which
+    #: is wrong twice over: it is unreachable, and it claims one door for two
+    #: roles while we in fact run two processes on two ports. A peer whose
+    #: recovery path re-sends its agreement "to the address your identity
+    #: declares" (najamjad §3.1) dials nowhere, and reads us as offline.
+    #:
+    #: Empty falls back to the bind address, which is honest for a local match
+    #: and harmless for a peer that never reads the field.
+    public_doors: dict[str, str] = field(default_factory=dict)
     turn_timeout_seconds: int = 180
     #: Wall-clock patience for the opening handshake and for each per-sub-game
     #: re-handshake, on top of the short retry burst. An opponent whose peer
     #: bounces behind a healthy tunnel takes every attempt down with it; these
     #: turn that from a technical loss into a pause. Peer-local on purpose - the
     #: constitution is hash-locked, so a knob there would break the handshake.
+    #:
+    #: Both are negotiable and worth negotiating, because a *mismatch* in
+    #: patience is indistinguishable from a broken opponent to whichever side
+    #: runs out first - and the shorter side is the one that manufactures the
+    #: failure. najamjad hold 1000 s per window and asked us to hold the same.
     handshake_budget_sec: int = 180
     rehandshake_budget_sec: int = 90
+    #: How many times a window that abandoned *before it was played* is re-offered
+    #: under its own number before the series gives up on it and advances.
+    #:
+    #: Zero - advance regardless - is what we have always done, and it is wrong
+    #: against a peer that re-offers: two peers advancing past unplayed windows
+    #: at different rates is how our game 5 meets their game 3 and every window
+    #: after that is refused by both guards. najamjad's contract §3.1 requires
+    #: the re-offer and reports it ending three series on consecutive evenings.
+    #:
+    #: Bounded rather than unlimited, because a genuinely dead peer must still
+    #: end the series instead of looping on window 1 forever. Per-opponent like
+    #: every other interop divergence: a peer that does *not* re-offer would see
+    #: our replay of N as a stale duplicate, so this is negotiated, never assumed.
+    window_reoffers: int = 0
     strategy: dict[str, str] = field(default_factory=dict)
     trash_talk_provider: str = "template"
     trash_talk_every_n_steps: int = 1
@@ -227,6 +261,7 @@ def load_peer(path: Path) -> PeerConfig:
         turn_timeout_seconds=net.get("turn_timeout_seconds", 180),
         handshake_budget_sec=net.get("handshake_budget_sec", 180),
         rehandshake_budget_sec=net.get("rehandshake_budget_sec", 90),
+        window_reoffers=int(net.get("window_reoffers", 0)),
         stateless_http=bool(net.get("stateless_http", True)),
         strategy=dict(raw.get("strategy", {})),
         trash_talk_provider=talk.get("provider", "template"),
@@ -262,6 +297,13 @@ OPPONENT_URL_VAR = "P2P_OPPONENT_URL"
 #: missing falls back to `P2P_OPPONENT_URL`.
 OPPONENT_DOOR_VARS = {"police": "P2P_OPPONENT_COP_URL",
                       "thief": "P2P_OPPONENT_THIEF_URL"}
+#: The same, for the doors *we* serve - see `PeerConfig.public_doors`. Keyed by
+#: the role we hold and spelled their way, so the identity block we publish
+#: reads `{"cop": ..., "thief": ...}` whatever we call the roles internally.
+#: In the environment rather than a committed file for the same reason as the
+#: opponent's: a quick tunnel's hostname is minted minutes before a match.
+PUBLIC_DOOR_VARS = {"police": "P2P_PUBLIC_COP_URL",
+                    "thief": "P2P_PUBLIC_THIEF_URL"}
 #: Some peers serve one agent per role on one port (`/cop/mcp`, `/thief/mcp`)
 #: rather than one endpoint that routes. Against those, the endpoint we must push
 #: to is a function of the sub-game: under alternation their cop plays the even
@@ -320,6 +362,21 @@ BOOL_VARS = {
     "P2P_SERIES_CONSENSUS": "series_consensus",
     "P2P_STATELESS_HTTP": "stateless_http",
 }
+#: The banter provider, per match. An LLM call carries a deadline of its own and
+#: can push a single turn against an opponent's per-turn envelope - najamjad
+#: expire a turn at 30 s. Promising a peer we will run the zero-token template
+#: has to be expressible without editing the committed `game.toml`, because that
+#: edit would ride silently into the next opponent's match.
+TRASH_TALK_VAR = "P2P_TRASH_TALK_PROVIDER"
+#: Numeric peer-local knobs settled per opponent, hours before a match. None of
+#: them is hashed, so an opponent can ask us to move one without re-signing the
+#: constitution - which is exactly what `handshake_budget_sec` is for.
+INT_VARS = {
+    "P2P_TURN_TIMEOUT": "turn_timeout_seconds",
+    "P2P_HANDSHAKE_BUDGET": "handshake_budget_sec",
+    "P2P_REHANDSHAKE_BUDGET": "rehandshake_budget_sec",
+    "P2P_WINDOW_REOFFERS": "window_reoffers",
+}
 #: Signed series length, when a short run must still sign the full one.
 SIGNED_NUM_GAMES_VAR = "P2P_SIGNED_NUM_GAMES"
 #: A mutually agreed `game_id` label, replacing the derived "<lo>-vs-<hi>".
@@ -343,6 +400,11 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     doors = {role: door for role, door in doors.items() if door}
     if doors:
         patch["opponent_doors"] = doors
+    mine = {role: (os.environ.get(var) or "").strip()
+            for role, var in PUBLIC_DOOR_VARS.items()}
+    mine = {role: door for role, door in mine.items() if door}
+    if mine:
+        patch["public_doors"] = mine
     mode = (os.environ.get(EMAIL_MODE_VAR) or "").strip()
     if mode in ("draft", "send"):
         patch["email_mode"] = mode
@@ -357,6 +419,9 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
         if model not in MODELS:
             raise ValueError(f"{SCENT_MODEL_VAR}={model!r} is not one of {MODELS}")
         patch["scent_model"] = model
+    talk = (os.environ.get(TRASH_TALK_VAR) or "").strip().lower()
+    if talk:
+        patch["trash_talk_provider"] = talk
     label = (os.environ.get(GAME_ID_LABEL_VAR) or "").strip()
     if label:
         patch["game_id_label"] = label
@@ -371,6 +436,16 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
             patch[field_name] = True
         elif raw in FALSE:
             patch[field_name] = False
+    for name, field_name in INT_VARS.items():
+        raw = (os.environ.get(name) or "").strip()
+        if not raw:
+            continue
+        # Loudly, not silently: a patience knob that a typo turned back into its
+        # default is the failure it exists to prevent, and it would only show up
+        # as an unexplained technical loss mid-series.
+        if not raw.isdigit():
+            raise ValueError(f"{name}={raw!r} is not a non-negative integer")
+        patch[field_name] = int(raw)
     return replace(peer, **patch) if patch else peer
 
 

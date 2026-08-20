@@ -73,7 +73,8 @@ def take_role(rt: Any, n: int, log_fn: Any) -> None:
     retarget_link(rt, role, log_fn)
 
 
-def rehandshake_if_needed(rt: Any, n: int, log_fn: Any) -> bool:
+def rehandshake_if_needed(rt: Any, n: int, log_fn: Any, *,
+                          force: bool = False) -> bool:
     """Re-negotiate before sub-game ``n`` when the opponent expects it.
 
     Runs *after* the engine has been reset onto ``n``: a refusal here has to
@@ -81,8 +82,13 @@ def rehandshake_if_needed(rt: Any, n: int, log_fn: Any) -> bool:
     freshly-started state. Refusing while the engine still holds sub-game n-1
     files the previous sub-game's ending as this one's result - a capture we
     never played, in a report the lecturer receives.
+
+    ``force`` is for a re-offered window. The ordinary gate skips sub-game 1,
+    whose handshake was the opening one - but a *re-offer* of sub-game 1 has no
+    live agreement behind it either, and the peer that re-offers is by
+    definition waiting on a fresh negotiate for the window it is re-opening.
     """
-    if not (rt.peer.handshake_per_sub_game and n > 1):
+    if not (force or (rt.peer.handshake_per_sub_game and n > 1)):
         return True
     return _rehandshake(rt, n, log_fn)
 
