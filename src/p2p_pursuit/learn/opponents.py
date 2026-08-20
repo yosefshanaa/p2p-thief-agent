@@ -247,10 +247,18 @@ class Cager(BrainBase):
       mouth of a pocket can close it. We seal the door that costs the thief the
       most room, and only inside `cage_range`, because at distance the metric
       measures which corner we stand in rather than anything about the thief.
-    * **Herd.** Otherwise move by gap and room together. Which of the two leads
-      is `room_first`, and it is not a tuning detail: they are two different
-      opponents, and our thief's record against them is 40-0 one way and 0-40
-      the other. See `_pick_move`.
+    * **Herd.** Otherwise close, breaking ties by the room the step takes away.
+
+    There was a second ordering here - room leading, gap breaking the ties - on
+    the reading that our thief's 0-for-40 against it was the live loss reproduced.
+    It was not. That police stood still: 0 moves in 1360 turns against `Evader`,
+    one distinct cell for a whole 40-seed sequence, and 6% of turns moved even
+    after the ordering was gated to close range. The room metric barely responds
+    to a police step at any distance, so ranking by it first is a rule that
+    prefers standing where it is, and the 40-0 it produced measured that rather
+    than anything about evasion. Removed rather than tuned: our own police
+    already takes ground for real, through `w_cut`, and it is in this pool as
+    `mirror`.
 
     Like :class:`Evader` it inverts the opponent's published field rather than
     reading the belief, because a cage built around the wrong cell is free
@@ -259,13 +267,11 @@ class Cager(BrainBase):
     so there it stops one door short and keeps the pocket enterable.
     """
 
-    def __init__(self, *, room_first: bool = False, seal_gain: int = 3,
-                 cage_range: int = 4) -> None:
-        #: Which quantity leads the move ranking - see `_pick_move`. Both are
-        #: played, because they are different opponents and the league contains
-        #: both: closing the gap is orcai-mj, taking the space is uoh-ay26.
-        self.room_first = room_first
-        #: Room the seal must take away before it is worth forfeiting the move.
+    def __init__(self, *, seal_gain: int = 1, cage_range: int = 4) -> None:
+        #: Ground the seal must take off the thief before it is worth forfeiting
+        #: the move. 1, because a barrier legal to us is adjacent to us, and one
+        #: of those takes a single cell far more often than it takes several: at
+        #: 2 this brain places no barrier at all and is a plain chaser.
         self.seal_gain = seal_gain
         #: How close we must be before a barrier is worth a turn.
         self.cage_range = cage_range
@@ -307,7 +313,6 @@ class Cager(BrainBase):
         if thief is None:
             return self._pick_move(view)
         theirs = bfs_distances(view.board, thief)
-        here = self._room(view.board, thief, view.own_pos, theirs)
 
         # A cage is a close-range weapon. At six steps the room metric is
         # dominated by which corner we happen to stand in - stepping off (0,0)
@@ -316,7 +321,22 @@ class Cager(BrainBase):
         # by room alone at range does neither. Close first, cage second.
         near = theirs.get(view.own_pos, FAR)
         if near <= self.cage_range and view.barrier_quota - view.barriers_used > 0:
-            best_cell, best_room = None, here
+            # What a barrier is worth is the ground it takes off the thief -
+            # cells it can still reach - and NOT the Voronoi room `_room`
+            # measures. The rules put a barrier on our own cell or an orthogonal
+            # neighbour, and a cell next to the police is a cell the police
+            # reaches first, so it is never in the thief's room: measured, the
+            # best available room-gain was exactly 0 on all 1825 in-range turns
+            # of a 40-seed sequence, which is why this brain placed no barrier in
+            # its entire life and the pool still had no cage in it.
+            #
+            # Reachability is the measure that can be followed. A cage is a
+            # sequence of barriers, and the early ones in the sequence buy no
+            # room at all - they buy the wall that the last one closes - so a
+            # greedy test against room can never start one, while a greedy test
+            # against ground taken can.
+            here_reach = len(bfs_distances(view.board, thief))
+            best_cell, best_reach = None, here_reach
             # Neighbours only. A barrier on our own cell is legal by the letter
             # of the rules and useless by their spirit - it forfeits the move and
             # walls the square we are standing on - and taking it silently was
@@ -332,10 +352,10 @@ class Cager(BrainBase):
                 # survival we then cannot reach into: stop one door short.
                 if walled.is_enclosed(thief) and not view.claim_enclosure:
                     continue
-                room = self._room(walled, thief, view.own_pos)  # barriers moved
-                if room < best_room:
-                    best_cell, best_room = cell, room
-            if best_cell is not None and here - best_room >= self.seal_gain:
+                reach = len(bfs_distances(walled, thief))
+                if reach < best_reach:
+                    best_cell, best_reach = cell, reach
+            if best_cell is not None and here_reach - best_reach >= self.seal_gain:
                 return Decision(move="STAY", barrier=best_cell)
 
         return self._pick_move(view)
@@ -349,21 +369,13 @@ class Cager(BrainBase):
 
         def score(move: str) -> tuple:
             pos = target_of(view.own_pos, move)
-            # Landing on the thief ends it now; nothing else compares. After
-            # that the two orderings are genuinely different pursuers, and our
-            # thief's record against them is the reason both are in the pool:
-            #
-            # * gap first, room breaking the ties - the ordinary closer. Our
-            #   shipped thief survives it 40 times in 40 under subtractive.
-            # * room first - it will stand in a corner rather than take a step
-            #   that hands the thief a tie, and it walks the thief into the wall
-            #   instead of at it. Our shipped thief loses to it 40 times in 40,
-            #   under the same physics, with the same weights. That is the live
-            #   loss reproduced, and no weight in the vector moves it.
+            # Landing on the thief ends it now; nothing else compares. Then
+            # close, and let the room the step takes away break the ties - which
+            # is the half of "take the ground" that a police step can actually
+            # move. Room cannot lead: see the class docstring.
             gap = theirs.get(pos, FAR)
             room = self._room(view.board, thief, pos, theirs)
-            first, second = (room, gap) if self.room_first else (gap, room)
-            return (pos != thief, first, second, view.rng.random())
+            return (pos != thief, gap, room, view.rng.random())
 
         return Decision(move=min(moves, key=score))
 

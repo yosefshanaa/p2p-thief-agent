@@ -6,6 +6,11 @@ import re
 import uuid
 from datetime import UTC, datetime
 
+#: Stands in for an opponent that named no group. It is deliberately not a
+#: slug either side could hold, because the derived ids are only shared when
+#: both peers feed them the same two real slugs - see `_adopt_shared_ids`.
+UNKNOWN_GROUP = "opponent"
+
 
 def new_game_uid() -> str:
     return uuid.uuid4().hex[:12]

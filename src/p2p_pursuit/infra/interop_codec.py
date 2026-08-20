@@ -22,6 +22,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from ..domain.crypto import reference_commit, verify_reference_record
+from ..domain.game_ids import UNKNOWN_GROUP
 from ..domain.rules import POLICE, THIEF
 from ..shared import sysinfo
 
@@ -172,7 +173,7 @@ def handshake_from_agreement(agreement: dict[str, Any], *, mine: dict[str, Any],
     payload: dict[str, Any] = {
         "kind": "handshake",
         "role": THIEF if mine.get("role") == POLICE else POLICE,
-        "group_id": identity.get("group_id", "opponent"),
+        "group_id": identity.get("group_id", UNKNOWN_GROUP),
         "group_name": identity.get("group_name", ""),
         "members": list(identity.get("members", [])),
         "repos": dict(identity.get("repos", {})),
