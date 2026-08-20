@@ -712,3 +712,85 @@ Four vectors now ship, and the numbers that produced each are above:
 | `doctrine-subtractive.json` | `subtractive_chebyshev_v1` | 14.313 -> **15.113** |
 | `doctrine-registered_v3.json` | `registered_v3` | 14.651 -> **15.045** |
 | `doctrine-orcai-mj.json` | `book_v1`, their pool | 13.553 -> **14.320** |
+
+### 10.14 Re-deciding the archive, and the four candidates that failed the test
+
+§10.1 counts what the doctrine of the day *played*. It has been quoted since as a live defect,
+which it no longer is: those logs were recorded before `_pounce` existed. `learn/counterfactual.py`
+asks the other question — standing in exactly the state the archive records, what does *this*
+vector do? The opponent's served field is not archived, but a served field is a pure function of
+the trajectory that emitted it, so it rebuilds; checked against the fields the archive *does*
+store — our own — the reconstruction is bit-identical on **2429 of 2429**, across all three
+physics. Same 76 chances, re-decided:
+
+| what we do with a capture chance | as played | today |
+| --- | ---: | ---: |
+| **converted** — stepped onto it | **11** | **26** |
+| barred the thief's own cell (rule #46) | 0 | 7 |
+| spent the turn placing a barrier instead | 27 | **0** |
+| stood still | 15 | **0** |
+| walked somewhere else | 23 | 43 |
+
+Both self-inflicted losses are gone outright. What remains is a lagged fix genuinely too thin to
+bet a turn on — under `book_v1` the fix is one step old, so five cells share the mass — and the
+obvious remedy does not work. **`pounce_floor` gates an early return**, so lowering it does not
+take more shots, it stops `_pursue` running at all and takes the territory, anti-camp,
+anti-dither and mixing rules with it:
+
+| `pounce_floor` | archive conversions | lab capture rate |
+| ---: | ---: | ---: |
+| 0.262 (shipped) | 29 / 76 | **0.812** |
+| 0.20 | 29 / 76 | 0.704 |
+| 0.15 | 29 / 76 | 0.704 |
+| 0.10 | 35 / 76 | 0.604 |
+| 0.04 | 35 / 76 | 0.567 |
+
+Every row is the shipped vector with one key moved, so the table is one series and not a splice.
+Buying six conversions costs twenty points of capture rate, which is not a trade worth making.
+
+So the evidence is priced as a term instead. **`w_pounce`** scores a candidate cell by the mass
+the tracker puts on it, on the same scale as distance — one unit means "a cell that certainly
+holds the thief is worth one step of ground", which is a tie-break, which is all a sub-threshold
+chance should ever be. It takes the archive to **29 / 76** and won on **five independent seed
+sets**, none of them used to choose it:
+
+| seeds | capture, `w_pounce` 0 | capture, `w_pounce` 1 |
+| --- | ---: | ---: |
+| 30000–30030 | 0.779 | **0.812** |
+| 31000–31040 | 0.784 | **0.791** |
+| 32000–32040 | 0.762 | **0.784** |
+| 34000–34120 | 0.772 | **0.794** |
+| 37000–37080 | 0.770 | **0.800** |
+
+Pooled, +0.023 over 2480 police sub-games — about two standard errors, so: real, and small. It is
+an exact **no-op under any lag-0 physics** (`subtractive_chebyshev_v1`, `registered_v3`), where
+`_where` is a delta on the fix and the pounce has either spent it or cannot reach it — measured
+identical to three decimals over 640 sub-games. The physics we prefer to negotiate carries no
+risk from it at all.
+
+**Four candidates were measured here and rejected.** They are recorded because each is the kind of
+thing that reads as an obvious fix and would otherwise be proposed again.
+
+*`flee_bias` is genuinely miscalibrated, and correcting it makes play worse.* `predict.spread` is
+a likelihood, so every observed opponent step is a labelled sample and the weight can be fitted
+rather than assumed. Fitted over 636 real-team steps it is **1.05**; we ship 2.76. The value we
+ship is what the **reference kit's own bot** fits (3.90) — every actual league team we have played
+fits 1.00–1.15 — so it was calibrated against a bot, not an opponent. And it does not matter:
+at the fitted value the archive converts **no additional chance** — 29 / 76 either way — and the
+lab loses nine points of capture (0.812 → 0.725). The weight is doing a pursuit job — lead the quarry — not a forecasting
+one, and one-step predictive accuracy is the wrong objective for it. Same result on the thief's
+mirror key, `chase_bias`: fitted 0.90 against the 0.20 `doctrine.json` actually carries, and
+marginally *negative* in play (survival 0.906 → 0.897).
+
+*Turning the kill shot into a step measured worse.* Rule #21 is honoured by every peer; rule #46
+is not, so barring a cell we could step onto looks like trading the agreed conversion path for the
+unagreed one. It scored 0.784 → 0.775, and on inspection the patch had barely fired: the kill shot
+is belief-gated, and an archive replay has no belief to feed it. **Belief-gated branches cannot be
+judged from the archive at all** — that limitation is now in `counterfactual`'s docstring, because
+a null result from the wrong instrument is worse than no result.
+
+*A barrier on the police's own cell is not reachable.* `validate` permits it (`cell != pos` is the
+guard) and `safe_decision` does not catch it, so it would bar the ground we stand on. It occurs
+**0 times in 15,818 lab turns** across both physics: `still_connected` vetoes it, because it
+cannot path from a source cell it has just barred. Incidental rather than explicit, but real.
+

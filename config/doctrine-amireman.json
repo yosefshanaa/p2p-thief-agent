@@ -24,5 +24,6 @@
   "w_risk": 3.95,
   "w_territory": 0.078724,
   "w_trail": 0.606457,
-  "w_trap": 1.611618
+  "w_trap": 1.611618,
+  "w_pounce": 1.0
 }

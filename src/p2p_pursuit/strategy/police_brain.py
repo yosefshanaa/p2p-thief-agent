@@ -69,6 +69,34 @@ tried on top and measured *worse* over 200 seeds, so neither shipped: a safe-set
 endgame that overrode the pursuit at close range (25.5% -> 23.0% at range 3 and
 21.0% at range 5, monotone in how often it fired), and every barrier variant in
 `test_police_pursuit`.
+
+v8 finishes the conversion story v6 opened, by replaying the archive through
+this brain instead of quoting what the archive's *own* doctrine did. The played
+14% is history: today's brain converts 26 of the same 76 chances, and both
+pathologies the review named are at zero - 27 turns spent barring from a cell
+adjacent to the thief became 0, and 15 spent standing still became 0.
+
+What remained was that `pounce_floor` gates an early return, so a chance below
+it is discarded rather than discounted, and the floor cannot be lowered to
+recover it: doing so stops `_pursue` running at all and the lab's capture rate
+falls 0.812 -> 0.567 while the archive converts nothing extra until 0.10, by
+which point it has already given up twenty points of capture. `w_pounce` prices
+the same evidence as a term in the pursuit score instead, which takes the
+archive to 29 of 76 and won every one of the five seed sets it was scored on.
+
+Three other candidates were measured here and rejected, which is why they are
+named rather than left to be re-proposed. `flee_bias` really is miscalibrated -
+fitted to the played archive it is 1.05, and the 2.76 we ship is what the
+reference kit's own bot fits, while every real team fits 1.00-1.15 - but the
+fitted value converts no extra chance and costs nine points of lab capture
+(0.812 -> 0.725), so the weight is doing a pursuit job, not a forecasting one.
+Turning the kill shot into a step onto the same cell (rule #21 is honoured by
+everyone, #46 is not) measured worse and, on inspection, never fired: the
+belief-gated branches cannot be judged from an archive replay at all, because
+the replay has no belief to feed them. And a barrier on the police's own cell -
+which `validate` permits and `safe_decision` does not catch - occurs 0 times in
+15,818 lab turns, because `still_connected` vetoes it from a source cell it has
+just barred.
 """
 
 from __future__ import annotations
@@ -452,7 +480,18 @@ class PoliceBrain(BrainBase):
                 mine = bfs_distances(view.board, pos)
                 cut = sum(1 for cell, theirs_d in theirs.items()
                           if mine.get(cell, far) <= theirs_d) / far
-            return (d - self.p.w_cut * cut, reversing, -near, view.rng.random())
+            # The capture chance the pounce declined, priced instead of
+            # discarded. `_pounce` returns early, so its floor is an
+            # all-or-nothing switch: below it a chance is thrown away entirely,
+            # and lowering it does not take more shots so much as stop this
+            # function running - measured, the archive converts no more chances
+            # at floor 0.20 than at 0.262 while the lab's capture rate falls
+            # 0.812 -> 0.704, and 0.567 by floor 0.04. Scored here it competes
+            # with distance and territory on one scale, so a cell the tracker
+            # says might hold the thief tilts a move without owning it.
+            catch = self._where.get(pos, 0.0)
+            return (d - self.p.w_cut * cut - self.p.w_pounce * catch,
+                    reversing, -near, view.rng.random())
 
         # Ambush is legitimate; camping is not. One STAY can pay - an evader may
         # walk onto us, which is how a random walker is often caught - but a

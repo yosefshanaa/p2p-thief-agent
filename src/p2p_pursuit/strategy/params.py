@@ -67,7 +67,34 @@ class Doctrine:
     pounce_floor: float = 0.18
     #: How much more likely the thief is to take a cell one step further from us
     #: than one step nearer. 1.0 is the uniform prior over its legal moves.
+    #:
+    #: Fitted against the archive it is 1.05, not 1.8 - and the value it *is*
+    #: calibrated to belongs to the reference kit's own bot, which fits 3.90
+    #: while every real team we have played fits 1.00-1.15. That is a genuine
+    #: miscalibration of the *prediction* and it does not transfer to the
+    #: policy: set to the fitted value it converts no additional capture chance
+    #: in the played archive and costs the lab nine points of capture rate
+    #: (0.812 -> 0.725), because this weight is doing a pursuit job - lead the
+    #: quarry - and not only a forecasting one. Left where the play measures it.
     flee_bias: float = 1.8
+    #: Weight on the chance a candidate cell is the thief's, scored as a term in
+    #: the pursuit rather than as an override of it.
+    #:
+    #: `pounce_floor` gates an early return, so lowering it does not merely take
+    #: more shots - it stops `_pursue` running at all, and with it the
+    #: territory, anti-camp, anti-dither and mixing rules. Measured: at floor
+    #: 0.20 the archive converts exactly as many chances as at 0.262 while the
+    #: lab's capture rate falls 0.812 -> 0.704, and by 0.04 it reaches 0.567.
+    #: Priced as a term instead, on the same scale as distance, one unit reads
+    #: "a cell that certainly holds the thief is worth one step of ground" - a
+    #: tie-break, which is all a sub-threshold chance should ever be. That takes
+    #: the archive from 26 of 76 chances converted to 29, and won on all FIVE
+    #: independent seed sets it was scored over - none of them used to pick it:
+    #: +0.023 capture rate over 2480 police sub-games, about two standard
+    #: errors, so real and small. A no-op under any lag-0 physics, where
+    #: `_where` is a delta on the fix and the pounce has already spent it or
+    #: cannot reach it - measured identical to three decimals over 640.
+    w_pounce: float = 1.0
     #: Weight on shrinking the thief's half of the board (a Voronoi split), as
     #: against simply closing the distance. Pure distance is a tail chase: the
     #: freshest evidence names where it *was*, so an equal-speed pursuer aiming
@@ -213,6 +240,11 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "claim_threshold": (0.03, 0.50, False),
     "pounce_floor": (0.02, 0.60, False),
     "flee_bias": (0.80, 4.00, False),
+    # Searchable, but the archive is the authority on it and the lab's margin is
+    # only about two standard errors - so treat a search that moves it far from
+    # 1 the way `police_mix_margin` is treated, and check the conversion count
+    # in `learn review` before writing the result to `config/`.
+    "w_pounce": (0.0, 4.0, False),
     "w_cut": (0.0, 2.0, False),
     # Floors below zero for the same reason as `backtrack_penalty`: 0 is the
     # "off" value and every default must sit STRICTLY inside its box, so the
@@ -251,7 +283,7 @@ SPACE: dict[str, tuple[float, float, bool]] = {
 #: defaults while reverting them in the thief's file.
 POLICE_KEYS = ("peak_window", "gap_window", "kill_shot_ratio", "seal_ratio",
                "seal_distance", "endgame_reserve", "belief_floor", "police_fresh_min",
-               "claim_threshold", "pounce_floor", "flee_bias", "w_cut",
+               "claim_threshold", "pounce_floor", "flee_bias", "w_pounce", "w_cut",
                "police_mix_margin")
 THIEF_KEYS = tuple(k for k in SPACE if k not in POLICE_KEYS)
 

@@ -14,6 +14,14 @@ cell, so a turn where the thief stands one step away is a chance. Counting them
 across the archive: 76 chances, 11 taken. Twenty-seven of the misses were spent
 placing a barrier - which forfeits the move - from a cell adjacent to the thief.
 
+Those are the counts of what was *played*, and they stay that way: this module
+reads the archive, it does not re-decide it. What the current brain would do
+from the same 76 states is a different question and a strictly harder one - the
+opponent's served field is not archived, though it rebuilds exactly from the
+trajectory that is. :mod:`.counterfactual` answers it, and its answer - 26
+converted, with the barrier and stand-still misses both at zero - is pinned in
+``tests/unit/test_archive_review`` rather than reported here.
+
 **Was the position estimate any good?** Both brains read the opponent's cell off
 ``argmax`` of its served scent field. Replaying that against the truth in the
 same records: right 11% of the time, because the field saturates and most served
