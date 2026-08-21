@@ -204,6 +204,17 @@ class PeerConfig:
     #: the update). A shared model *name* is not a shared physics, so this is
     #: negotiated per opponent and locked before the first move (rule #23).
     scent_model: str = BOOK_V1
+    #: Subtractive only: cut the transmitted packet *before* the decay, so our
+    #: freshest served centre reads 0.9 instead of 0.8. Not a physics change -
+    #: the stored grid is identical either way - but it is what an opponent that
+    #: decodes intensity as age actually sees, and reading it the other way puts
+    #: a systematic one-step lag on the wire. The kit's document does not settle
+    #: which side of the decay the packet comes from, so both readings hash to
+    #: the same lock and only a written agreement separates them: s82kma9e's two
+    #: golden fields require 0.8 and we filed a counted series under that;
+    #: najamjad verify 0.9 on our first transmitted grid and stop at step 1 if
+    #: it is not. Hence per opponent, and hence default False.
+    scent_serve_before_decay: bool = False
 
 
 #: *Negotiated* terms an opponent may propose differently per match. A
@@ -361,6 +372,7 @@ BOOL_VARS = {
     "P2P_ALWAYS_CLAIM": "always_claim",
     "P2P_SERIES_CONSENSUS": "series_consensus",
     "P2P_STATELESS_HTTP": "stateless_http",
+    "P2P_SCENT_SERVE_BEFORE_DECAY": "scent_serve_before_decay",
 }
 #: The banter provider, per match. An LLM call carries a deadline of its own and
 #: can push a single turn against an opponent's per-turn envelope - najamjad

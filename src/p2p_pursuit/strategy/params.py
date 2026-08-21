@@ -121,6 +121,18 @@ class Doctrine:
     #: quota to seal it with, since an empty quota cannot close a mouth.
     trap_floor: int = 10
     w_trap: float = 1.2
+    #: Weight on the room we could still be sealed into *alone* - the only term
+    #: with a gradient while a wall is being built. `w_trap` above is reactive
+    #: and fires once the pocket has already closed; on najamjad's cage that was
+    #: measured to be seven turns after the last step from which the gap was
+    #: reachable. Default 0.0: it is a real per-turn cost (a pairwise scan over
+    #: the seam) and it is the search's job to decide whether it earns its keep.
+    w_lifeboat: float = 0.0
+    #: Weight on being on the wall-builder's side of a forming wall. The only
+    #: anticipatory term whose signal arrives before the escape expires: three
+    #: collinear barriers on their turn 7 against a turn-9 deadline. Default 0.0
+    #: - off until it is measured to earn its place.
+    w_wall_side: float = 0.0
     w_centroid: float = 0.4
     w_risk: float = 3.0
     w_lead_risk: float = 1.5
@@ -255,6 +267,12 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "w_mobility2": (0.0, 1.5, False),
     "w_territory": (0.0, 1.0, False),
     "trap_floor": (0, 24, True),
+    # Floor below zero for the reason given above `police_mix_margin`: 0.0 is
+    # this term's OFF value and a default must sit strictly inside its box, so
+    # the search has to be able to reach off from either side. Anything <= 0
+    # skips the seam scan entirely.
+    "w_lifeboat": (-0.25, 1.0, False),
+    "w_wall_side": (-0.25, 1.0, False),
     "w_trap": (0.0, 6.0, False),
     "w_centroid": (0.0, 1.5, False),
     "w_risk": (0.0, 8.0, False),
