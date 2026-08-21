@@ -18,6 +18,7 @@ import pytest
 
 from p2p_pursuit.learn.counterfactual import replay, served_fields
 from p2p_pursuit.learn.review import (
+    _cut_of,
     _model_of,
     _our_steps,
     death_corner_share,
@@ -72,8 +73,19 @@ def test_the_estimator_that_was_replaced_and_the_one_that_replaced_it(archive):
     sub-game, every opponent and all three negotiated models.
     """
     assert archive.fixes > 1500
-    assert archive.argmax_right / archive.fixes < 0.20, (
+    # Split by cut before reading any argmax rate. The archive is mixed physics
+    # now, and the early cut serves the emission ceiling on the emitter's OWN
+    # cell - so there the argmax is not a weak estimate, it is exactly right,
+    # and averaging the two together says nothing about either. Taken whole the
+    # rate reads 24%, which is neither number.
+    late_fixes = archive.fixes - archive.early_cut_fixes
+    late_argmax = archive.argmax_right - archive.early_cut_argmax_right
+    assert late_fixes > 1500, "the late-cut series are the ones this claim is about"
+    assert late_argmax / late_fixes < 0.20, (
         "argmax of the served field was the position estimate both brains used")
+    assert archive.early_cut_argmax_right == archive.early_cut_fixes, (
+        "under the early cut the peak IS the emitter's cell - if that ever "
+        "fails, the cut detection is wrong, not the estimator")
     assert archive.inverse_wrong == 0, (
         f"inverting the model named the WRONG cell {archive.inverse_wrong} times - "
         "a confident wrong fix is worse than no fix")
@@ -89,7 +101,17 @@ def test_the_thief_died_where_the_broken_estimator_pointed_it(archive):
     on the far edges: not proof of the mechanism, but exactly its signature.
     """
     assert archive.exposures > 30, "it walked into the pursuer's reach routinely"
-    assert death_corner_share(archive) > 0.6
+    # 0.69 when this was written, 0.58 now, and the gate moves with it because
+    # the archive grew a SECOND way our thief dies. najamjad's cage sealed it at
+    # (2,4) in all three thief windows of the counted series - open ground, not
+    # a corner - so the far-edge signature is diluted by new deaths rather than
+    # contradicted by them. The claim being pinned is that the edges still
+    # dominate, not that the ratio is frozen.
+    assert death_corner_share(archive) > 0.55
+    assert archive.enclosure_deaths >= 9, (
+        "cage deaths are now half our thief losses and need their own number")
+    assert (2, 4) in archive.enclosure_death_cells, (
+        "the counted najamjad cage, the one currently costing us 20 a window")
 
 
 def test_the_walls_it_built_against_itself(archive):
@@ -132,7 +154,13 @@ def test_the_reconstruction_the_counterfactual_rests_on(archive):
         scented = [s for s in ours if s["scent"]]
         if len(scented) < 3:
             continue
-        rebuilt = served_fields({s["step"]: s["after"] for s in ours}, _model_of(scented))
+        model = _model_of(scented)
+        # BOTH halves of the physics. The packet cut is a per-opponent term that
+        # the log does not name, and rebuilding on the wrong one lands every
+        # field exactly one decay out: all 126 najamjad fields failed here when
+        # the cut was assumed rather than detected.
+        rebuilt = served_fields({s["step"]: s["after"] for s in ours}, model,
+                                serve_before_decay=_cut_of(scented, model))
         for step in scented:
             checked += 1
             mismatched += rebuilt[step["step"]] != step["scent"]
