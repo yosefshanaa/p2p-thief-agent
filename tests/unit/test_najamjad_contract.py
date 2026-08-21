@@ -22,7 +22,6 @@ peer that does *not* re-offer would read our replay of N as a stale duplicate.
 
 from __future__ import annotations
 
-import json
 from dataclasses import replace
 from pathlib import Path
 
@@ -201,9 +200,14 @@ def test_re_offering_is_off_by_default_and_on_for_najamjad(monkeypatch, police) 
 
 
 def test_the_friendly_contract_never_mails_the_lecturer() -> None:
-    """Their §7.4 and ours agree: friendlies go to the two teams only."""
+    """Their §7.4 and ours agree: friendlies go to the two teams only.
+
+    This run files to najamjad's own published contact rather than to us - the
+    address on the `Contact:` line of the contract, checked here so a typo in
+    an outbound address cannot reach a stranger unnoticed.
+    """
     env = _env_of("config/opponents/najamjad.env")
-    assert env["P2P_EMAIL_RECIPIENT"] == "apexmediamind@gmail.com"
+    assert env["P2P_EMAIL_RECIPIENT"] == "najikayal4@gmail.com"
     assert "rmisegal" not in env["P2P_EMAIL_RECIPIENT"]
 
 
@@ -266,10 +270,27 @@ def test_an_unparseable_patience_knob_is_loud(monkeypatch, police) -> None:
         apply_env_overrides(peer)
 
 
-def test_the_archive_is_untouched() -> None:
-    """Nothing in this work may edit a filed match."""
-    before = json.dumps(sorted(p.name for p in Path("matches").iterdir()))
-    assert "najamjad" not in before
+def test_the_counted_series_is_filed_and_complete() -> None:
+    """Nothing in this work may EDIT a filed match - only add one.
+
+    This asserted `najamjad` appeared nowhere under `matches/` while the pairing
+    was still unplayed. The counted series was played 2026-08-21 and filed, so
+    the guard now checks the thing that still matters: it went in as its own new
+    directory, carrying the whole artifact set the book requires, and no earlier
+    team's archive grew a najamjad file.
+    """
+    archive = Path("matches/najamjad-counted")
+    runs = [p for p in archive.iterdir() if p.is_dir()]
+    assert len(runs) == 1, "one counted series per pair (rule 52)"
+    names = sorted(p.name for p in runs[0].iterdir())
+    assert sum(n.startswith("log_") for n in names) == 6
+    assert sum(n.startswith("config_") for n in names) == 6
+    assert "declaration_ahk-yosi-vs-najamjad.json" in names
+    assert "result_ahk-yosi-vs-najamjad.json" in names
+
+    strays = [p.name for p in Path("matches").iterdir()
+              if "najamjad" in p.name and p.name != "najamjad-counted"]
+    assert not strays, f"najamjad artifacts filed outside its own archive: {strays}"
 
 
 def test_a_retrying_peer_does_not_leave_us_one_window_behind_forever() -> None:
@@ -346,7 +367,7 @@ def test_the_counted_contract_mails_the_lecturer_and_the_friendly_never_does() -
     counted = _env_of("config/opponents/najamjad-counted.env")
     lecturer = "rmisegal+uoh26finalgame@gmail.com"
 
-    assert friendly["P2P_EMAIL_RECIPIENT"] == "apexmediamind@gmail.com"
+    assert friendly["P2P_EMAIL_RECIPIENT"] == "najikayal4@gmail.com"
     assert counted["P2P_EMAIL_RECIPIENT"] == lecturer
     assert counted["P2P_EMAIL_MODE"] == friendly["P2P_EMAIL_MODE"] == "send"
 

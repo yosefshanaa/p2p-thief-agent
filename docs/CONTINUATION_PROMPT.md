@@ -44,9 +44,12 @@ Reference-derived opponents were the biggest un-de-riskable unknown. It is now c
   sub-game, their audit of us `log_verified: true`, ours of them `Verified OK`, scores agreed.
   Evidence + reproduction: `matches/warmup-reference-interop/`. Details: RUNBOOK §3b.
 - Interop caveats that are real and documented: no mutually enforceable scent-model lock, their
-  claim answers/win claims are unsealed, and they never return their verdict of us (so our
-  result honestly reports `mutual_agreement: false` for such a match). **Prefer the native
-  dialect for counted matches** when the opponent will run the shim.
+  claim answers/win claims are unsealed, and neither peer returns its verdict of the other —
+  both `submit_audit` implementations answer `{"ok": True}`. `mutual_agreement` therefore means
+  "my audit passed and the exchange completed" in this dialect; requiring both verdicts made the
+  flag unreachable and filed `false` against najamjad's `true` on a clean 6–0, which is a rule 35
+  contradiction risk. **Agree the definition in writing with each reference-dialect opponent.**
+  **Prefer the native dialect for counted matches** when the opponent will run the shim.
 
 ## Already done — do not redo
 

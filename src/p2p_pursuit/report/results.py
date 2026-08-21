@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from ..domain.audit import VERIFIED_OK
+from ..domain.audit import NOT_REPORTED_REFERENCE, VERIFIED_OK
 from ..domain.crypto import digest
 from ..domain.rules import POLICE
 from ..shared.version import CODE_VERSION
@@ -64,12 +64,30 @@ def sub_game_row(*, index: int, ending: str, winner: str, cause: str,
 
 
 def agreement_reached(sub_games: list[dict[str, Any]]) -> bool:
-    """True only when every sub-game was audited clean *in both directions*.
+    """True when every sub-game was audited clean and the exchange completed.
 
-    A dialect that never returns the opponent's verdict (or an opponent that
-    goes silent) therefore reports no mutual agreement, which is the truth:
-    claiming otherwise would put an unverified assertion into a signed result.
+    "Audited clean" is our own verdict of their log, which is never waived. The
+    opponent's verdict of *ours* is required too whenever the dialect can carry
+    it - a returned failure, or silence where an answer was due, still means no
+    agreement, and claiming otherwise would put an unverified assertion into a
+    signed result.
+
+    The one case that does not block is `NOT_REPORTED_REFERENCE`: the reference
+    dialect's `submit_audit` answers `{"ok": True}` on both sides, so *neither*
+    peer can report what it made of the other's log. Requiring it there made
+    this flag unreachable by construction - measured against najamjad
+    2026-08-21, a 6-0 series with `Verified OK` on all six windows filed
+    `mutual_agreement: false` while their report of the same series said true.
+    Two signed files contradicting each other on a field named
+    `mutual_agreement` is precisely what rule 35 voids for, and the reports did
+    not actually disagree about anything: their peer asserts "my audit passed
+    and the exchange completed", which is the reading taken here.
+
+    So this is a *negotiated* definition, not a relaxed one. It belongs in both
+    terms documents, because a peer that reads it strictly and a peer that reads
+    it this way will file opposite booleans on an identical series.
     """
     return bool(sub_games) and all(
-        row.get("audit") == VERIFIED_OK and row.get("opponent_audit") == VERIFIED_OK
+        row.get("audit") == VERIFIED_OK
+        and row.get("opponent_audit") in (VERIFIED_OK, NOT_REPORTED_REFERENCE)
         for row in sub_games)
