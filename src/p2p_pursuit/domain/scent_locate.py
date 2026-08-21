@@ -37,6 +37,7 @@ unique this returns ``None`` and the caller keeps whatever it already believed.
 
 from __future__ import annotations
 
+from . import scent_subtractive
 from .board import Cell
 from .scent import BOOK_V1, REGISTERED_V3, SUBTRACTIVE_V1, ScentField
 
@@ -91,6 +92,7 @@ def changed(previous: Field, current: Field, size: int) -> bool:
 
 def locate_emitter(previous: Field, current: Field, *, size: int,
                    model: str = BOOK_V1,
+                   serve_before_decay: bool = False,
                    candidates: list[Cell] | None = None,
                    tolerance: float = TOLERANCE) -> Cell | None:
     """The cell whose emission turns ``previous`` into ``current``, if unique.
@@ -115,9 +117,22 @@ def locate_emitter(previous: Field, current: Field, *, size: int,
     best_cost = float("inf")
     ties = 0
     for cell in cells:
-        trial = ScentField(size, [row[:] for row in previous], model)
-        trial.serve_for_step(cell)
-        cost = _residual(trial.grid, current, size, best_cost)
+        grid = [row[:] for row in previous]
+        if serve_before_decay:
+            # `previous` is their *packet*, cut before their decay, so it is not
+            # their stored grid - it is one decay higher than it. Apply the decay
+            # they applied after cutting it and we are standing on their state
+            # again. Skip this and every candidate is scored against a grid that
+            # is uniformly 0.1 too high, which does not merely add noise: it
+            # rescales the residual and silently moves the argmin.
+            scent_subtractive.decay(grid, size=size)
+        trial = ScentField(size, grid, model, serve_before_decay=serve_before_decay)
+        served = trial.serve_for_step(cell)
+        # Compare like with like: what they would have *transmitted*. For the
+        # other orders that is the post-step grid, which is what `trial.grid`
+        # holds; when the packet is cut early the two are a decay apart.
+        cost = _residual(served if serve_before_decay else trial.grid,
+                         current, size, best_cost)
         if cost < best_cost:
             best, best_cost, ties = cell, cost, 1
         elif cost == best_cost:

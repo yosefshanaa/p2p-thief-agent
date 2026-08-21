@@ -70,14 +70,20 @@ class Conversion:
         return self.converted / max(self.chances, 1)
 
 
-def served_fields(cells: dict[int, Cell], model: str, size: int = SIZE) -> dict[int, Field]:
+def served_fields(cells: dict[int, Cell], model: str, size: int = SIZE,
+                  serve_before_decay: bool = False) -> dict[int, Field]:
     """The field an agent served at each of its steps, from its trajectory alone.
 
     The emitter's own history is the only input a scent model has, so replaying
     the cells in step order reproduces the served field exactly - which is what
     makes an opponent whose fields were never archived trackable anyway.
+
+    ``serve_before_decay`` has to match the match being replayed: reconstructing
+    a najamjad series on the default cut hands the brain fields 0.1 below the
+    ones it actually saw, and a counterfactual asked on the wrong observation
+    answers a question nobody asked.
     """
-    field = ScentField(size=size, model=model)
+    field = ScentField(size=size, model=model, serve_before_decay=serve_before_decay)
     return {step: field.serve_for_step(cells[step]) for step in sorted(cells)}
 
 

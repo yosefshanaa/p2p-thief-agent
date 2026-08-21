@@ -88,4 +88,5 @@ def run_audit(engine: TurnEngine, package: dict[str, Any]) -> tuple[str, list[st
         barriers_before_step=_barriers_before_step(engine),
         dialect=engine.commit_dialect,
         scent_model=engine.own_field.model,
+        scent_serve_before_decay=engine.own_field.serve_before_decay,
     )

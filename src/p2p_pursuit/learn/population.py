@@ -33,6 +33,7 @@ from .opponents import (
     RandomWalker,
     Replayer,
     Sniper,
+    najamjad_cage,
 )
 
 Factory = Callable[[str], BrainBase]
@@ -79,6 +80,18 @@ BUILTIN: dict[str, Member] = {
     #: measured a seal against Voronoi room and the rules only let a police
     #: wall a cell it is standing next to - which is a cell it already owns.
     "cager": Member(lambda role: Cager(), roles=(POLICE,)),
+    #: The cage that actually closed on us, replayed turn for turn rather than
+    #: modelled. `cager` is a policy and reasons about room; najamjad's police
+    #: is a 34-turn transcript that walls column 3 on alternate turns and folds
+    #: the top-right corner into a seven-cell pocket - and it played identically
+    #: in all three of its windows, so the transcript IS the opponent.
+    #:
+    #: It reproduces the live result exactly (12 barriers, a 7-cell pocket, our
+    #: thief ending on (0,6)) on every seed. Keep it in the pool even though no
+    #: doctrine vector currently beats it: it is the only member that makes the
+    #: failure visible, and a search that cannot see a failure optimises around
+    #: it. See `Transcript` for why a survival here is not proof of anything.
+    "najamjad-cage": Member(lambda role: najamjad_cage(), roles=(POLICE,)),
     # The pool's only pursuer that knows where the thief actually is. Added
     # after a thief search found nothing to learn: sixteen of seventeen members
     # scored a flat 10.00 against our evader, so the objective was blind and the

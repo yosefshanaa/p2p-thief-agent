@@ -173,3 +173,56 @@ def test_the_lock_example_is_what_the_model_actually_does() -> None:
     for key, value in doc["example"]["after_one_decay"].items():
         r, c = (int(x) for x in key.split(","))
         assert served[r][c] == pytest.approx(value)
+
+
+# -- najamjad's cut ----------------------------------------------------------
+# Same physics, same lock digest, different packet. najamjad cut the transmitted
+# grid before the decay and s82kma9e cut it after, and the signed document does
+# not say which - so this is a per-opponent term carried in `najamjad.env`, not
+# a correction to the default. Both blocks below must stay true at once.
+
+
+def test_the_default_cut_is_unchanged_for_everyone_else() -> None:
+    """s82kma9e's golden fields are a filed counted series - they do not move."""
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    assert fld.serve_for_step((3, 3)) == THEIR_FIELD_AFTER_EMIT_AT_33
+    assert fld.serve_for_step((3, 3))[3][3] == 0.8
+
+
+def test_serving_before_the_decay_puts_09_on_the_wire() -> None:
+    """najamjad read the peak at step 1 and stop the series if it is not 0.9."""
+    fld = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1, serve_before_decay=True)
+    served = fld.serve_for_step((3, 3))
+    assert served[3][3] == 0.9
+    assert served[3][2] == 0.6, "ring 1"
+    assert served[3][1] == 0.3, "ring 2"
+
+
+def test_the_stored_grid_is_identical_under_both_cuts() -> None:
+    """The whole safety argument: only the snapshot moves, so nothing we
+    compute from our own field changes - it is a wire term, not a physics one."""
+    late = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    early = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1, serve_before_decay=True)
+    for cell in ((3, 3), (3, 4), (2, 4), (2, 4), (1, 4)):
+        late.serve_for_step(cell)
+        early.serve_for_step(cell)
+        assert late.grid == early.grid, f"stored grids diverged at {cell}"
+
+
+def test_the_early_cut_is_exactly_one_decay_above_the_late_one() -> None:
+    late = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1)
+    early = ScentField(size=7, model=SUBTRACTIVE_CHEBYSHEV_V1, serve_before_decay=True)
+    a, b = late.serve_for_step((3, 3)), early.serve_for_step((3, 3))
+    for r in range(7):
+        for c in range(7):
+            if a[r][c] > 0.0:
+                assert round(b[r][c] - a[r][c], 4) == 0.1, f"at {(r, c)}"
+
+
+def test_the_flag_does_not_touch_the_other_two_models() -> None:
+    """It is a subtractive-only term; book and registered must be untouched."""
+    for model in (BOOK_V1, REGISTERED_V3):
+        off = ScentField(size=7, model=model)
+        on = ScentField(size=7, model=model, serve_before_decay=True)
+        assert off.serve_for_step((3, 3)) == on.serve_for_step((3, 3))
+        assert off.grid == on.grid

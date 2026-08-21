@@ -179,10 +179,19 @@ class EngineState:
             else self.shared.thief_start
         opp_start = self.shared.thief_start if self.role == POLICE else self.shared.cop_start
         self.belief = BeliefMap.at(self.shared.grid_size, opp_start)
-        self.own_field = ScentField(self.shared.grid_size, model=self.peer.scent_model)
+        self.own_field = ScentField(
+            self.shared.grid_size, model=self.peer.scent_model,
+            serve_before_decay=self.peer.scent_serve_before_decay)
         # Fresh per sub-game, like the board: a fix carried across the boundary
         # would name a cell from a game that is already over.
-        self.opp_tracker = OpponentTracker(self.shared.grid_size, self.peer.scent_model)
+        #
+        # The tracker takes the same flag because the serve order is a *mutual*
+        # term: whichever cut both sides agreed, both sides transmit. Passing it
+        # to our field and not to the inverse would leave us reading their
+        # packets against a physics neither of us plays.
+        self.opp_tracker = OpponentTracker(
+            self.shared.grid_size, self.peer.scent_model,
+            serve_before_decay=self.peer.scent_serve_before_decay)
         self.trust = TrustModel()
         self.my_steps = self.opp_steps = 0
         self.barriers_used = 0

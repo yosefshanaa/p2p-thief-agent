@@ -361,3 +361,65 @@ def test_the_two_contracts_agree_on_everything_except_the_recipient() -> None:
                  if friendly.get(k) != counted.get(k)}
     assert differing == {"P2P_EMAIL_RECIPIENT"}, (
         f"unrehearsed drift between friendly and counted: {sorted(differing)}")
+
+
+# -- the serve order they verify at step 1 -----------------------------------
+# "We will read the peak of your first transmitted grid. If it is not 0.9 with
+# 0.6 and 0.3 rings, we stop there" - 2026-08-20. Their gate, our conformance.
+
+
+def test_both_najamjad_contracts_cut_the_packet_early() -> None:
+    for name in ("najamjad.env", "najamjad-counted.env"):
+        env = _env_of(f"config/opponents/{name}")
+        assert env["P2P_SCENT_SERVE_BEFORE_DECAY"] == "true", name
+
+
+def test_the_env_flag_actually_reaches_the_config(monkeypatch) -> None:
+    monkeypatch.delenv("P2P_SCENT_SERVE_BEFORE_DECAY", raising=False)
+    _, peer = load_role(Path("config/police"))
+    assert peer.scent_serve_before_decay is False, "the default is the late cut"
+    monkeypatch.setenv("P2P_SCENT_SERVE_BEFORE_DECAY", "true")
+    assert apply_env_overrides(peer).scent_serve_before_decay is True
+    monkeypatch.setenv("P2P_SCENT_SERVE_BEFORE_DECAY", "false")
+    assert apply_env_overrides(peer).scent_serve_before_decay is False
+
+
+def test_our_first_transmitted_grid_passes_their_step_1_check() -> None:
+    """Exactly the check they described, run on the field the engine serves."""
+    from p2p_pursuit.domain.scent import SUBTRACTIVE_CHEBYSHEV_V1, ScentField
+    env = _env_of("config/opponents/najamjad.env")
+    field = ScentField(size=7, model=env["P2P_SCENT_MODEL"],
+                       serve_before_decay=env["P2P_SCENT_SERVE_BEFORE_DECAY"] == "true")
+    assert env["P2P_SCENT_MODEL"] == SUBTRACTIVE_CHEBYSHEV_V1
+    served = field.serve_for_step((3, 3))
+    assert max(max(row) for row in served) == 0.9
+    assert served[3][2] == 0.6 and served[3][1] == 0.3
+
+
+def test_the_inverse_is_still_exact_under_the_early_cut() -> None:
+    """Threading the flag to our own field but not to the reader would leave us
+    decoding their packets against a physics neither side plays."""
+    from p2p_pursuit.domain.scent import SUBTRACTIVE_CHEBYSHEV_V1 as MODEL
+    from p2p_pursuit.domain.scent import ScentField
+    from p2p_pursuit.domain.scent_locate import locate_emitter
+    path = [(3, 3), (3, 4), (2, 4), (2, 4), (1, 4), (1, 5), (1, 6), (0, 6)]
+    field = ScentField(size=7, model=MODEL, serve_before_decay=True)
+    served = [field.serve_for_step(cell) for cell in path]
+    for i in range(1, len(path)):
+        assert locate_emitter(served[i - 1], served[i], size=7, model=MODEL,
+                              serve_before_decay=True) == path[i], f"step {i}"
+
+
+def test_the_audit_replay_follows_the_same_cut() -> None:
+    """`audit_opponent` re-derives every served field and reports a mismatch as
+    tampering, so an audit on the other cut fails an honest opponent on every
+    step. Both readers come off `engine.own_field`, which is what keeps them
+    from drifting apart - assert the wiring, not just the default."""
+    import inspect
+
+    from p2p_pursuit.domain.audit import audit_opponent
+    from p2p_pursuit.peer import audit_bridge
+    assert "scent_serve_before_decay" in inspect.signature(audit_opponent).parameters
+    src = inspect.getsource(audit_bridge)
+    assert "scent_serve_before_decay=engine.own_field.serve_before_decay" in src
+    assert "scent_model=engine.own_field.model" in src

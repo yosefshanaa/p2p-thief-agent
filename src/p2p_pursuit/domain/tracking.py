@@ -73,9 +73,16 @@ def unique_peak(scent: Field, size: int) -> Cell | None:
 class OpponentTracker:
     """Where the opponent is, read off the field it is required to publish."""
 
-    def __init__(self, size: int, model: str = BOOK_V1) -> None:
+    def __init__(self, size: int, model: str = BOOK_V1,
+                 serve_before_decay: bool = False) -> None:
         self.size = size
         self.model = model
+        # Their serve order, not ours - though under a negotiated contract the
+        # two are the same value. `unique_peak` does not care (the emitter's
+        # cell is the unique maximum at 0.8 or at 0.9); the replay inverse does.
+        self.serve_before_decay = serve_before_decay
+        # Unchanged by the packet's cut point: an early-cut packet still carries
+        # this step's own emission, so it is still lag 0.
         self.lag = fix_lag(model)
         self.fix: Cell | None = None
         self.previous_fix: Cell | None = None
@@ -111,12 +118,14 @@ class OpponentTracker:
             candidates = [c for c in [self.fix, *board.neighbors4(self.fix)]
                           if board.is_open(c)]
         found = locate_emitter(previous, scent, size=self.size, model=self.model,
+                               serve_before_decay=self.serve_before_decay,
                                candidates=candidates)
         if found is None and candidates is not None:
             # Continuity broke - a dropped turn, a model that is not quite the
             # one we negotiated, or a peer that re-serves a stale field. Re-open
             # the scan to the whole board rather than carry a stale fix forward.
-            found = locate_emitter(previous, scent, size=self.size, model=self.model)
+            found = locate_emitter(previous, scent, size=self.size, model=self.model,
+                                   serve_before_decay=self.serve_before_decay)
         if found is None:
             return None
         self.previous_fix, self.fix = self.fix, found

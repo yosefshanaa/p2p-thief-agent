@@ -37,6 +37,7 @@ def audit_opponent(
     barriers_before_step: Callable[[int], set[Cell]],
     dialect: str = NATIVE,
     scent_model: str = BOOK_V1,
+    scent_serve_before_decay: bool = False,
 ) -> tuple[str, list[str]]:
     """Re-verify the opponent's full revealed log against what we saw live.
 
@@ -48,7 +49,12 @@ def audit_opponent(
         return TAMPERED, [f"record count {len(entries)} != received hashes {len(live_hashes)}"]
 
     steps = [e for e in entries if e.get("kind") == KIND_STEP]
-    field = ScentField(grid_size, model=scent_model)
+    # The serve order has to reach here too, and this is the line that makes it
+    # matter: every step is checked by recomputing the served field, so an audit
+    # replaying the other cut disagrees with a perfectly honest opponent on
+    # every single step - and reports it as tampering.
+    field = ScentField(grid_size, model=scent_model,
+                       serve_before_decay=scent_serve_before_decay)
     expected_pos = list(start_pos)
     barriers_placed = 0
 

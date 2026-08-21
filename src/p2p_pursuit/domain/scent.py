@@ -85,6 +85,13 @@ class ScentField:
     size: int
     grid: list[list[float]] = field(default_factory=list)
     model: str = BOOK_V1
+    #: Subtractive only: snapshot *between* the emission and the decay, so the
+    #: freshest served centre reads 0.9 rather than 0.8. The kit's document
+    #: pins `order: deposit_then_decay` for the grid but never says which side
+    #: of the decay the *packet* is cut from, so the two readings are both
+    #: defensible and neither is inferable from the digest - see
+    #: `PeerConfig.scent_serve_before_decay`. Per opponent, never global.
+    serve_before_decay: bool = False
 
     def __post_init__(self) -> None:
         if not self.grid:
@@ -120,7 +127,17 @@ class ScentField:
             # says `"order": "deposit_then_decay"` and their two published golden
             # fields require 0.8, so this is the order we contracted, locked and
             # played the counted match under (2026-08-17, 6/6 Verified OK).
+            #
+            # najamjad read the same document the other way and cut the packet
+            # before the decay. Both orders leave the *stored* grid identical -
+            # only the snapshot moves - so this changes what we transmit and
+            # nothing we compute. It is per-opponent because the two teams
+            # genuinely disagree and the digest cannot settle it.
             scent_subtractive.emit(self.grid, center, size=self.size)
+            if self.serve_before_decay:
+                served = self.snapshot()
+                scent_subtractive.decay(self.grid, size=self.size)
+                return served
             scent_subtractive.decay(self.grid, size=self.size)
             return self.snapshot()
         if self.model == REGISTERED_V3:
