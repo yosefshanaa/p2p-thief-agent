@@ -47,7 +47,7 @@ from ..domain.tracking import OpponentTracker
 from ..strategy.params import Doctrine
 from ..strategy.police_brain import PoliceBrain
 from .clone_data import _steps
-from .review import LAG, SIZE, _model_of, _our_steps
+from .review import LAG, SIZE, _cut_of, _model_of, _our_steps
 
 Field = list[list[float]]
 #: The archive's own shared config: 14 barriers, 40 moves, survival at 35.
@@ -111,9 +111,14 @@ def replay_log(log: dict, doctrine: Doctrine, into: Conversion) -> None:
     if not ours or not theirs or len(scented) < 3:
         return
     model = _model_of(scented)
-    served = served_fields(theirs, model)
+    # Both halves of the physics, inferred from our own archived fields. The cut
+    # is a per-opponent term and the log does not name it, so a series played on
+    # the early cut rebuilds one decay low on every field unless it is detected -
+    # and a counterfactual asked on the wrong observation answers nothing.
+    cut = _cut_of(scented, model)
+    served = served_fields(theirs, model, serve_before_decay=cut)
     brain = PoliceBrain(doctrine)
-    tracker = OpponentTracker(SIZE, model)
+    tracker = OpponentTracker(SIZE, model, serve_before_decay=cut)
     board, used = Board(SIZE), 0
     for step in ours:
         if step["barrier"]:

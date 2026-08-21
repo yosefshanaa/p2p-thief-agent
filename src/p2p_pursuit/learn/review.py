@@ -28,9 +28,16 @@ same records: right 11% of the time, because the field saturates and most served
 fields have 6 to 20 cells tied at the maximum. Inverting the field instead
 (:mod:`...domain.scent_locate`) is exact.
 
-**Where did the thief die?** Not evenly: 11 of 14 captures are on the bottom and
+**Where did the thief die?** Not evenly: 11 of 19 captures are on the bottom and
 right edges, and the thief finished its move inside the pursuer's next-step
-reach on 43 turns to get there.
+reach on 45 turns to get there.
+
+And increasingly, not by pursuit at all. **9 of those 19 are enclosures** - a
+barrier cage sealed around a thief that never saw it being built - including all
+three thief windows of the counted najamjad series, where the box shut on open
+ground at (2,4) five moves inside the survival threshold. That is the failure
+currently costing us 20 points a window, and it is counted separately
+(`enclosure_deaths`) precisely because it says nothing about the estimator.
 
 The numbers printed here are the ones quoted in the brains' own docstrings and
 in ``docs/STRATEGY.md``; running this is how they stay honest.
@@ -45,8 +52,9 @@ from pathlib import Path
 
 from ..domain.board import Board
 from ..domain.rules import POLICE, THIEF
-from ..domain.scent import BOOK_V1, MODELS
+from ..domain.scent import BOOK_V1, MODELS, SUBTRACTIVE_V1
 from ..domain.scent_locate import fix_lag, locate_emitter
+from ..domain.scent_subtractive import CENTER_INTENSITY, DECAY_PER_STEP
 from ..strategy.pathing import bfs_distances
 from .clone_data import _steps
 
@@ -84,12 +92,39 @@ class Review:
     #: short of `fixes` only by the silences.
     inverse_wrong: int = 0
     fixes: int = 0
+    #: How many of `fixes` came from a series served on the EARLY cut. The
+    #: archive is mixed physics, so any rate taken across the whole of it is an
+    #: average over two different observation models - and `argmax_right` in
+    #: particular is a property of the cut, not of the estimator: the early cut
+    #: leaves the emission ceiling on the emitter's own cell, so the argmax is
+    #: simply correct there. Split any such rate on this before reading it.
+    early_cut_fixes: int = 0
+    #: Of `argmax_right`, how many came from an early-cut series. Expect these to
+    #: be ALL of them: the early cut serves the emission ceiling on the emitter's
+    #: own cell, so there the argmax is not an estimate at all, it is the answer.
+    early_cut_argmax_right: int = 0
+    #: Thief deaths by barrier cage rather than by pursuit - sealed with no open
+    #: neighbour (book rule 47). A SUBSET of `death_cells`, not a partition of
+    #: it, because `death_corner_share` is a historical measurement and moving
+    #: its denominator would rewrite the finding it recorded.
+    #:
+    #: Worth its own counter because it is evidence about a *pursuer's barrier
+    #: plan* rather than about where our estimator pointed us, and because it is
+    #: the failure that is currently costing us: 9 of our 19 archived thief
+    #: deaths, including all three windows of the counted najamjad series, where
+    #: the cage closed on open ground at (2,4) five moves inside the survival
+    #: threshold.
+    enclosure_deaths: int = 0
+    enclosure_death_cells: Counter = field(default_factory=Counter)
     death_cells: Counter = field(default_factory=Counter)
     per_match: dict[str, dict] = field(default_factory=dict)
 
     def as_dict(self) -> dict:
-        payload = {k: v for k, v in vars(self).items() if k not in ("death_cells",)}
+        skip = ("death_cells", "enclosure_death_cells")
+        payload = {k: v for k, v in vars(self).items() if k not in skip}
         payload["death_cells"] = [[list(c), n] for c, n in self.death_cells.most_common()]
+        payload["enclosure_death_cells"] = [
+            [list(c), n] for c, n in self.enclosure_death_cells.most_common()]
         return payload
 
 
@@ -121,6 +156,34 @@ def _model_of(steps: list[dict]) -> str:
     return best
 
 
+def _cut_of(steps: list[dict], model: str) -> bool:
+    """Which side of the decay this sub-game cut its transmitted packet from.
+
+    The companion to :func:`_model_of`, and needed for the same reason: the cut
+    is a per-opponent negotiated term (najamjad take it early, s82kma9e late)
+    and the sub-game log does not name it either. Rebuilding a series on the
+    wrong cut puts every field one decay away from the one actually served -
+    measured, all 126 of the najamjad counted fields failed to reconstruct and
+    the inverter's accuracy over the whole archive fell from >99% to 96.5%.
+
+    Read off the emitter's own cell rather than searched, because under the
+    subtractive model that cell is exactly the emission ceiling before the decay
+    and exactly one decay below it after: 0.9 early, 0.8 late, with no third
+    value possible. Verified across the archive - 126/126 at 0.9 for najamjad,
+    322/322 at 0.8 for s82kma9e and uoh-ay26.
+
+    Only the subtractive model has two cuts; the multiplicative ones decay by a
+    factor and the flag does not reach them, so they answer False.
+    """
+    if model != SUBTRACTIVE_V1:
+        return False
+    for step in steps:
+        if step["scent"]:
+            row, col = step["after"]
+            return step["scent"][row][col] > CENTER_INTENSITY - DECAY_PER_STEP / 2
+    return False
+
+
 def review_log(log: dict, into: Review) -> None:
     """Fold one sealed sub-game into the running totals."""
     role = log.get("perspective") or POLICE
@@ -138,10 +201,19 @@ def review_log(log: dict, into: Review) -> None:
         into.captures_against += ending == "capture"
         if ending == "capture":
             into.death_cells[ours[-1]["after"]] += 1
+            # An ADDITIONAL view, never a subtraction: `death_cells` keeps
+            # counting every death so `death_corner_share` goes on measuring
+            # exactly what it measured when the corner pathology was found.
+            # Splitting the cage deaths out of it moved a historical number,
+            # which is the wrong way to make a stale threshold pass.
+            if "enclos" in ((log.get("result") or {}).get("cause") or ""):
+                into.enclosure_deaths += 1
+                into.enclosure_death_cells[ours[-1]["after"]] += 1
 
     # Estimator quality, against our own published fields and our own truth.
     scented = [s for s in ours if s["scent"]]
     model = _model_of(scented)
+    cut = _cut_of(scented, model)
     lag = fix_lag(model)
     for a, b in zip(scented, scented[1:], strict=False):
         truth = (b if lag == 0 else a)["after"]
@@ -149,7 +221,10 @@ def review_log(log: dict, into: Review) -> None:
                    key=lambda cell: b["scent"][cell[0]][cell[1]])
         into.fixes += 1
         into.argmax_right += peak == truth
-        found = locate_emitter(a["scent"], b["scent"], size=SIZE, model=model)
+        into.early_cut_fixes += cut
+        into.early_cut_argmax_right += cut and peak == truth
+        found = locate_emitter(a["scent"], b["scent"], size=SIZE, model=model,
+                               serve_before_decay=cut)
         into.inverse_right += found == truth
         into.inverse_wrong += found is not None and found != truth
 
