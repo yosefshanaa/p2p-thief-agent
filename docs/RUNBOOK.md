@@ -212,8 +212,22 @@ Our audit of a reference peer checks hash binding, that **every commitment we wi
 actually revealed** (their own audit does not check this), and trajectory continuity. It does
 **not** re-derive scent honesty or barrier quota from their record shape, and their protocol
 never exchanges a scent-model lock, so rule #23 cannot be mutually enforced in this dialect.
-Their peer also keeps its verdict of us to itself, so `mutual_agreement` in our result is
-`false` for an interop match — truthfully, since we never received their verdict.
+Their peer also keeps its verdict of us to itself — and so does ours, since both `submit_audit`
+implementations answer `{"ok": True}`. The blindness is symmetric: neither peer is withholding
+anything, and neither *can* report what it made of the other's log.
+
+`mutual_agreement` therefore records **"my audit of their log passed and the exchange
+completed"** in this dialect, not "both verdicts were exchanged and both were clean". That is a
+negotiated definition and it must be agreed in writing with the opponent, because the strict
+reading and this one file opposite booleans on an identical series. Measured against najamjad
+2026-08-21: a 6–0 series, `Verified OK` on all six windows, and the same `mutual_signature`
+`f77e4fb9…` on both sides — and our report said `false` while theirs said `true`. Two signed
+reports contradicting each other is what **rule 35** voids for, so the strict reading was the
+more dangerous one despite being the more cautious. See `report.results.agreement_reached`.
+
+Silence is still not agreement: `not received`, `no package received` and any real failure
+verdict all block. Only `NOT_REPORTED_REFERENCE` — the sentinel meaning *the wire cannot carry
+it* — is non-blocking, and our own verdict is never waived.
 
 **Therefore: prefer the native dialect for counted matches** when the opponent will run our
 shim, and use reference dialect when they will not. Either way, warm up uncounted first.

@@ -337,12 +337,12 @@ or an opponent (§16).
 | 5. Cloud exposure — public-URL config, smoke probe, [`docs/RUNBOOK.md`](docs/RUNBOOK.md), CI chaos drills (latency / dead link / silence) | ✅ incl. live two-tunnel drill + tunnel-kill drill |
 | 6. Crypto — commit-reveal, nonces, mutual audit, step-0 declaration, locks | ✅ |
 | 7. Reporting + GUI — 4 JSON artifacts, Gatekeeper, Gmail (draft/send), live GUI, replay verifier | ✅ |
-| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **three opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
+| 8. Interop — dialect detection, reference-dialect bridge, cross-dialect audit | ✅ proven vs. the unmodified reference peer, **seven opposing teams' live peers** (§16), and every CORE vector of the league's shared conformance kit |
 | 9. Offline learning — CEM policy search over the doctrine vector, opponent cloning from sealed logs | ✅ frozen into `config/doctrine.json`; never runs during a match |
 
 **Quality gate:** 541 tests, coverage 94% (gate 85%), Ruff clean (E/F/W/I/N/UP/B/C4/SIM),
-CI on every push. Six counted league matches have been played and reported — three won, one
-tied, two lost, all 36 sub-games audited clean — which clears the book's ≥2-against-different-teams
+CI on every push. Seven counted league matches have been played and reported — three won, two
+tied, two lost, all 42 sub-games audited clean — which clears the book's ≥2-against-different-teams
 requirement; the full record with artifacts is [§16](#16-match-record), remaining tasks are in
 [`docs/TODO.md`](docs/TODO.md) §8–9, and the submission repos are already split, public and green.
 
@@ -593,7 +593,7 @@ Times are read from the artifacts themselves (`started_at` / `ended_at` on the s
 declaration), never from file mtimes, and are shown in **UTC** — the team plays in
 Asia/Jerusalem, UTC+3 in August.
 
-### Counted league matches — 6 of 10 played
+### Counted league matches — 7 of 10 played
 
 | # | Opponent | Series points `ahk-yosi` – them | Winner | League bonus | Final points `ahk-yosi` – them | Started (UTC) | Ended (UTC) | Match archive |
 |---:|---|:---:|---|:---:|:---:|---|---|---|
@@ -603,7 +603,8 @@ Asia/Jerusalem, UTC+3 in August.
 | 4 | [`s82kma9e`](https://github.com/Imreec/copthief-league-protocol) | **90 – 30** <br>(**6 – 0**) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **100 – 30** | 2026-08-16 23:44:07 | 2026-08-16 23:47:47 | [`s82kma9e-counted/`](matches/s82kma9e-counted) |
 | 5 | [`gal-roy1`](https://github.com/galbb12/orch-models-final-cop) *(private)* | 35 – 75 <br>(1 – 5) | `gal-roy1` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-17 17:34:07 | 2026-08-17 17:40:37 | [`gal-roy1-counted/`](matches/gal-roy1-counted) |
 | 6 | [`uoh-ay26`](https://github.com/aishadahesh/uoh-ay26-final-project-cop) | 35 – 75 <br>(1 – 5) | `uoh-ay26` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-19 17:03:46 | 2026-08-19 17:22:59 | [`uoh-ay26-counted/`](matches/uoh-ay26-counted) |
-| | **6 opponents** | **380 – 340** <br>(20 – 16) | **3 wins · 1 tie · 2 losses** | **+32** to us <br>**+20** to them | **412 – 362** | | | |
+| 7 | [`najamjad`](https://github.com/najikay/najamjad-cop) *(private)* | 75 – 75 <br>(3 – 3) | *tie, no winner* | **+2** <br>*tie score, to **each** side* | **77 – 77** | 2026-08-21 18:23:31 | 2026-08-21 18:27:07 | [`najamjad-counted/`](matches/najamjad-counted) |
+| | **7 opponents** | **455 – 415** <br>(23 – 19) | **3 wins · 2 ties · 2 losses** | **+34** to us <br>**+24** to them | **489 – 439** | | | |
 
 *¹ That series predates the timing fix (`da8856a`), so its declaration carries `ended_at: null`;
 the time shown is `generated_at` from the sealed result — the moment the report was signed,
@@ -639,7 +640,7 @@ declarations before it enters the league table. So treat the final column as the
 book's full parameter values — the lecturer's weighting is applied downstream of our report, and
 the book does not publish its formula.
 
-**All 30 counted sub-games audited `Verified OK`** — every gameplay commit re-hashed to the
+**All 42 counted sub-games audited `Verified OK`** — every gameplay commit re-hashed to the
 record its owner later revealed. The counterpart field `opponent_audit` reads *"not reported
 (reference dialect)"* for all five: that dialect never returns the opponent's verdict of us,
 and asserting an agreement we never received would be a lie in a signed artifact (§13,

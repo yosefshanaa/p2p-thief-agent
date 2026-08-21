@@ -9,7 +9,7 @@ theirs. These tests keep that interoperability from regressing silently.
 
 from __future__ import annotations
 
-from p2p_pursuit.domain.audit import TAMPERED, VERIFIED_OK
+from p2p_pursuit.domain.audit import NOT_REPORTED_REFERENCE, TAMPERED, VERIFIED_OK
 from p2p_pursuit.domain.crypto import REFERENCE, reference_commit, seal
 from p2p_pursuit.gui import replay_data
 from p2p_pursuit.infra.interop_audit import audit_reference_log
@@ -447,6 +447,52 @@ def test_mutual_agreement_needs_both_directions():
     assert results.agreement_reached(both) is True
     assert results.agreement_reached(one_way) is False
     assert results.agreement_reached([]) is False
+
+
+def test_the_reference_dialects_own_blindness_does_not_block_agreement():
+    """Neither reference peer can answer with a verdict, so requiring one made
+    this flag unreachable - and filed `false` against najamjad's `true` on a
+    6-0 series that both sides audited clean. Contradicting signed reports is
+    what rule 35 voids for, so the sentinel for "the wire cannot carry it" is
+    non-blocking while every other non-verdict stays blocking.
+    """
+    blind = [{"audit": VERIFIED_OK, "opponent_audit": NOT_REPORTED_REFERENCE}]
+    assert results.agreement_reached(blind) is True
+
+
+def test_silence_is_still_not_agreement():
+    """The distinction the whole change rests on: a peer that went quiet has
+    told us nothing, and is not the same as a dialect that cannot speak.
+    """
+    for verdict in ("not received", "no package received", TAMPERED, ""):
+        rows = [{"audit": VERIFIED_OK, "opponent_audit": verdict}]
+        assert results.agreement_reached(rows) is False, verdict
+
+
+def test_our_own_verdict_is_never_waived():
+    """Their blindness excuses their half, never ours."""
+    rows = [{"audit": TAMPERED, "opponent_audit": NOT_REPORTED_REFERENCE}]
+    assert results.agreement_reached(rows) is False
+
+
+def test_one_bad_window_sinks_the_series():
+    rows = [{"audit": VERIFIED_OK, "opponent_audit": NOT_REPORTED_REFERENCE},
+            {"audit": VERIFIED_OK, "opponent_audit": "not received"},
+            {"audit": VERIFIED_OK, "opponent_audit": NOT_REPORTED_REFERENCE}]
+    assert results.agreement_reached(rows) is False
+
+
+def test_the_bridge_returns_the_exact_sentinel_the_reader_allows():
+    """Producer and reader compare strings across two modules; a literal in
+    either would let them drift silently into an unreachable flag again.
+    """
+    import inspect
+
+    from p2p_pursuit.infra import interop_bridge
+
+    source = inspect.getsource(interop_bridge.ReferenceBridge.audit)
+    assert "NOT_REPORTED_REFERENCE" in source
+    assert '"not reported (reference dialect)"' not in source
 
 
 def test_a_win_claim_is_sent_immediately_not_carried_to_a_turn_that_never_comes():

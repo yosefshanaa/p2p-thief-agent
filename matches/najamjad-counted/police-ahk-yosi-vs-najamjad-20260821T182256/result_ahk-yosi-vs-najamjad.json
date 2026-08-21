@@ -1,0 +1,237 @@
+{
+  "report_type": "game_result",
+  "game_uid": "c581764c-4c29-50a6-f800-a5d416ef9536",
+  "game_id": "ahk-yosi-vs-najamjad",
+  "generated_at": "2026-08-21T18:27:07+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "najamjad",
+      "group_name": "NajAmjad",
+      "members": [
+        "Naji Kayal",
+        "Amjad Abed"
+      ],
+      "repos": {
+        "cop": "https://github.com/najikay/najamjad-cop",
+        "thief": "https://github.com/najikay/najamjad-thief"
+      }
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 6] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "police",
+        "najamjad": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "najamjad": 5
+      }
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 30,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "thief",
+        "najamjad": "police"
+      },
+      "result": "capture",
+      "winner_group": "najamjad",
+      "score": {
+        "ahk-yosi": 5,
+        "najamjad": 20
+      }
+    },
+    {
+      "index": 3,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 6] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "police",
+        "najamjad": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "najamjad": 5
+      }
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 30,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "thief",
+        "najamjad": "police"
+      },
+      "result": "capture",
+      "winner_group": "najamjad",
+      "score": {
+        "ahk-yosi": 5,
+        "najamjad": 20
+      }
+    },
+    {
+      "index": 5,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [5, 6] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 13,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "police",
+        "najamjad": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "najamjad": 5
+      }
+    },
+    {
+      "index": 6,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "enclosed",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 30,
+      "github_commit": "9ec700689497b34438eb6866f5e61cf67d34a21c",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "thief",
+        "najamjad": "police"
+      },
+      "result": "capture",
+      "winner_group": "najamjad",
+      "score": {
+        "ahk-yosi": 5,
+        "najamjad": 20
+      }
+    }
+  ],
+  "totals": {
+    "police": 120,
+    "thief": 30
+  },
+  "my_role": "police",
+  "my_total": 120,
+  "opponent_total": 30,
+  "series_winner": "police",
+  "tokens_used": 0,
+  "mutual_agreement": true,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 75,
+      "najamjad": 75
+    },
+    "sub_games_won": {
+      "ahk-yosi": 3,
+      "najamjad": 3
+    },
+    "ties": 0,
+    "winner_group": null,
+    "series_tie": true
+  },
+  "links": {
+    "declaration": "declaration_ahk-yosi-vs-najamjad.json",
+    "configs": [
+      "config_ahk-yosi-vs-najamjad_g01.json",
+      "config_ahk-yosi-vs-najamjad_g02.json",
+      "config_ahk-yosi-vs-najamjad_g03.json",
+      "config_ahk-yosi-vs-najamjad_g04.json",
+      "config_ahk-yosi-vs-najamjad_g05.json",
+      "config_ahk-yosi-vs-najamjad_g06.json"
+    ],
+    "logs": [
+      "log_ahk-yosi-vs-najamjad_g01.json",
+      "log_ahk-yosi-vs-najamjad_g02.json",
+      "log_ahk-yosi-vs-najamjad_g03.json",
+      "log_ahk-yosi-vs-najamjad_g04.json",
+      "log_ahk-yosi-vs-najamjad_g05.json",
+      "log_ahk-yosi-vs-najamjad_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "najamjad": {
+        "cop": "https://github.com/najikay/najamjad-cop",
+        "thief": "https://github.com/najikay/najamjad-thief"
+      }
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 7,
+    "najamjad": 6
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": false,
+    "najamjad": false
+  },
+  "mutual_signature": "54b60b8de774e78c79bac662f6ccb568c097f0c99f26cb542829f3b75eb8426e",
+  "result_sha256": "0f8e383990aa2f698c63e3851d8f1228854c3007fe7869700e79aa4c6f1ebed6"
+}

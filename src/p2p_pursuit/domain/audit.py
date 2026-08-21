@@ -18,6 +18,14 @@ from .scent import BOOK_V1, ScentField
 
 VERIFIED_OK = "Verified OK"
 TAMPERED = "TAMPERED"
+#: The opponent audited our log and kept the answer. Not a failure and not
+#: silence: the reference dialect's `submit_audit` answers `{"ok": True}` by
+#: construction, so a peer speaking it *cannot* tell us what it made of our
+#: records however clean they were. Distinguished from "not received" - which
+#: means they went silent and IS a failure - because `agreement_reached` treats
+#: the two oppositely. Defined here rather than in the bridge so the producer
+#: and the reader cannot drift apart on a string comparison.
+NOT_REPORTED_REFERENCE = "not reported (reference dialect)"
 
 
 def verify_entry(entry: dict[str, Any], commit_hash: str, dialect: str = NATIVE) -> bool:

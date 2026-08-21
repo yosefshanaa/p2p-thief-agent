@@ -21,6 +21,7 @@ import time
 from datetime import UTC, datetime
 from typing import Any
 
+from ..domain.audit import NOT_REPORTED_REFERENCE
 from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, record_sub_game
 from ..domain.rules import THIEF
 from ..domain.scoring import SURVIVAL
@@ -496,7 +497,11 @@ class ReferenceBridge:
 
         Their ``submit_audit`` answers ``{"ok": True}``: a reference peer keeps
         its verdict of us to itself, so unlike a native match we cannot report
-        what they made of our log - only that they received it.
+        what they made of our log - only that they received it. Ours answers the
+        same way, so the blindness is symmetric and neither peer is withholding
+        anything. That is why the sentinel returned here is
+        `NOT_REPORTED_REFERENCE` and not "not received": see
+        `report.results.agreement_reached`, which treats the two oppositely.
 
         The envelope **names its sub-game**. Without that the receiver has only
         one way to file it - against whichever index it has reached by the time
@@ -521,7 +526,7 @@ class ReferenceBridge:
              "sub_game_number": n,
              "records": records,
              "result_claim": end.ending if end else "unknown"}, timeout=timeout)
-        return {"verdict": "not reported (reference dialect)", "violations": []}
+        return {"verdict": NOT_REPORTED_REFERENCE, "violations": []}
 
     def _self_check(self, records: list[dict], package: dict, n: int) -> None:
         """Audit our own package as they will, and say so before it goes out.
