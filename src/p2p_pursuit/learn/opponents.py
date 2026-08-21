@@ -720,12 +720,34 @@ class Transcript(BrainBase):
 #: (all three identical). Their cage is the only one in our archive that sealed
 #: our thief into a genuinely small pocket - 49 cells down to 7 - so it is the
 #: only real evidence we have of the failure mode `Cager` was written to model.
+#: The cage as it was played in the COUNTED series, 2026-08-21 - the version
+#: that kills. Its predecessor (kept below) is the one from the friendlies the
+#: same evening, and the difference between them is a single placement.
+#:
+#: Eleven of the twelve barriers are identical in both. The twelfth was `(0, 5)`
+#: on turn 34, which seals nothing and let our thief run out the full 35 steps in
+#: all six friendly windows; here it is `(1, 4)` on turn 30, which shuts the box
+#: five moves inside the survival threshold and took all three counted windows.
+#: Training against the old one measures a cage that cannot win.
 NAJAMJAD_CAGE_MOVES: tuple[str, ...] = (
+    "E", "E", "STAY", "S", "STAY", "S", "STAY", "S", "STAY", "S", "STAY", "S",
+    "STAY", "S", "E", "E", "STAY", "N", "N", "STAY", "E", "STAY", "E", "N",
+    "N", "STAY", "N", "W", "STAY", "STAY",
+)
+NAJAMJAD_CAGE_BARRIERS: tuple[Cell | None, ...] = (
+    None, None, (0, 3), None, (1, 3), None, (2, 3), None, (3, 3), None,
+    (4, 3), None, (5, 3), None, None, None, (6, 3), None, None, (3, 4),
+    None, (3, 5), None, None, None, (3, 6), None, None, (2, 5), (1, 4),
+)
+#: The friendly-era cage, kept because the pair of them is the evidence that this
+#: opponent iterates between meetings - and because a doctrine that survives the
+#: harmless one has proved nothing.
+NAJAMJAD_CAGE_MOVES_FRIENDLY: tuple[str, ...] = (
     "E", "E", "STAY", "S", "STAY", "S", "STAY", "S", "STAY", "S", "STAY", "S",
     "STAY", "S", "E", "E", "STAY", "N", "N", "STAY", "E", "STAY", "E", "N",
     "N", "STAY", "N", "W", "STAY", "W", "S", "N", "E", "STAY",
 )
-NAJAMJAD_CAGE_BARRIERS: tuple[Cell | None, ...] = (
+NAJAMJAD_CAGE_BARRIERS_FRIENDLY: tuple[Cell | None, ...] = (
     None, None, (0, 3), None, (1, 3), None, (2, 3), None, (3, 3), None,
     (4, 3), None, (5, 3), None, None, None, (6, 3), None, None, (3, 4),
     None, (3, 5), None, None, None, (3, 6), None, None, (2, 5), None,
@@ -734,5 +756,5 @@ NAJAMJAD_CAGE_BARRIERS: tuple[Cell | None, ...] = (
 
 
 def najamjad_cage() -> Transcript:
-    """The cage exactly as it was played, for the thief search to train against."""
+    """The cage exactly as it was played in the counted series - the lethal one."""
     return Transcript(NAJAMJAD_CAGE_MOVES, NAJAMJAD_CAGE_BARRIERS)

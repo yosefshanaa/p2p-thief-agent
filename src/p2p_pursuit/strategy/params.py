@@ -347,14 +347,26 @@ def save(doctrine: Doctrine, path: Path) -> None:
     path.write_text(json.dumps(asdict(doctrine), indent=2) + "\n", encoding="utf-8")
 
 
-@lru_cache(maxsize=4)
 def active(path: Path | None = None) -> Doctrine:
     """The doctrine this process plays: the tuned file if present, else v5.
 
     Announced at load, because "which policy am I actually running" is not
     something a league match should have to infer from how it played.
+
+    The cache is keyed on the RESOLVED path, never on the argument. Caching
+    ``active(None)`` looks equivalent and is not: every ordinary call passes no
+    argument, so the key is `None` for all of them and the first load is handed
+    back for the life of the process however `P2P_DOCTRINE` changes afterwards.
+    Measured 2026-08-21 - a test that set the variable to the subtractive
+    doctrine silently supplied it to every later caller, so a replay of the
+    najamjad cage under the *default* physics ran the *counted* doctrine and
+    reported a capture that the default doctrine does not suffer.
     """
-    path = path or default_path()
+    return _load_active_cached(path or default_path())
+
+
+@lru_cache(maxsize=4)
+def _load_active_cached(path: Path) -> Doctrine:
     if not path.exists():
         log.info("doctrine: shipped defaults (no %s)", path)
         return Doctrine()
@@ -363,3 +375,11 @@ def active(path: Path | None = None) -> Doctrine:
     log.info("doctrine: tuned from %s (%d of %d fields differ from the defaults)",
              path, changed, len(SPACE))
     return doctrine
+
+
+#: `active` is a thin resolver in front of the cache, so the cache-clearing hook
+#: has to be re-exposed on it: callers know `active` and should not have to know
+#: which private function happens to hold the memo.
+_load_active = _load_active_cached
+active.cache_clear = _load_active_cached.cache_clear
+active.cache_info = _load_active_cached.cache_info
