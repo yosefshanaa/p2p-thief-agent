@@ -20,7 +20,7 @@
   "pounce_floor": 0.262045,
   "seal_distance": 3,
   "seal_ratio": 0.550617,
-  "stay_penalty": 0.344733,
+  "stay_penalty": 0.0,
   "thief_fresh_min": 0.476776,
   "thief_truth_rate": 0.15,
   "trap_floor": 23,

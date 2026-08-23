@@ -165,6 +165,14 @@ class Doctrine:
     #: turn its mouth is sealed: measured vs orcai-mj, our thief died at (5,6)
     #: or (6,6) in nine consecutive sub-games across two doctrines and three
     #: seeds, always in a pocket whose only exits the pursuer already owned.
+    #: OFF in the registered_v3 file since 2026-08-23, and only there. The
+    #: archive evidence above stands - it is a real failure and it happened -
+    #: but under that physics the term now costs more than it saves: 0.057 -> 0
+    #: measures 9.835 -> 9.899 pts/sub-game over 48 seeds x 6 windows, paired 59
+    #: better and 11 worse, with our thief's survivals against `mirror` going
+    #: 84/288 to 156/288. `w_safe2` at 3.5 (shipped alongside it) refuses the
+    #: same pockets one ply earlier and by a sharper test, so the Voronoi count
+    #: is now paying for ground the exit test has already ruled out.
     w_territory: float = 0.15
     #: Below `trap_floor` owned cells we are in a pocket, and the penalty scales
     #: with how far below - but only while the pursuer still holds the barrier
@@ -187,6 +195,13 @@ class Doctrine:
     w_risk: float = 3.0
     w_lead_risk: float = 1.5
     w_trail: float = 0.7
+    #: OFF in the book file since 2026-08-23. `_pick_move` already ENFORCES
+    #: "never STAY twice" - a second consecutive STAY is struck from the
+    #: candidate list, not taxed - so this soft penalty only ever prices the
+    #: FIRST hold, which is the one that is sometimes right. Measured over 48
+    #: seeds x 6 windows under `book_v1`: 0.345 -> 0 is 9.897 -> 9.941, paired
+    #: 56 better and 17 worse, with `barrier` 229/288 -> 263/288. Left alone
+    #: under subtractive, where the same change measures 4 better and 2 worse.
     stay_penalty: float = 1.2
     corner_penalty: float = 0.5
     juke_penalty: float = 0.6
