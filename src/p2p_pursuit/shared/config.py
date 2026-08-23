@@ -380,6 +380,12 @@ BOOL_VARS = {
 #: has to be expressible without editing the committed `game.toml`, because that
 #: edit would ride silently into the next opponent's match.
 TRASH_TALK_VAR = "P2P_TRASH_TALK_PROVIDER"
+#: The brain class for a role, per match. Same reasoning as the banter provider
+#: and more so: swapping a brain by editing the committed `[strategy]` section
+#: would ride silently into every later opponent, and a brain that calls out to
+#: a model is exactly the kind of thing that must be armed for one match only.
+BRAIN_CLASS_VARS = {"P2P_POLICE_CLASS": "police_class",
+                    "P2P_THIEF_CLASS": "thief_class"}
 #: Numeric peer-local knobs settled per opponent, hours before a match. None of
 #: them is hashed, so an opponent can ask us to move one without re-signing the
 #: constitution - which is exactly what `handshake_budget_sec` is for.
@@ -434,6 +440,11 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
     talk = (os.environ.get(TRASH_TALK_VAR) or "").strip().lower()
     if talk:
         patch["trash_talk_provider"] = talk
+    brains = {key: (os.environ.get(var) or "").strip()
+              for var, key in BRAIN_CLASS_VARS.items()}
+    brains = {key: spec for key, spec in brains.items() if spec}
+    if brains:
+        patch["strategy"] = {**peer.strategy, **brains}
     label = (os.environ.get(GAME_ID_LABEL_VAR) or "").strip()
     if label:
         patch["game_id_label"] = label

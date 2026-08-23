@@ -2,17 +2,33 @@
  "team": "orcai-mj",
  "sources": [
   "matches/ahk-yosi-vs-orcai-mj-counted",
+  "matches/ahk-yosi-vs-orcai-mj-counted-attempt1-incomplete",
   "matches/police-ahk-yosi-vs-orcai-mj-thief-20260812T163413",
-  "matches/thief-ahk-yosi-vs-orcai-mj-20260812T163411"
+  "matches/thief-ahk-yosi-vs-orcai-mj-20260812T163411",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T145426",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T161235",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T165243",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T180041",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T181659",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T185821",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T192656",
+  "results/police-ahk-yosi-vs-orcai-mj-20260813T200339",
+  "results/police-ahk-yosi-vs-orcai-mj-thief-20260812T163413",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260812T163411",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260813T150631",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260813T161236",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260813T165242",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260813T180041",
+  "results/thief-ahk-yosi-vs-orcai-mj-20260813T181657"
  ],
- "samples": 218,
+ "samples": 1293,
  "states": {
   "thief": 11,
-  "police": 41
+  "police": 107
  },
  "holdout_agreement": {
   "thief": 1.0,
-  "police": 0.8667
+  "police": 0.9179
  },
  "roles": {
   "thief": [
@@ -27,7 +43,8 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 6
+    "barrier": null,
+    "weight": 29
    },
    {
     "pos": [
@@ -40,7 +57,8 @@
     ],
     "prev_move": "S",
     "move": "E",
-    "weight": 9
+    "barrier": null,
+    "weight": 46
    },
    {
     "pos": [
@@ -53,7 +71,8 @@
     ],
     "prev_move": "E",
     "move": "E",
-    "weight": 9
+    "barrier": null,
+    "weight": 46
    },
    {
     "pos": [
@@ -66,7 +85,8 @@
     ],
     "prev_move": "E",
     "move": "N",
-    "weight": 9
+    "barrier": null,
+    "weight": 46
    },
    {
     "pos": [
@@ -79,7 +99,8 @@
     ],
     "prev_move": "N",
     "move": "S",
-    "weight": 9
+    "barrier": null,
+    "weight": 46
    },
    {
     "pos": [
@@ -92,7 +113,8 @@
     ],
     "prev_move": "S",
     "move": "N",
-    "weight": 9
+    "barrier": null,
+    "weight": 45
    },
    {
     "pos": [
@@ -105,7 +127,8 @@
     ],
     "prev_move": "N",
     "move": "S",
-    "weight": 9
+    "barrier": null,
+    "weight": 45
    },
    {
     "pos": [
@@ -118,7 +141,8 @@
     ],
     "prev_move": "S",
     "move": "N",
-    "weight": 9
+    "barrier": null,
+    "weight": 45
    },
    {
     "pos": [
@@ -131,7 +155,8 @@
     ],
     "prev_move": "N",
     "move": "S",
-    "weight": 18
+    "barrier": null,
+    "weight": 90
    },
    {
     "pos": [
@@ -144,7 +169,8 @@
     ],
     "prev_move": "S",
     "move": "N",
-    "weight": 9
+    "barrier": null,
+    "weight": 45
    },
    {
     "pos": [
@@ -157,7 +183,8 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 3
+    "barrier": null,
+    "weight": 17
    }
   ],
   "police": [
@@ -172,7 +199,8 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 6
+    "barrier": null,
+    "weight": 26
    },
    {
     "pos": [
@@ -185,7 +213,8 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 9
+    "barrier": null,
+    "weight": 39
    },
    {
     "pos": [
@@ -198,7 +227,8 @@
     ],
     "prev_move": "S",
     "move": "E",
-    "weight": 5
+    "barrier": null,
+    "weight": 29
    },
    {
     "pos": [
@@ -211,7 +241,8 @@
     ],
     "prev_move": "E",
     "move": "E",
-    "weight": 9
+    "barrier": null,
+    "weight": 39
    },
    {
     "pos": [
@@ -224,7 +255,8 @@
     ],
     "prev_move": "E",
     "move": "E",
-    "weight": 5
+    "barrier": null,
+    "weight": 25
    },
    {
     "pos": [
@@ -237,7 +269,8 @@
     ],
     "prev_move": "E",
     "move": "E",
-    "weight": 7
+    "barrier": null,
+    "weight": 34
    },
    {
     "pos": [
@@ -250,7 +283,8 @@
     ],
     "prev_move": "E",
     "move": "E",
-    "weight": 2
+    "barrier": null,
+    "weight": 14
    },
    {
     "pos": [
@@ -262,8 +296,43 @@
      6
     ],
     "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 15
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 15
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "STAY",
     "move": "W",
-    "weight": 2
+    "barrier": null,
+    "weight": 15
    },
    {
     "pos": [
@@ -276,7 +345,8 @@
     ],
     "prev_move": "W",
     "move": "S",
-    "weight": 2
+    "barrier": null,
+    "weight": 12
    },
    {
     "pos": [
@@ -289,7 +359,8 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 2
+    "barrier": null,
+    "weight": 15
    },
    {
     "pos": [
@@ -302,7 +373,25 @@
     ],
     "prev_move": "S",
     "move": "E",
-    "weight": 2
+    "barrier": null,
+    "weight": 12
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 12
    },
    {
     "pos": [
@@ -313,9 +402,27 @@
      6,
      6
     ],
-    "prev_move": "E",
+    "prev_move": "STAY",
     "move": "S",
-    "weight": 2
+    "barrier": null,
+    "weight": 12
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     0,
+     0
+    ],
+    "weight": 12
    },
    {
     "pos": [
@@ -328,7 +435,393 @@
     ],
     "prev_move": "S",
     "move": "S",
-    "weight": 3
+    "barrier": null,
+    "weight": 18
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "STAY",
+    "move": "E",
+    "barrier": null,
+    "weight": 10
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "barrier": null,
+    "weight": 10
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 18
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "STAY",
+    "move": "E",
+    "barrier": null,
+    "weight": 9
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     3
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "barrier": [
+     0,
+     -1
+    ],
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "E",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "E",
+    "move": "N",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "barrier": [
+     0,
+     0
+    ],
+    "weight": 7
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     -1,
+     0
+    ],
+    "weight": 7
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 7
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "STAY",
+    "move": "S",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     5,
+     2
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "S",
+    "move": "W",
+    "barrier": null,
+    "weight": 7
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     6,
+     2
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "barrier": [
+     0,
+     -1
+    ],
+    "weight": 7
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 7
+   },
+   {
+    "pos": [
+     3,
+     0
+    ],
+    "pursuer": [
+     5,
+     4
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 10
+   },
+   {
+    "pos": [
+     3,
+     2
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "barrier": null,
+    "weight": 13
    },
    {
     "pos": [
@@ -341,253 +834,319 @@
     ],
     "prev_move": "E",
     "move": "E",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "barrier": null,
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 14
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "barrier": null,
+    "weight": 10
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 10
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 12
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 8
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "barrier": null,
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 4
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "STAY",
+    "move": "W",
+    "barrier": null,
     "weight": 5
    },
    {
     "pos": [
+     4,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "barrier": null,
+    "weight": 4
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 4
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 6
+   },
+   {
+    "pos": [
+     2,
+     0
+    ],
+    "pursuer": [
      3,
      5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     2,
+     1
+    ],
+    "pursuer": [
+     4,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     2,
+     2
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     3,
+     2
     ],
     "pursuer": [
      6,
      5
     ],
-    "prev_move": "E",
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "W",
     "move": "S",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
     "weight": 2
    },
    {
     "pos": [
      4,
-     5
-    ],
-    "pursuer": [
-     6,
-     5
-    ],
-    "prev_move": "S",
-    "move": "W",
-    "weight": 4
-   },
-   {
-    "pos": [
-     4,
-     6
-    ],
-    "pursuer": [
-     6,
-     4
-    ],
-    "prev_move": "E",
-    "move": "S",
-    "weight": 1
-   },
-   {
-    "pos": [
-     5,
-     6
-    ],
-    "pursuer": [
-     6,
-     3
-    ],
-    "prev_move": "S",
-    "move": "S",
-    "weight": 1
-   },
-   {
-    "pos": [
-     6,
-     6
-    ],
-    "pursuer": [
-     6,
-     2
-    ],
-    "prev_move": "S",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     6,
-     5
-    ],
-    "pursuer": [
-     5,
-     1
-    ],
-    "prev_move": "W",
-    "move": "E",
-    "weight": 1
-   },
-   {
-    "pos": [
-     6,
-     6
-    ],
-    "pursuer": [
-     4,
-     1
-    ],
-    "prev_move": "E",
-    "move": "N",
-    "weight": 1
-   },
-   {
-    "pos": [
-     5,
-     6
-    ],
-    "pursuer": [
-     5,
-     1
-    ],
-    "prev_move": "N",
-    "move": "N",
-    "weight": 1
-   },
-   {
-    "pos": [
-     4,
-     6
-    ],
-    "pursuer": [
-     4,
-     1
-    ],
-    "prev_move": "N",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     4,
-     5
-    ],
-    "pursuer": [
-     5,
-     1
-    ],
-    "prev_move": "W",
-    "move": "N",
-    "weight": 1
-   },
-   {
-    "pos": [
-     3,
-     5
-    ],
-    "pursuer": [
-     5,
-     0
-    ],
-    "prev_move": "N",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     3,
      4
     ],
     "pursuer": [
      6,
-     0
-    ],
-    "prev_move": "W",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     3,
-     3
-    ],
-    "pursuer": [
-     5,
-     0
-    ],
-    "prev_move": "W",
-    "move": "S",
-    "weight": 1
-   },
-   {
-    "pos": [
-     4,
-     3
-    ],
-    "pursuer": [
-     6,
-     0
-    ],
-    "prev_move": "S",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     4,
-     2
-    ],
-    "pursuer": [
-     6,
-     0
-    ],
-    "prev_move": "W",
-    "move": "S",
-    "weight": 1
-   },
-   {
-    "pos": [
-     5,
-     2
-    ],
-    "pursuer": [
-     6,
-     1
-    ],
-    "prev_move": "S",
-    "move": "W",
-    "weight": 1
-   },
-   {
-    "pos": [
-     3,
-     0
-    ],
-    "pursuer": [
-     5,
-     4
-    ],
-    "prev_move": "S",
-    "move": "E",
-    "weight": 4
-   },
-   {
-    "pos": [
-     3,
-     2
-    ],
-    "pursuer": [
-     6,
-     5
-    ],
-    "prev_move": "E",
-    "move": "E",
-    "weight": 4
-   },
-   {
-    "pos": [
-     3,
-     5
-    ],
-    "pursuer": [
-     5,
      6
     ],
     "prev_move": "E",
-    "move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
     "weight": 3
    },
    {
@@ -596,38 +1155,193 @@
      4
     ],
     "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "STAY",
+    "move": "E",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     5,
+     5
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 3
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
      6,
      6
+    ],
+    "prev_move": "E",
+    "move": "S",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 2
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "N",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "barrier": [
+     0,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "STAY",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     4
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "barrier": null,
+    "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     6,
+     3
     ],
     "prev_move": "W",
     "move": "S",
-    "weight": 4
-   },
-   {
-    "pos": [
-     5,
-     4
-    ],
-    "pursuer": [
-     5,
-     6
-    ],
-    "prev_move": "S",
-    "move": "S",
-    "weight": 4
-   },
-   {
-    "pos": [
-     6,
-     4
-    ],
-    "pursuer": [
-     5,
-     6
-    ],
-    "prev_move": "S",
-    "move": "E",
-    "weight": 6
+    "barrier": null,
+    "weight": 1
    },
    {
     "pos": [
@@ -636,24 +1350,268 @@
     ],
     "pursuer": [
      6,
-     6
+     2
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     1
     ],
     "prev_move": "S",
     "move": "E",
-    "weight": 2
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     5,
+     0
+    ],
+    "prev_move": "STAY",
+    "move": "N",
+    "barrier": null,
+    "weight": 1
    },
    {
     "pos": [
      4,
-     4
+     3
+    ],
+    "pursuer": [
+     4,
+     0
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     2
+    ],
+    "pursuer": [
+     4,
+     0
+    ],
+    "prev_move": "W",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     1
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     4,
+     1
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     1
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     -1
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
     ],
     "pursuer": [
      5,
      6
     ],
-    "prev_move": "E",
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     4
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "S",
     "move": "E",
+    "barrier": null,
     "weight": 2
+   },
+   {
+    "pos": [
+     3,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "W",
+    "move": "S",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     3
+    ],
+    "pursuer": [
+     6,
+     5
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     4
+    ],
+    "pursuer": [
+     6,
+     4
+    ],
+    "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 1
    },
    {
     "pos": [
@@ -665,34 +1623,152 @@
      6
     ],
     "prev_move": "E",
-    "move": "W",
-    "weight": 2
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
+   },
+   {
+    "pos": [
+     2,
+     0
+    ],
+    "pursuer": [
+     5,
+     3
+    ],
+    "prev_move": "S",
+    "move": "S",
+    "barrier": null,
+    "weight": 1
    },
    {
     "pos": [
      4,
-     4
-    ],
-    "pursuer": [
-     5,
-     6
-    ],
-    "prev_move": "W",
-    "move": "S",
-    "weight": 2
-   },
-   {
-    "pos": [
-     5,
-     4
+     2
     ],
     "pursuer": [
      6,
      6
     ],
     "prev_move": "S",
-    "move": "S",
+    "move": "E",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     3
+    ],
+    "pursuer": [
+     5,
+     6
+    ],
+    "prev_move": "E",
+    "move": "E",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     5,
+     1
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "barrier": null,
     "weight": 2
+   },
+   {
+    "pos": [
+     6,
+     6
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "E",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     6,
+     5
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "E",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     5,
+     6
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "N",
+    "move": "N",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     6
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     6,
+     0
+    ],
+    "prev_move": "W",
+    "move": "N",
+    "barrier": null,
+    "weight": 1
+   },
+   {
+    "pos": [
+     3,
+     5
+    ],
+    "pursuer": [
+     6,
+     1
+    ],
+    "prev_move": "N",
+    "move": "W",
+    "barrier": null,
+    "weight": 1
    }
   ]
  }

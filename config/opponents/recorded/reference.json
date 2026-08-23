@@ -4,14 +4,14 @@
   "matches/warmup-reference-2026-08-01",
   "matches/warmup-reference-interop"
  ],
- "samples": 421,
+ "samples": 442,
  "states": {
   "thief": 18,
-  "police": 32
+  "police": 40
  },
  "holdout_agreement": {
-  "thief": 0.9882,
-  "police": 0.9524
+  "thief": 1.0,
+  "police": 0.4583
  },
  "roles": {
   "thief": [
@@ -26,6 +26,7 @@
     ],
     "prev_move": "S",
     "move": "S",
+    "barrier": null,
     "weight": 4
    },
    {
@@ -39,6 +40,7 @@
     ],
     "prev_move": "S",
     "move": "S",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -52,6 +54,7 @@
     ],
     "prev_move": "S",
     "move": "E",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -65,6 +68,7 @@
     ],
     "prev_move": "E",
     "move": "E",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -78,6 +82,7 @@
     ],
     "prev_move": "E",
     "move": "E",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -91,6 +96,7 @@
     ],
     "prev_move": "E",
     "move": "N",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -104,6 +110,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -117,6 +124,7 @@
     ],
     "prev_move": "S",
     "move": "N",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -130,6 +138,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -143,6 +152,7 @@
     ],
     "prev_move": "S",
     "move": "N",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -156,6 +166,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 10
    },
    {
@@ -169,6 +180,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 58
    },
    {
@@ -182,6 +194,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 45
    },
    {
@@ -195,6 +208,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 26
    },
    {
@@ -208,6 +222,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 45
    },
    {
@@ -221,6 +236,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 31
    },
    {
@@ -234,6 +250,7 @@
     ],
     "prev_move": "S",
     "move": "S",
+    "barrier": null,
     "weight": 6
    },
    {
@@ -247,6 +264,7 @@
     ],
     "prev_move": "STAY",
     "move": "STAY",
+    "barrier": null,
     "weight": 15
    }
   ],
@@ -257,11 +275,29 @@
      0
     ],
     "pursuer": [
-     4,
+     3,
      4
     ],
     "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 2
+   },
+   {
+    "pos": [
+     1,
+     0
+    ],
+    "pursuer": [
+     4,
+     4
+    ],
+    "prev_move": "STAY",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -275,7 +311,25 @@
     ],
     "prev_move": "E",
     "move": "S",
+    "barrier": null,
     "weight": 2
+   },
+   {
+    "pos": [
+     2,
+     1
+    ],
+    "pursuer": [
+     5,
+     5
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 3
    },
    {
     "pos": [
@@ -286,8 +340,9 @@
      5,
      6
     ],
-    "prev_move": "S",
+    "prev_move": "STAY",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -300,7 +355,25 @@
      6
     ],
     "prev_move": "E",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 3
+   },
+   {
+    "pos": [
+     2,
+     2
+    ],
+    "pursuer": [
+     6,
+     6
+    ],
+    "prev_move": "STAY",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -314,6 +387,7 @@
     ],
     "prev_move": "E",
     "move": "S",
+    "barrier": null,
     "weight": 2
    },
    {
@@ -327,6 +401,7 @@
     ],
     "prev_move": "S",
     "move": "S",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -340,6 +415,7 @@
     ],
     "prev_move": "S",
     "move": "S",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -353,6 +429,7 @@
     ],
     "prev_move": "S",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -366,6 +443,7 @@
     ],
     "prev_move": "E",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -379,6 +457,7 @@
     ],
     "prev_move": "E",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -392,6 +471,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -405,6 +485,7 @@
     ],
     "prev_move": "S",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -418,6 +499,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -431,6 +513,58 @@
     ],
     "prev_move": "S",
     "move": "N",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     0,
+     5
+    ],
+    "prev_move": "N",
+    "move": "STAY",
+    "barrier": [
+     -1,
+     0
+    ],
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     0,
+     4
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 3
+   },
+   {
+    "pos": [
+     4,
+     5
+    ],
+    "pursuer": [
+     0,
+     3
+    ],
+    "prev_move": "STAY",
+    "move": "STAY",
+    "barrier": [
+     0,
+     1
+    ],
     "weight": 3
    },
    {
@@ -442,8 +576,9 @@
      0,
      2
     ],
-    "prev_move": "N",
+    "prev_move": "STAY",
     "move": "W",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -457,6 +592,7 @@
     ],
     "prev_move": "W",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -470,6 +606,7 @@
     ],
     "prev_move": "N",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -483,6 +620,7 @@
     ],
     "prev_move": "N",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -496,6 +634,7 @@
     ],
     "prev_move": "N",
     "move": "E",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -509,6 +648,7 @@
     ],
     "prev_move": "E",
     "move": "N",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -522,6 +662,24 @@
     ],
     "prev_move": "N",
     "move": "W",
+    "barrier": null,
+    "weight": 3
+   },
+   {
+    "pos": [
+     0,
+     4
+    ],
+    "pursuer": [
+     1,
+     0
+    ],
+    "prev_move": "W",
+    "move": "STAY",
+    "barrier": [
+     0,
+     -1
+    ],
     "weight": 3
    },
    {
@@ -533,8 +691,9 @@
      1,
      1
     ],
-    "prev_move": "W",
+    "prev_move": "STAY",
     "move": "S",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -548,6 +707,7 @@
     ],
     "prev_move": "S",
     "move": "W",
+    "barrier": null,
     "weight": 2
    },
    {
@@ -561,6 +721,7 @@
     ],
     "prev_move": "W",
     "move": "W",
+    "barrier": null,
     "weight": 2
    },
    {
@@ -574,6 +735,7 @@
     ],
     "prev_move": "W",
     "move": "W",
+    "barrier": null,
     "weight": 3
    },
    {
@@ -587,6 +749,7 @@
     ],
     "prev_move": "W",
     "move": "N",
+    "barrier": null,
     "weight": 2
    },
    {
@@ -600,7 +763,25 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 2
+   },
+   {
+    "pos": [
+     1,
+     0
+    ],
+    "pursuer": [
+     4,
+     3
+    ],
+    "prev_move": "S",
+    "move": "STAY",
+    "barrier": [
+     1,
+     0
+    ],
+    "weight": 1
    },
    {
     "pos": [
@@ -613,6 +794,7 @@
     ],
     "prev_move": "E",
     "move": "S",
+    "barrier": null,
     "weight": 1
    },
    {
@@ -626,6 +808,7 @@
     ],
     "prev_move": "N",
     "move": "S",
+    "barrier": null,
     "weight": 1
    },
    {
@@ -639,6 +822,7 @@
     ],
     "prev_move": "S",
     "move": "W",
+    "barrier": null,
     "weight": 1
    },
    {
@@ -652,6 +836,7 @@
     ],
     "prev_move": "W",
     "move": "W",
+    "barrier": null,
     "weight": 1
    },
    {
@@ -665,6 +850,7 @@
     ],
     "prev_move": "E",
     "move": "S",
+    "barrier": null,
     "weight": 1
    }
   ]

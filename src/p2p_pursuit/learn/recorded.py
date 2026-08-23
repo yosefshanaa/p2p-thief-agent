@@ -49,13 +49,8 @@ class Recorded(BrainBase):
             raise ValueError("a recorded opponent needs at least one observed decision")
         self.rows = rows
 
-    def move_for(self, own: Cell, pursuer: Cell, prev: str | None) -> str:
-        """The move they played from the observed state nearest to this one.
-
-        Public because it is also how the table is *scored*: `agreement` replays
-        held-out decisions through exactly the lookup a game would use, rather
-        than through a second implementation of it.
-        """
+    def nearest(self, own: Cell, pursuer: Cell, prev: str | None) -> dict | None:
+        """The decision they took from the observed state nearest to this one."""
         best, best_key = None, None
         for row in self.rows:
             pos, opp = row["pos"], row["pursuer"]
@@ -64,15 +59,27 @@ class Recorded(BrainBase):
                    + (0 if row["prev_move"] == prev else 1),
                    -row["weight"])
             if best_key is None or key < best_key:
-                best, best_key = row["move"], key
-        return best or "STAY"
+                best, best_key = row, key
+        return best
 
-    def _pick_move(self, view: BrainView) -> Decision:
+    def move_for(self, own: Cell, pursuer: Cell, prev: str | None) -> str:
+        """The move they played from the nearest observed state.
+
+        Public because it is also how the table is *scored*: `agreement` replays
+        held-out decisions through exactly the lookup a game would use, rather
+        than through a second implementation of it.
+        """
+        row = self.nearest(own, pursuer, prev)
+        return (row["move"] if row else None) or "STAY"
+
+    def _threat(self, view: BrainView) -> Cell:
         # The table was built against our *true* cell, so the lookup wants the
         # closest thing this view has to one: the scent fix, and the belief peak
         # only when there is no fix.
-        pursuer = view.opp_fix or view.belief.argmax()
-        move = self.move_for(view.own_pos, pursuer, getattr(self, "_last", None))
+        return view.opp_fix or view.belief.argmax()
+
+    def _pick_move(self, view: BrainView) -> Decision:
+        move = self.move_for(view.own_pos, self._threat(view), getattr(self, "_last", None))
         legal = view.board.legal_moves(view.own_pos)
         if move not in legal:
             move = "STAY" if "STAY" in legal else legal[0]
@@ -80,6 +87,21 @@ class Recorded(BrainBase):
         return Decision(move=move)
 
     def _decide_move(self, view: BrainView) -> Decision:
+        """As police, replay the *whole* decision - the wall included.
+
+        Stored as an offset from their own cell rather than an absolute one,
+        because a barrier is only legal beside the police and the useful thing
+        to reproduce is the geometry of the placement, not the coordinate. That
+        also lets one observed decision answer a state a few cells away, which
+        is the whole point of a nearest-state table.
+        """
+        row = self.nearest(view.own_pos, self._threat(view), getattr(self, "_last", None))
+        offset = row.get("barrier") if row else None
+        if offset is not None and view.barriers_used < view.barrier_quota:
+            cell = (view.own_pos[0] + offset[0], view.own_pos[1] + offset[1])
+            if view.board.is_open(cell) and cell != view.own_pos:
+                self._last = "STAY"
+                return Decision(move="STAY", barrier=cell)
         return self._pick_move(view)
 
 
@@ -94,13 +116,18 @@ def table_from_samples(samples: list[Sample]) -> dict[str, list[dict]]:
     counted: dict[tuple, Counter] = {}
     for s in samples:
         key = (s.role, s.pos, s.pursuer, s.prev_move)
-        counted.setdefault(key, Counter())[s.move] += 1
+        # The decision is the move *and* the wall: collapsing on the move alone
+        # would let three plain STAYs outvote the one turn they spent building.
+        offset = None if s.barrier is None else (s.barrier[0] - s.pos[0],
+                                                 s.barrier[1] - s.pos[1])
+        counted.setdefault(key, Counter())[(s.move, offset)] += 1
     out: dict[str, list[dict]] = {}
-    for (role, pos, pursuer, prev), moves in counted.items():
-        move, weight = moves.most_common(1)[0]
+    for (role, pos, pursuer, prev), decisions in counted.items():
+        (move, offset), weight = decisions.most_common(1)[0]
         out.setdefault(role, []).append(
             {"pos": list(pos), "pursuer": list(pursuer), "prev_move": prev,
-             "move": move, "weight": weight})
+             "move": move, "barrier": list(offset) if offset else None,
+             "weight": weight})
     return out
 
 
@@ -116,6 +143,7 @@ def agreement(rows: list[dict], samples: list[Sample]) -> float:
 def _hydrate(rows: list[dict]) -> list[dict]:
     return [{"pos": tuple(r["pos"]), "pursuer": tuple(r["pursuer"]),
              "prev_move": r["prev_move"], "move": r["move"],
+             "barrier": tuple(r["barrier"]) if r.get("barrier") else None,
              "weight": int(r.get("weight", 1))} for r in rows]
 
 

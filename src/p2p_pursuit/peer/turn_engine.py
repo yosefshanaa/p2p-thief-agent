@@ -71,6 +71,12 @@ class TurnEngine(EngineState):
         view = self._view()
         decision = safe_decision(self.board, self.role, self.own_pos, self.barriers_used,
                                  self.shared.max_barriers, self.brain.decide(view))
+        # A brain that spends tokens to *decide* has to be covered by the budget
+        # seal too, not only the verbal channel below. Brains that spend none do
+        # not define the hook and contribute nothing.
+        take_tokens = getattr(self.brain, "take_tokens", None)
+        if take_tokens is not None:
+            self.tokens_used += take_tokens()
         region, intent = self.brain.hint_plan(view, decision)
         hint, tokens = self._make_hint(region)
         self.tokens_used += tokens

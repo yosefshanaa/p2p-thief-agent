@@ -23,6 +23,11 @@ from ..domain.board import MOVES, Cell
 from ..domain.rules import POLICE, THIEF
 
 BARRIERS_IN_STATE = re.compile(r"barriers=(\[.*?\])\s*(?:;|$)")
+#: ``BARRIER:3,6`` - gal-roy1 names the cell inside the move token itself.
+CELL_IN_MOVE = re.compile(r"^BARRIER:\s*(\d+)\s*,\s*(\d+)\s*$")
+#: ``BARRIER:S`` - orcai-mj names a *direction* from wherever it is standing,
+#: and ``SELF`` is the cell it stands on.
+BARRIER_DIRS: dict[str, Cell] = {**MOVES, "SELF": (0, 0)}
 #: Some reference-family peers put the position *inside* the state string
 #: (``"grid=7;self=[0, 1]"``) instead of a `pos_after`/`position` field. Without
 #: this, every one of their records is dropped for having no position and the
@@ -43,6 +48,17 @@ class Sample:
     move: str
     prev_move: str | None
     size: int
+    #: The cell this decision walled, if it walled one. Until 2026-08-23 there
+    #: was no such field and `_move_of` returned None for every ``BARRIER:*``
+    #: record, so a barrier turn was simply dropped - 188 of them across the
+    #: archive, plus najamjad's 36, which their dialect spells as a plain STAY
+    #: with a separate `barrier_placed` and which therefore cloned as *standing
+    #: still* on the turns they were building a cage. The consequence is not
+    #: subtle: 87% of our archived thief deaths are barrier kills, and every
+    #: opponent this package replays was, until now, structurally incapable of
+    #: placing one. The thief half of the objective was measuring a game the
+    #: league does not play.
+    barrier: Cell | None = None
 
 
 def _move_of(raw: Any) -> str | None:
@@ -60,6 +76,30 @@ def _move_of(raw: Any) -> str | None:
         return "STAY"
     text = text.removeprefix("MOVE:").strip()
     return text if text in MOVES else None
+
+
+def _placed_by(payload: dict) -> Cell | None:
+    """The cell this record walled, in any of the four dialects the league uses.
+
+    Four, because every team we have played spells it differently: a `barrier`
+    field beside the move (orcai-mj), a `barrier_placed` field with the move
+    reported as a plain STAY (najamjad), the cell inside the move token
+    (gal-roy1 ``BARRIER:3,6``), and a direction inside it (``BARRIER:S``). Read
+    only one of them and the other three teams look like they never build.
+    """
+    for key in ("barrier", "barrier_placed"):
+        value = payload.get(key)
+        if isinstance(value, list) and len(value) == 2:
+            return (int(value[0]), int(value[1]))
+    text = str(payload.get("move") or "").upper().strip()
+    if not text.startswith("BARRIER"):
+        return None
+    found = CELL_IN_MOVE.match(text)
+    if found:
+        return (int(found.group(1)), int(found.group(2)))
+    here = _position_of(payload)
+    delta = BARRIER_DIRS.get(text.split(":", 1)[1].strip())
+    return None if here is None or delta is None else (here[0] + delta[0], here[1] + delta[1])
 
 
 def _barriers_of(payload: dict) -> list[Cell]:
@@ -103,11 +143,16 @@ def _steps(records: list[dict]) -> list[dict]:
         payload = record.get("payload") if isinstance(record.get("payload"), dict) else record
         move = _move_of(payload.get("move"))
         position = _position_of(payload)
-        if move is None or position is None:
+        placed = _placed_by(payload)
+        if position is None:
             continue
+        if move is None:
+            if placed is None:
+                continue
+            move = "STAY"           # placing forfeits the move, by rule
         out.append({"step": int(payload.get("step", len(out) + 1)),
                     "pos": position, "move": move,
-                    "barrier": payload.get("barrier"),
+                    "barrier": placed,
                     "barriers": _barriers_of(payload)})
     return sorted(out, key=lambda s: s["step"])
 
@@ -131,7 +176,12 @@ def samples_from_log(log: dict, size: int = 7) -> list[Sample]:
         if prev_pos is not None and pursuer is not None:
             samples.append(Sample(role=their_role, pos=prev_pos, pursuer=pursuer,
                                   barriers=tuple(sorted(walls)), move=record["move"],
-                                  prev_move=prev_move, size=size))
+                                  prev_move=prev_move, size=size,
+                                  barrier=record["barrier"]))
+        # Their own wall is on the board from here on, whether or not their
+        # dialect also re-declares the full list.
+        if record["barrier"]:
+            walls.add(tuple(record["barrier"]))
         prev_move, prev_pos = record["move"], record["pos"]
     return samples
 

@@ -262,11 +262,29 @@ class ReferenceBridge:
             return self.peer_consensus_sha
 
     def _owe(self, envelope: dict) -> None:
-        """Queue an answer their protocol can only carry on our next turn."""
+        """Queue an answer their protocol can only carry on our next turn.
+
+        THIS is the live path for a claim answer, not :meth:`event` - the engine
+        *returns* the sealed answer from `_answer_claim` and `on_receive_turn`
+        hands it here, so nothing routes through the event surface. F002 was lost
+        to exactly that distinction: the same fix was applied to :meth:`event`,
+        proved by a unit test that called :meth:`event` directly, and the wire
+        never touched it. All six thief windows across F001 and F002 came back
+        `audit=no package received`.
+
+        `caught: true` is terminal, so there is no next turn to carry it and it
+        must be flushed now. `timeout` is None because `on_receive_turn` has none
+        to give; `_flush_terminal` treats that as the link default and already
+        suppresses send failures, so a courtesy message can never turn a won
+        sub-game into an error.
+        """
         public = envelope.get("public", {})
         if public.get("kind") == KIND_CAPTURE_ANSWER:
+            caught = bool(public["answer"])
             self._owed_claim_response = {"claim": list(public["claim_cell"]),
-                                         "caught": bool(public["answer"])}
+                                         "caught": caught}
+            if caught:
+                self._flush_terminal(None, hint="You got me.")
 
     def _apply_side_channels(self, parts: dict) -> None:
         """Their unsealed claim answer / win claim, fed to our engine as events.
@@ -362,12 +380,43 @@ class ReferenceBridge:
         # much as unreadable, and the fix costs two keys. `sender` is our role
         # rather than our slug because it also tells the receiver which of our
         # two doors is speaking - their contract accepts either spelling.
-        return {"terms": self.terms, "nonce": nonce,
-                "signature": reference_commit(self.terms, nonce),
-                "sub_game_number": self.service.engine.sub_game,
-                "sender": self.service.engine.role,
-                "group_id": self.identity.get("group_id", ""),
-                "identity": self.identity}
+        # `role`, `game_uid` and `scent_model_sha256` are lifted from the native
+        # handshake we already build, because a cross-check nobody can perform is
+        # not a cross-check. vibecode audited our Step-0 after F001 and found we
+        # send none of them: we had written "we declare it at Step-0" about the
+        # scent hash and on the wire we did not, and the labelled-uid agreement we
+        # spent two mails settling never actually exercised against their value.
+        # Their gate refuses on disagreement, not omission, so all three were
+        # silently unverifiable in both directions. Supersets are accepted here,
+        # so adding them costs nothing and makes the wire match the contract.
+        #
+        # `sender` stays: it is our role under the name their contract reads for
+        # door selection, and `role` is the same value under the reference name.
+        # The uid is the one value here that is NOT safe to send unconditionally.
+        # `_adopt_shared_ids` runs AFTER the opening handshake (runtime.py:172,
+        # sent at :161), so the very first greeting still holds the locally
+        # minted `uuid4().hex[:12]` - a value no opponent can derive. Sending
+        # that where a peer cross-checks the uid is strictly worse than sending
+        # nothing: omission refuses nothing under this gate, disagreement is what
+        # aborts a series. The derived value is a full dashed UUID and the minted
+        # one never is, so shape alone separates them without new state.
+        # `getattr` rather than attribute access: this greeting is built by
+        # bridges wired to a bare service in tests and in the loopback
+        # harness, and a Step-0 field is a courtesy - never a reason for the
+        # handshake itself to raise.
+        mine = getattr(self.service, "my_handshake", None) or {}
+        signed = {"terms": self.terms, "nonce": nonce,
+                  "signature": reference_commit(self.terms, nonce),
+                  "sub_game_number": self.service.engine.sub_game,
+                  "sender": self.service.engine.role,
+                  "role": mine.get("role", self.service.engine.role),
+                  "scent_model_sha256": mine.get("scent_model_sha256", ""),
+                  "group_id": self.identity.get("group_id", ""),
+                  "identity": self.identity}
+        game_uid = str(mine.get("game_uid", ""))
+        if "-" in game_uid:
+            signed["game_uid"] = game_uid
+        return signed
 
     def commit(self, msg: dict, timeout: float | None = None) -> dict:
         """Hold the hash: their protocol carries it on the turn message itself."""
@@ -427,9 +476,26 @@ class ReferenceBridge:
         kind = public.get("kind")
         engine = self.service.engine
         if kind == KIND_CAPTURE_ANSWER:
-            # Answering a claim is not terminal, so it rides the next turn.
+            # An answer of `false` is not terminal, so it rides the next turn.
+            # `true` IS terminal, and that is the whole of this branch's history:
+            # the sub-game ends on it, so there is no next turn to carry it, and
+            # left to ride it dies in the buffer while we go straight to
+            # submit_audit. Exactly the win-claim shape documented above, missed
+            # here because answering a claim reads like an ordinary reply.
+            #
+            # Found live against vibecode 2026-08-22 (F001), who diagnosed it
+            # from their side before we did: all three of our thief windows were
+            # captured, detected and sealed correctly - the `capture_answer`
+            # record carries `answer: true` on the right cell - and all three
+            # came back `audit=no package received` with zero opponent records,
+            # because their cop was still waiting for the answer turn their
+            # protocol calls the settlement. Their rule, which we accepted in
+            # writing: "caught: true is terminal".
+            caught = bool(public["answer"])
             self._owed_claim_response = {"claim": list(public["claim_cell"]),
-                                         "caught": bool(public["answer"])}
+                                         "caught": caught}
+            if caught:
+                self._flush_terminal(timeout, hint="You got me.")
         elif kind == KIND_CAPTURED_EVENT and engine.role == THIEF:
             # Book 46/47: a barrier on our own cell, or no legal move left. Only
             # the thief can observe it, and in this dialect the thief *announces*
