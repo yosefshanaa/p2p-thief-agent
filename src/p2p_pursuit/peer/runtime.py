@@ -366,6 +366,17 @@ class PeerRuntime:
             for n in range(self.start_index, self.num_games + 1):
                 self.play_window(n)
                 self.sub_results.append(runtime_reports.finish_sub_game(self, n, _log))
+            # The watchdog guards the *turn* loops, which are the only places
+            # that beat. The consensus linger deliberately blocks for up to
+            # `consensus_wait_sec` (600s against yanell11) with nothing to beat,
+            # against a 60s watchdog - so leaving it armed here fires a false
+            # "main loop frozen" on every clean series that waits out a peer
+            # which has already gone. It cost us a real diagnosis: we read that
+            # line as a hang, killed the process four minutes before
+            # `wait_for_consensus` would have returned, and lost the result
+            # artifact it was about to file. The wait is bounded by its own
+            # timeout, so nothing here can hang unguarded.
+            self.watchdog.stop()
             if self.peer.series_consensus:
                 self.series_consensus = runtime_reports.exchange_series_consensus(self, _log)
         finally:
@@ -387,4 +398,8 @@ class PeerRuntime:
         state = self.service.status()
         (self.out_dir / "watchdog_state.json").write_text(
             json.dumps(state, indent=2), encoding="utf-8")
-        _log(f"[{self.role}] WATCHDOG: main loop frozen; state persisted, shutting down")
+        # NOT a shutdown: `on_freeze` persists and returns, the watchdog thread
+        # exits, and the main loop keeps running. Saying otherwise sent us
+        # hunting a hang that was a bounded wait doing its job.
+        _log(f"[{self.role}] WATCHDOG: no heartbeat for {self.watchdog.timeout_sec}s; "
+             f"state persisted to watchdog_state.json (the main loop is NOT killed)")
