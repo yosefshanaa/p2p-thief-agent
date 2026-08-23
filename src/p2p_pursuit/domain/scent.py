@@ -27,6 +27,17 @@ BOOK_V1 = "book_v1"
 #: served *after* the update - so the freshest cell reads 0.9. Negotiated per
 #: opponent, because it is a different physics and not merely a different name.
 REGISTERED_V3 = "registered_v3"
+#: The kit's *promoted* registered model, adopted for yanell11 (2026-08-23).
+#: Algebraically identical to :data:`REGISTERED_V3` - same kernel, same rho,
+#: same clamp, same one-expression update, same serve-after-update - and a
+#: **different document**, so it locks to a different hash: `934c220d...`
+#: against our `0761ca16...`. That is the whole reason it exists as a separate
+#: entry. The lock is over the document and never over the behaviour, so two
+#: teams running provably identical physics still refuse each other until one
+#: of them adopts the other's bytes; yanell11 cannot move because their graded
+#: conformance vectors pin theirs, so we hold both documents and declare
+#: whichever a given opponent is pinned to.
+MULTIPLICATIVE_BOOK_V1 = "multiplicative_book_v1"
 #: The reference implementation's physics, CORE in the league's shared kit:
 #: flat Chebyshev rings and *subtractive* decay. A different world, not a
 #: different spelling - see :mod:`.scent_subtractive`.
@@ -34,7 +45,11 @@ SUBTRACTIVE_V1 = "subtractive_chebyshev_v1"
 #: Long-form alias. Both names are in use across the test suite and both are
 #: the same model string; neither is deprecated.
 SUBTRACTIVE_CHEBYSHEV_V1 = SUBTRACTIVE_V1
-MODELS = (BOOK_V1, REGISTERED_V3, SUBTRACTIVE_V1)
+MODELS = (BOOK_V1, REGISTERED_V3, MULTIPLICATIVE_BOOK_V1, SUBTRACTIVE_V1)
+#: Models that share `ScentField.advance` - the registered one-expression
+#: update. Membership is what routes a model to that physics, so a document
+#: registered without being named here would silently play `book_v1`.
+REGISTERED_MODELS = frozenset({REGISTERED_V3, MULTIPLICATIVE_BOOK_V1})
 
 # Book figure 4: radial falloff around the emitting agent (offsets -2..2).
 EMISSION_KERNEL: list[list[float]] = [
@@ -66,6 +81,51 @@ def scent_model_document(model: str = BOOK_V1) -> dict:
             "rounding_digits": None,
             "dust_floor": None,
             "serving": "each step serves the field AFTER that step's own update",
+        }
+    if model == MULTIPLICATIVE_BOOK_V1:
+        # yanell11's bytes, reproduced from their 2026-08-23 message and verified
+        # to hash to 934c220d..., which is the value their own vendored vectors
+        # pin. Held as a literal rather than derived from the fields above: the
+        # physics is shared with `registered_v3`, the *document* is theirs, and
+        # deriving it would let one of our constants quietly rewrite their hash.
+        return {
+            "example": {
+                "clamped": 0.9,
+                "delta": 0.62,
+                "note": "the clamp case: a saturated cell decays, then takes an "
+                        "adjacent deposit",
+                "raw": 1.4300000000000002,
+                "tau": 0.9,
+            },
+            "family": "scent_model",
+            "name": "multiplicative_book_v1",
+            "params": {
+                "cadence": "per_full_turn",
+                "center_intensity": 0.9,
+                "clamp": [0.0, 0.9],
+                "decay": "multiplicative",
+                "decay_rho": 0.1,
+                "evaluation_order": "(1 - rho) * tau + delta, then clamp",
+                "field_size": 5,
+                "initial_field": "empty",
+                # Inlined rather than `EMISSION_KERNEL`: their figures are
+                # equal to ours today and the document must not depend on that
+                # staying true - a change to our constant would otherwise
+                # rewrite the hash we agreed with them.
+                "kernel": [[0.04, 0.14, 0.20, 0.14, 0.04],
+                           [0.14, 0.42, 0.62, 0.42, 0.14],
+                           [0.20, 0.62, 0.90, 0.62, 0.20],
+                           [0.14, 0.42, 0.62, 0.42, 0.14],
+                           [0.04, 0.14, 0.20, 0.14, 0.04]],
+                "kernel_source": "book v3.0.0 figure 4 \u2014 printed values, "
+                                 "verbatim lookup",
+                "order": "decay_then_deposit",
+                "receiver_side_decay": False,
+                "rounding_decimals": None,
+                "transmitted": False,
+                "update": "tau' = clamp((1 - rho) * tau + kernel_delta, 0, "
+                          "center_intensity)",
+            },
         }
     return {
         "formula": "tau(t+1) = min(0.9, max(0, (1 - rho) * tau(t) + delta_tau))",
@@ -140,7 +200,7 @@ class ScentField:
                 return served
             scent_subtractive.decay(self.grid, size=self.size)
             return self.snapshot()
-        if self.model == REGISTERED_V3:
+        if self.model in REGISTERED_MODELS:
             self.advance(center)
             return self.snapshot()
         served = self.snapshot()

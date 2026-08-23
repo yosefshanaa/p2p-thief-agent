@@ -39,7 +39,7 @@ from __future__ import annotations
 
 from . import scent_subtractive
 from .board import Cell
-from .scent import BOOK_V1, REGISTERED_V3, SUBTRACTIVE_V1, ScentField
+from .scent import BOOK_V1, REGISTERED_MODELS, REGISTERED_V3, SUBTRACTIVE_V1, ScentField
 
 Field = list[list[float]]
 
@@ -49,7 +49,7 @@ Field = list[list[float]]
 #: step ago. Getting this backwards costs a whole step of lead and is silent -
 #: validated against the archive, the fix is exact under both conventions and
 #: simply answers a different question.
-SERVES_AFTER_EMISSION = frozenset({REGISTERED_V3, SUBTRACTIVE_V1})
+SERVES_AFTER_EMISSION = REGISTERED_MODELS | {SUBTRACTIVE_V1}
 
 
 def fix_lag(model: str) -> int:

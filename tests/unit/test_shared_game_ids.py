@@ -104,14 +104,44 @@ def test_an_unnamed_opponent_leaves_our_own_pair_alone(tmp_path, slug) -> None:
     assert (police.game_id, police.game_uid) == (minted_id, minted_uid)
 
 
-def test_the_agreed_label_overrides_the_id_but_never_the_uid(tmp_path) -> None:
-    """`P2P_GAME_ID` is how two teams name a demo match; the uid still proves
-    they signed the same terms, so the label must not be able to forge it."""
+def test_the_agreed_label_reaches_both_the_id_and_the_uid(tmp_path) -> None:
+    """Reversed on 2026-08-23, and the reason the old rule was wrong is a
+    collision, not a preference.
+
+    This test used to assert the opposite - that a label names the id and never
+    the uid - on the reasoning that "the uid still proves they signed the same
+    terms, so the label must not be able to forge it". The terms half of that is
+    still true and is asserted below: the terms remain in the seed, so no label
+    produces a matching uid against a different constitution.
+
+    What it missed is that two *labelled* series between the same two teams then
+    share one uid. `friendly-1` and `counted-1` against the same opponent derive
+    the same `game_uid` under the old rule, and `game_uid` is the second key of
+    the series-consensus document (`report.consensus.consensus_document`) - so a
+    counted series could settle against the digest of the warm-up it replaced.
+    yanell11 found this on their side and pin the folded form in their own unit
+    tests; we verified both readings against theirs before adopting it.
+
+    The fold happens only when a label was actually negotiated, so every
+    unlabelled pairing keeps the uid it already agreed - see
+    `test_the_unlabelled_seed_did_not_move` in the yanell11 contract.
+    """
     police, _ = _peers(tmp_path)
     police.peer = dataclasses.replace(police.peer, game_id_label="AHK-DEMO1")
     police._adopt_shared_ids(_handshake(THEIRS))
     assert police.game_id == "AHK-DEMO1"
-    assert police.game_uid == _derived_uid(police)
+
+    terms = interop_terms(police.shared, num_games=police.signed_num_games)
+    assert police.game_uid == reference_game_uid(terms, OURS, THEIRS,
+                                                 game_id="AHK-DEMO1")
+    assert police.game_uid != _derived_uid(police), "the label never reached the uid"
+
+    # The property the old rule was protecting, kept: the terms still bind, so a
+    # label cannot forge agreement against a different constitution.
+    assert reference_game_uid({**terms, "max_steps": 36}, OURS, THEIRS,
+                              game_id="AHK-DEMO1") != police.game_uid
+    # And the collision that motivated the change is closed.
+    assert reference_game_uid(terms, OURS, THEIRS, game_id="AHK-DEMO2") != police.game_uid
 
 
 def test_the_output_directory_stays_unique_per_run(tmp_path) -> None:

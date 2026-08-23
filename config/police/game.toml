@@ -48,3 +48,11 @@ step_deadline_seconds = 30
 [email]
 recipient = "rmisegal+uoh26finalgame@gmail.com"
 mode = "send"            # draft (dev) | send (league)
+
+[interop]
+# Agreed with yanell11 (2026-08-23): their series-consensus envelope arrives
+# 20-30s after sub-game 6, and their peer lingers 600s for ours. A wait shorter
+# than theirs reads as "no digest received" and silently costs the confirmation
+# rather than the series. Safe for every opponent - it is a ceiling on waiting,
+# not a term, and a peer that answers sooner is not delayed by it.
+consensus_wait_sec = 600

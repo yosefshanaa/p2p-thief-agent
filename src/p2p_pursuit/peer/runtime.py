@@ -248,11 +248,15 @@ class PeerRuntime:
         # A mutually agreed label replaces the derived id when both teams set the
         # same one. It is a top-level key of the consensus object, so an override
         # on one side only is a guaranteed digest mismatch - which is why it is an
-        # explicit per-match value rather than anything inferred. The *uid* is
-        # never overridden: it is derived from the terms and both slugs, and is
-        # what proves the two peers signed the same document.
+        # explicit per-match value rather than anything inferred. The uid follows
+        # it: a label that reached the id and not the uid would give two labelled
+        # series between the same two teams one uid, so the label is folded in
+        # whenever we set one - and only then, leaving every unlabelled pairing
+        # on the byte-identical seed it already agreed.
         self.game_id = self.peer.game_id_label or reference_game_id(my_gid, their_gid)
-        self.game_uid = reference_game_uid(terms, my_gid, their_gid)
+        self.game_uid = reference_game_uid(
+            terms, my_gid, their_gid,
+            game_id=self.game_id if self.peer.game_id_label else "")
         # Their `game_id` is deterministic by design - the same two teams always
         # derive the same string - so it cannot also name our output directory:
         # a warm-up would overwrite the sealed logs of the counted match played
