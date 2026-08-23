@@ -47,6 +47,22 @@ QUIET = apply_env_overrides(PeerConfig(raw={}, group_name="lab", group_id="lab")
 #: `always_claim` the brain's own claim policy is inert.
 CLAIM_REGIMES = (False, True)
 
+#: Consecutive seeds that count as ONE match for our own brain.
+#:
+#: Until 2026-08-23 this objective rebuilt our doctrine for every seed, so a
+#: candidate met each opponent for the first time on every evaluation and
+#: *nothing* our brain remembers between sub-games could be scored. That is not
+#: a small blind spot: the archive holds six series in which every thief window
+#: ended at the identical step, five of them on the identical cell, and the term
+#: that answers it (`w_grave`) was invisible here - flat at every value, so the
+#: search had no reason to prefer one.
+#:
+#: Three, because role alternation gives each role three of a match's six
+#: windows, so three is what the brain actually gets to learn from. The
+#: opponent side already worked this way - see `population.Member.stateful` -
+#: and the asymmetry was the bug.
+SERIES = 3
+
 
 @lru_cache(maxsize=1)
 def default_shared(path: Path = SHARED_PATH) -> SharedConfig:
@@ -104,7 +120,12 @@ def score(doctrine: Doctrine, pool: dict[str, Member], seeds: tuple[int, ...],
         # can represent an opponent who has already seen the candidate play, and
         # without it `replayer` is just a slower `interceptor`.
         kept = member.make(POLICE) if member.stateful else None
+        # Our own brains persist across a window of `SERIES` seeds for the same
+        # reason `kept` does: that is what "later in the same match" means.
+        ours_police = ours_thief = None
         for index, seed in enumerate(seeds):
+            if index % SERIES == 0:
+                ours_police, ours_thief = ours(POLICE, doctrine), ours(THIEF, doctrine)
             # Half the seeds under each claim regime - see CLAIM_REGIMES. Keyed
             # off the seed's position so every candidate in a generation meets
             # the same split, which is the common-random-numbers discipline the
@@ -114,13 +135,13 @@ def score(doctrine: Doctrine, pool: dict[str, Member], seeds: tuple[int, ...],
             # thieves, and vice versa - see population.Member.roles.
             if POLICE in roles and THIEF in member.roles:
                 ending, police_pts, _ = sub_game(
-                    shared, ours(POLICE, doctrine), member.make(THIEF), seed, claiming)
+                    shared, ours_police, member.make(THIEF), seed, claiming)
                 earned, played = earned + police_pts, played + 1
                 report.police_sub_games += 1
                 report.captures_as_police += ending == CAPTURE
             if THIEF in roles and POLICE in member.roles:
                 ending, _, thief_pts = sub_game(
-                    shared, kept or member.make(POLICE), ours(THIEF, doctrine),
+                    shared, kept or member.make(POLICE), ours_thief,
                     seed + 500_000, claiming)
                 earned, played = earned + thief_pts, played + 1
                 report.thief_sub_games += 1

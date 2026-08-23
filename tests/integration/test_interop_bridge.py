@@ -518,8 +518,13 @@ def test_a_win_claim_is_sent_immediately_not_carried_to_a_turn_that_never_comes(
 
 
 def test_a_claim_answer_still_rides_the_next_turn():
-    """The capture answer is NOT terminal - the game continues - so it keeps the
-    original behaviour and must not be pushed as a message of its own."""
+    """A capture answer of `false` is not terminal - the game continues - so it
+    keeps the original behaviour and must not be pushed as a message of its own.
+
+    Scoped deliberately to `false`. The `true` case is terminal and is covered by
+    the test below; conflating the two is exactly the assumption that cost three
+    sub-games in F001.
+    """
     from p2p_pursuit.domain.protocol import KIND_CAPTURE_ANSWER
 
     bridge, _service, peer = _bridge()
@@ -530,6 +535,72 @@ def test_a_claim_answer_still_rides_the_next_turn():
                              "answer": False}}, timeout=1)
     assert len(peer.turns) == sent_before, "it waits for the next turn"
     assert bridge._owed_claim_response == {"claim": [1, 2], "caught": False}
+
+
+def test_a_true_capture_answer_is_sent_immediately_like_a_win_claim():
+    """Measured live 2026-08-22 (F001 vs vibecode), who diagnosed it from their
+    side. Same shape as the win-claim bug above: `caught: true` IS terminal - the
+    sub-game ends on it, so there is no next turn to ride. Left owed, their cop
+    waits for the answer turn their protocol calls the settlement, times out, and
+    skips the audit. All three of our thief windows came back `audit=no package
+    received` with zero opponent records, while our own sealed `capture_answer`
+    held the right answer on the right cell the whole time.
+    """
+    from p2p_pursuit.domain.protocol import KIND_CAPTURE_ANSWER
+
+    bridge, _service, peer = _bridge()
+    bridge.commit({"hash": "e" * 64}, timeout=1)
+    bridge.reveal(_reveal(role="thief", step=7, hash="e" * 64), timeout=1)
+    sent_before = len(peer.turns)
+
+    bridge.event({"public": {"kind": KIND_CAPTURE_ANSWER, "claim_cell": [6, 5],
+                             "answer": True}}, timeout=1)
+
+    assert len(peer.turns) == sent_before + 1, "the terminal answer goes out alone"
+    final = peer.turns[-1]
+    assert final["claim_response"] == {"claim": [6, 5], "caught": True}
+    assert final["step"] == 7 and final["commit"] == "e" * 64, "a copy of our last turn"
+    assert bridge._owed_claim_response is None, "nothing is left owed"
+
+
+def test_a_true_capture_answer_is_flushed_from_the_LIVE_inbound_path():
+    """The regression F002 was actually lost to, and the reason this test exists
+    at the entry point instead of at the handler.
+
+    A claim answer reaches the bridge through `_owe`, never through `event`: the
+    engine RETURNS the sealed answer from `_answer_claim` and `on_receive_turn`
+    hands it straight to `_owe`. The same terminal-flush fix was first applied to
+    `event` alone and proved by a test that called `event` directly - both passed,
+    and the wire was untouched. All six of our thief windows across F001 and F002
+    came back `audit=no package received`.
+
+    So this drives the real inbound message. If a future change moves the routing
+    again, this fails and the `event` test above will not.
+    """
+    from p2p_pursuit.domain.protocol import KIND_CAPTURE_ANSWER
+
+    engine = _FakeEngine(role="thief")
+    service = _FakeService(engine)
+    service.reveal_response = {"ok": True, "events": [
+        {"public": {"kind": KIND_CAPTURE_ANSWER, "claim_cell": [6, 5],
+                    "answer": True}, "hash": "f" * 64}]}
+    bridge, _service, peer = _bridge(service=service)
+
+    bridge.commit({"hash": "d" * 64}, timeout=1)
+    bridge.reveal(_reveal(role="thief", step=14, hash="d" * 64), timeout=1)
+    sent_before = len(peer.turns)
+
+    bridge.on_receive_turn({"step": 14, "sender": "police", "hint": "",
+                            "smell_grid": {}, "commit": "c" * 64,
+                            "timestamp": "t", "barrier_placed": None,
+                            "capture_claim": [6, 5], "claim_response": None,
+                            "win_claim": None})
+
+    assert len(peer.turns) == sent_before + 1, (
+        "the terminal answer must reach the wire from the inbound path - their "
+        "cop waits for it and calls it the settlement")
+    assert peer.turns[-1]["claim_response"] == {"claim": [6, 5], "caught": True}
+    assert bridge._owed_claim_response is None, "nothing is left owed"
 
 
 def test_an_inbound_agreement_counts_as_liveness():

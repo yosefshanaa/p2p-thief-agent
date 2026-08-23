@@ -20,6 +20,19 @@ rehandshake_budget_sec = 90
 
 # [strategy]  -- optional: point at YOUR brain subclass (else the shipped brain runs)
 # thief_class = "p2p_pursuit.strategy.thief_brain:ThiefBrain"
+#
+# An LLM may propose the thief MOVE (see strategy/thief_llm.py). It is off here
+# on purpose: arm it for ONE match with the environment override rather than by
+# editing this file, which would ride into the next opponent's match.
+#   P2P_THIEF_CLASS=p2p_pursuit.strategy.thief_llm:LLMThiefBrain
+#   P2P_MOVE_PROVIDER=openai|ollama   (defaults to the [trash_talk] provider)
+#   P2P_MOVE_MODEL=...                (defaults to the provider's own default)
+# BOTH switches are needed: the class alone loads a wrapper with no provider,
+# which falls back to the doctrine on every turn. The doctrine move is computed
+# first each turn and plays whenever the model is slow, unreachable, or names an
+# illegal move; three consecutive failures switch it off for the rest of the run.
+# The prompt states the reachable-region size and its trend, which is the one
+# thing the tuned vector cannot price - see the module docstring.
 
 [trash_talk]
 provider = "openai"       # template (0 tokens, default) | openai | ollama | claude_api | claude_cli

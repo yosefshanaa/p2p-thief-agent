@@ -49,7 +49,34 @@ class Doctrine:
     """Both doctrines as one vector. Field names are the search-space keys."""
 
     # -- police: thresholds are ratios of a rolling peak, never absolutes
+    #: `peak_window` is the rolling window `_barrier_play` compares against, and
+    #: it is INERT: measured 2026-08-23 at 4, 7, 10 and 14 over 2208 sub-games
+    #: per value, every score identical to the digit. Left addressable rather
+    #: than deleted, but do not read a searched value for it as evidence.
     peak_window: int = 12
+    #: How many turns of pursuit `_evading` looks back over before it will
+    #: believe the thief is running - and therefore before the squeeze may
+    #: start. The single most valuable integer in this vector, and every shipped
+    #: file had it wrong.
+    #:
+    #: `_evading` fires only when `len(self._gaps) == self._gaps.maxlen`, so
+    #: this is both the amount of history required and the age of the gap being
+    #: compared against. Shipped at 8 - the top of its own search box - the
+    #: squeeze started too late to ever start. Measured 2026-08-23 on fresh
+    #: seeds, 3312 sub-games per value:
+    #:
+    #:   subtractive   8 -> 6   18.315 -> 19.215, and `recorded:vibecode` (the
+    #:                          team that beat our police 0/3 in three
+    #:                          friendlies) goes 25/240 -> 240/240
+    #:   registered    7 -> 5   19.342 -> 19.527
+    #:   orcai-mj      7 -> 3   18.555 -> 19.176
+    #:   book_v1       already 3, which measured best
+    #:
+    #: Too small is a real cost, not a free win: at 2 the test fires on two
+    #: turns of noise and the police squeezes where a plain chase would have
+    #: caught it, which is the 25/30 -> 20/30 regression `_decide_move`
+    #: describes. The curve has a genuine interior optimum and every physics
+    #: puts it in a different place.
     gap_window: int = 4
     kill_shot_ratio: float = 0.85
     seal_ratio: float = 0.60
@@ -57,6 +84,19 @@ class Doctrine:
     endgame_reserve: int = 2
     belief_floor: float = 0.22
     police_fresh_min: float = 0.7
+    #: Belief on our own cell before we issue a capture claim, in the half of
+    #: the league that does NOT play `always_claim`. A claim names our cell and
+    #: is simply answered, so claiming early costs information and nothing else
+    #: - and half the contracts we have signed claim on every single turn.
+    #:
+    #: Swept by hand 2026-08-23, full pool, 40 seeds x 6 windows on fresh seeds.
+    #: Under `subtractive_chebyshev_v1` the shipped 0.291 was far too high:
+    #: 0.04, 0.08 and 0.12 are a flat plateau at 19.168/19.168/19.166 against
+    #: 18.962, paired 31 better and 2 worse. 0.12 is the top of that plateau, so
+    #: it takes the same points while claiming on the fewest turns. The other
+    #: two physics measured a tie and were left alone (registered 19.486 vs
+    #: 19.476; book 19.188 vs 19.155), which is the usual pattern here - a term
+    #: is worth different amounts under different scent models.
     claim_threshold: float = 0.15
     police_truth_rate: float = 0.20
     #: Least probability that a one-step move lands on the thief before we spend
@@ -76,6 +116,16 @@ class Doctrine:
     #: in the played archive and costs the lab nine points of capture rate
     #: (0.812 -> 0.725), because this weight is doing a pursuit job - lead the
     #: quarry - and not only a forecasting one. Left where the play measures it.
+    #:
+    #: And the play now measures it higher, under ONE physics. Coordinate
+    #: descent 2026-08-23 found this completely inert under
+    #: `subtractive_chebyshev_v1` and live under `book_v1` - which is exactly
+    #: what the "prediction" reading predicts: with an invertible field the
+    #: pursuer has the thief's cell and has nothing to forecast, while book's
+    #: fix is a step stale. So `doctrine.json` moved 2.757 -> 3.6 (19.185 ->
+    #: 19.266 pts/sub-game, 30 better and 10 worse paired, `evader` 191/240 ->
+    #: 224/240) and the subtractive file did not move at all. 3.3/3.6/3.9 are a
+    #: plateau; 3.6 was taken because 3.9 sits on the search bound.
     flee_bias: float = 1.8
     #: Weight on the chance a candidate cell is the thief's, scored as a term in
     #: the pursuit rather than as an override of it.
@@ -163,6 +213,20 @@ class Doctrine:
     #: term ships addressable and off, rather than shipping a guess that the only
     #: measurement available says is worse. Turn it on when a sparring partner
     #: exists that can actually punish an oscillating evader.
+    #:
+    #: The subtractive file carried a searched 3.297 and now carries **1.0**,
+    #: which is a deliberate compromise rather than the argmax. Coordinate
+    #: descent over the whole thief vector (2880 sub-games per trial) found this
+    #: the ONLY key with anything to say, and 0.0 / 0.5 / 1.0 all measure the
+    #: same 9.930 against 3.297's 9.878 - 44 better and **0 worse** paired, with
+    #: our thief's survivals against `mirror` going 217/288 to 288/288. 1.0 is
+    #: the top of that flat region, so it takes the whole gain while still
+    #: pricing the exact step-back the archive recorded.
+    #:
+    #: Why the high value cost anything at all: `w_grave` now prices the cell a
+    #: previous window died on, which is precisely what the uoh-ay26 death was.
+    #: A heavy blanket tax on *every* return then double-charges the one cell
+    #: that matters and overcharges the forty-eight that do not.
     backtrack_penalty: float = 0.0
     #: Penalty on ending our move inside the pursuer's next-step reach. This is
     #: the term the thief never had: across the archive our thief finished its
@@ -176,14 +240,19 @@ class Doctrine:
     #: against one pursuer it produced six identical trajectories, so an opponent
     #: that beats it once beats it in every remaining sub-game of the match.
     #:
-    #: DEFAULT 0, on the measurement rather than on principle. Against our own
-    #: police over 40 seeds, survival is 0/40 at margins 0, 0.15, 0.40 and 1.00,
-    #: and mean steps survived FALLS from 15.0 to 14.3 to 12.8. Mixing defeats
-    #: *prediction*, and under `subtractive_chebyshev_v1` no competent opponent
-    #: has to predict us: the field we are required to publish has a unique peak
-    #: on our own cell, so it can simply look. There is nothing for
-    #: unpredictability to buy when the pursuer has your coordinates, and on a
-    #: grid a pursuer with an exact fix catches an evader by construction.
+    #: DEFAULT 0, on the measurement rather than on principle - but the shipped
+    #: subtractive file now carries 0.25, and the reason the older measurement
+    #: read the other way is that the POLICE changed underneath it. "Survival is
+    #: 0/40 at margins 0, 0.15, 0.40 and 1.00" was taken against a pursuer whose
+    #: `gap_window` was pinned at the top of its box, so it never squeezed in
+    #: time; against one that does, unpredictability finally buys something -
+    #: 9.895 against 9.826, and our thief's survivals against `mirror` go
+    #: 218/384 to 318/384. Under `book_v1` the old reading still holds and
+    #: mixing stays off. Mixing defeats *prediction*, and under
+    #: `subtractive_chebyshev_v1` no competent opponent has to predict us: the
+    #: field we are required to publish has a unique peak on our own cell, so it
+    #: can simply look. What it buys is not secrecy but a different road, and a
+    #: pursuer that commits its barriers to one road pays for that.
     #:
     #: Where it WOULD have a mechanism is a lag-1 physics like `book_v1`, whose
     #: fix is one step stale and spread over about four cells - and there our
@@ -199,14 +268,57 @@ class Doctrine:
     #: the ground away. `w_mobility` counts doors and cannot see this, because
     #: it counts a door the pursuer is standing behind.
     #:
-    #: DEFAULT 0, and the measurement says it cannot be otherwise. Swept over
-    #: 0.15/0.3/0.6/1.0/2.0 against 40 seeds: survival against our own police is
-    #: 0% at EVERY weight, and 100% against every other archetype at every
-    #: weight. The term is inert, and the reason is structural rather than a
-    #: missing weight - see `mix_margin`. It stays addressable because the day
-    #: the pool contains a pursuer that cuts *imperfectly* is the day it has
-    #: something to say.
+    #: That day arrived. This was recorded as INERT - "survival against our own
+    #: police is 0% at EVERY weight, and 100% against every other archetype" -
+    #: and the reading was true of the pool that measured it and false of the
+    #: term. Two blind spots were doing the work: the objective rebuilt our
+    #: brain every seed (see `learn.arena.SERIES`) and our own police could not
+    #: squeeze in time (see `gap_window`). With both fixed, this is the single
+    #: strongest thief lever there is. Measured 2026-08-23, 48 seeds x 6 windows
+    #: on fresh seeds:
+    #:
+    #:   registered_v3   0.0 -> 3.5   9.745 -> 9.827 pts, and najamjad's cage
+    #:                                goes 194/288 -> **288/288**
+    #:   subtractive     1.01 -> 3.5  with mix_margin 0.25, 9.840 -> 9.905
+    #:   book_v1         unchanged - every candidate measured worse there
+    #:
+    #: Raising `w_strike` instead does nothing once this is set: 10.0 and 12.0
+    #: are byte-identical to the shipped value over 1152 paired sub-games. The
+    #: refusal this term expresses - do not take a cell whose every exit the
+    #: pursuer can hold - is the one a squeezing police punishes, and the one
+    #: `w_strike` (which refuses only the cell itself) cannot express.
     w_safe2: float = 0.0
+    #: Weight on keeping away from a cell an earlier sub-game of THIS series
+    #: died on, and how far that push reaches in BFS steps.
+    #:
+    #: The one term that is not about this sub-game at all. A match is six
+    #: windows from the same two signed starting cells against the same
+    #: opponent, and a deterministic evader plays the sixth exactly as it played
+    #: the first. Audited from `result.my_steps` in the sealed logs: of 22
+    #: archived series and 67 thief sub-games, 38 ended in capture, **eight
+    #: series lost every thief window and six of those lost them at the
+    #: identical step** - vibecode at step 14 on [6, 5] in three friendlies
+    #: running, najamjad at 30, uoh-ay26 at 10 on [5, 5], orcai-mj at 16. Five
+    #: of the six died on one repeated cell. Mixing does not answer it: it
+    #: varies the road, and a funnel gathers every road.
+    #:
+    #: A weight rather than a constant because it is worth different amounts
+    #: under different physics, which is the same reason every other weight here
+    #: is one. Swept 2026-08-23 over the whole pool, 3312 sub-games per cell:
+    #:
+    #:   physics             off      (2,1)    (4,2)
+    #:   registered_v3     9.535     9.700    9.766     <- 308 captures -> 155
+    #:   subtractive       9.777     9.958    9.926     <- 148 captures ->  28
+    #:   book_v1           9.888     9.903    9.893     <- 74 captures ->  64
+    #:
+    #: So the registered file carries (4, 2) and every book/subtractive file
+    #: carries (2, 1). A LARGE weight is not free: under `book_v1` at (12, 3)
+    #: the pool takes 43 sub-games where the term switched off takes 20 - the
+    #: thief spends the board avoiding one cell and gets run down elsewhere. The
+    #: first shipped version scaled this off `w_strike` (~8-9) and was tuned
+    #: against a single foil; that is the value this sweep replaced.
+    w_grave: float = 2.0
+    grave_radius: int = 1
 
 
 #: Fields the offline search is NOT allowed to touch, and why.
@@ -293,6 +405,10 @@ SPACE: dict[str, tuple[float, float, bool]] = {
     "w_strike": (0.0, 10.0, False),
     "mix_margin": (-0.5, 3.0, False),
     "w_safe2": (-0.5, 4.0, False),
+    # Floor below zero for the reason given above `police_mix_margin`: 0.0 is
+    # this term's OFF value and every default must sit strictly inside its box.
+    "w_grave": (-1.0, 16.0, False),
+    "grave_radius": (0, 4, True),
 }
 
 #: Which half of the vector each role reads. Spelled out rather than derived

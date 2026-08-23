@@ -55,6 +55,12 @@ from .predict import spread, strike_zone
 # stale enough to lie about is not searched: it is fixed by the decay schedule.
 STALE_LOW, STALE_HIGH = 0.25, 0.65
 
+#: How many cells of a losing run are buried, counting back from the cell we
+#: died on, and with what weight - the death cell always at 1.0, each earlier
+#: cell linearly less. Not a doctrine key, because the measurement says there is
+#: nothing to tune: see `_bury`.
+GRAVE_TAIL = 1
+
 
 class ThiefBrain(BrainBase):
     def __init__(self, doctrine: Doctrine | None = None) -> None:
@@ -67,19 +73,53 @@ class ThiefBrain(BrainBase):
         self._sub_game: int | None = None
         self._strike: dict[Cell, float] = {}
         self._prev_cell: Cell | None = None
+        #: Cells earlier sub-games of THIS series ended on when we were caught,
+        #: each with the weight `_bury` gave it.
+        #:
+        #: A match is six sub-games from the same two signed starting cells, and
+        #: without this the thief plays the sixth exactly as it played the
+        #: first. Audited from `result.my_steps` in the sealed logs: of 22
+        #: archived series and 67 thief sub-games, 38 ended in capture; eight
+        #: series lost EVERY thief window and six of those lost them at the
+        #: identical step - vibecode at step 14 on [6, 5] in three friendlies
+        #: running, najamjad at 30, uoh-ay26 at 10 on [5, 5], orcai-mj at 16.
+        #: Mixing does not fix it, because it varies the road and a funnel
+        #: gathers every road. How hard this pushes is `w_grave`, per physics.
+        self._graves: list[tuple[Cell, float]] = []
+        self._last_step = 0
+        #: Cells walked in the current sub-game, newest last - only so that a
+        #: death can bury more than its final cell. See `GRAVE_TAIL`.
+        self._walked: list[Cell] = []
 
     def _pick_move(self, view: BrainView) -> Decision:
         if view.sub_game != self._sub_game or view.step <= 1:
+            # A previous sub-game that stopped short of the survival threshold
+            # ended because we were caught, and `_prev_cell` is where. Inferred
+            # rather than reported: the brain is never told the outcome, and a
+            # new protocol field for it would have to be negotiated.
+            if (self._sub_game is not None and self._prev_cell is not None
+                    and 0 < self._last_step < view.survival_threshold):
+                self._bury()
             self._sub_game, self._last_move, self._run_len = view.sub_game, None, 0
             self._prev_peak = self._fresh = self._prev_fresh = None
             self._strike = {}
             self._prev_cell = None
+            self._walked = []
         self._track_trail(view)
         # Where the pursuer is now, and therefore which cells it can take on its
         # next move - the cells this thief must not be standing on. Both come
         # from the exact fix; with no fix they stay empty and the older,
         # belief-driven terms carry the turn as they always did.
         self._strike = self._danger(view)
+        self._last_step = view.step
+        self._walked.append(view.own_pos)
+        # One BFS *per grave*, not one from where we stand: the term has to
+        # measure each candidate's LANDING cell, and a single BFS from our own
+        # position would give every candidate the same number and do nothing.
+        # Graves are few - one per lost sub-game, at most five - and the board
+        # is 7x7, so this is cheaper than the per-candidate search it replaces.
+        graves = [(bfs_distances(view.board, cell), weight)
+                  for cell, weight in self._graves] if self.p.w_grave > 0 else []
         centroid = scent_centroid(view.own_scent)
         peak = view.belief.argmax()
         projected = view.opp_lead or self._project(view, peak)
@@ -173,6 +213,17 @@ class ThiefBrain(BrainBase):
                 edges = (pos[0] in (0, n - 1)) + (pos[1] in (0, n - 1))
                 early = view.step <= view.survival_threshold // 2
                 s -= self.p.corner_penalty * edges * (1.0 if early else threat)
+            # Where earlier sub-games of this series died. A funnel gathers
+            # every road, so varying the road is not enough - the trap cell
+            # itself has to become expensive. Scaled by `w_strike` so it is
+            # decisive on the doctrine's own scale rather than a tunable
+            # afterthought, and it only ever competes: a move that is better on
+            # every other term still wins.
+            if graves:
+                near = max((weight * (self.p.grave_radius + 1 - d.get(pos, 99))
+                            for d, weight in graves), default=0.0)
+                if near > 0:
+                    s -= self.p.w_grave * near
             return s + view.rng.random() * 1e-3
 
         # "Never STAY twice" (STRATEGY.md) is now enforced, not merely penalised:
@@ -187,6 +238,39 @@ class ThiefBrain(BrainBase):
         self._prev_cell = view.own_pos
         self._prev_peak = peak
         return Decision(move=best)
+
+    def _bury(self) -> None:
+        """Record where the sub-game we just lost ended, and how we got there.
+
+        Inferred rather than reported: the brain is never told the outcome, and
+        a new protocol field for it would have to be negotiated. A window that
+        stopped short of the survival threshold stopped because we were caught,
+        and `_walked` says where.
+
+        Only the final cell, and that is a measurement rather than a default.
+        Burying the approach as well is the obvious generalisation - a cage
+        kills you twenty turns before it closes, so the mistake is upstream of
+        the grave - and over 3312 sub-games it is **worse than having no memory
+        at all**: under `subtractive_chebyshev_v1` a tail of 1 is taken 28 times
+        and a tail of 2 is taken 148, which is exactly the score of the term
+        switched off; under `registered_v3`, 155 -> 176 -> 192 for tails 1, 2
+        and 4.
+
+        The reason is visible in a single trace against najamjad's cage. The
+        thief dies on (2, 4), having come through (1, 4). A tail of 2 buries
+        both - and (1, 4) is the only way *out* of that pocket, so the thief
+        that has learned to avoid its own approach has learned to stay in the
+        trap: it dies on (2, 4) at step 30 in all six windows, where burying the
+        death cell alone gets it out in five of six.
+
+        **The approach to a grave is the escape route from it.** That is why
+        this is a constant and not a searchable key.
+        """
+        tail = [c for c in self._walked[-GRAVE_TAIL:] if c is not None]
+        if not tail:
+            tail = [self._prev_cell]
+        for i, cell in enumerate(reversed(tail)):
+            self._graves.append((cell, 1.0 - i / max(len(tail), 1)))
 
     def _danger(self, view: BrainView) -> dict[Cell, float]:
         """Probability that the pursuer can be on each cell after its next move.
