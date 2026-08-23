@@ -192,7 +192,26 @@ class PeerRuntime:
         So a peer joining a series joins it where the other side is. Only forward:
         an index we have already settled is not replayable, and pulling the other
         peer backwards is what deadlocked both of us earlier tonight.
+
+        **Never against a peer that serves a door per role.** uoh-sqak ran one
+        process, so its index *was* the series position. A rule-1 split runs two,
+        and each one reports the next window *it* will play - a cop that has
+        played nothing truthfully declares `sub_game_number: 2`, because under
+        alternation window 2 is its first. Read as a series position that says
+        "window 1 is settled", and it is not: their thief is sitting on window 1
+        waiting for us. We joined at 2 against yanell11 three times, skipped
+        window 1, and then took their thief's window-1 turns for a role
+        collision and retargeted onto the door of the half that was not playing
+        - a permanent stall, every symptom of which we blamed on their state.
+        Their two peers were correct throughout.
+
+        We cannot repair that downstream: their turn messages carry no sub-game
+        at all (`interop_codec.to_turn_message`), so a late window-1 turn is
+        indistinguishable from a current one. Not skipping the window is the
+        whole fix.
         """
+        if getattr(self.peer, "opponent_doors", None):
+            return
         declared = (theirs or {}).get("sub_game_number")
         if not isinstance(declared, int) or declared <= self.start_index:
             return
