@@ -33,17 +33,29 @@ def reference_game_id(group_a: str, group_b: str) -> str:
     return f"{lo}-vs-{hi}"
 
 
-def reference_game_uid(terms: dict, group_a: str, group_b: str) -> str:
+def reference_game_uid(terms: dict, group_a: str, group_b: str,
+                       game_id: str = "") -> str:
     """Their deterministic uid: a UUID over the agreed terms and both slugs.
 
     Deterministic on purpose - both sides derive it independently and must land
     on the same value, so a uid carried over from an earlier pairing shows up as
     a mismatch instead of quietly labelling this series with the last one's id.
+
+    ``game_id`` folds a *mutually agreed label* in, replacing the slug pair in
+    the seed. Two teams that label two series against each other `friendly-1`
+    and `counted-1` otherwise derive one uid for both, because the label reaches
+    the id and never the uid - which is the collision this closes. It is passed
+    only when a label was actually negotiated: with it empty the seed is
+    byte-identical to the unlabelled rule, so every peer we have already played
+    keeps the uid it agreed with us. yanell11 pin the labelled form in their own
+    unit tests and we verified both readings against them before adopting it.
     """
     from .crypto import canonical_bytes, sha256_raw
 
     lo, hi = sorted((group_a, group_b))
-    material = canonical_bytes(terms) + b"|" + lo.encode("utf-8") + b"|" + hi.encode("utf-8")
+    tail = game_id.encode("utf-8") if game_id else \
+        lo.encode("utf-8") + b"|" + hi.encode("utf-8")
+    material = canonical_bytes(terms) + b"|" + tail
     return str(uuid.UUID(bytes=sha256_raw(material)[:16]))
 
 
