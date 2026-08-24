@@ -34,10 +34,20 @@ def tracked_files(workspace: Path) -> list[str]:
 
 
 def role_banner(role: str, urls: dict[str, str]) -> str:
+    """Role line + the provenance line pointing back at the development repo.
+
+    Both are regenerated from the pristine workspace README on every sync, so
+    editing them in a published repo is pointless - the next run overwrites it.
+    """
     sister = "thief" if role == "police" else "police"
     return (f"> **Role of this repository: {role.upper()} agent** — "
             f"`uv run p2p-pursuit peer` defaults to `--role {role}` here "
-            f"(`ROLE` marker). Sister ({sister}) repository: {urls[sister]}\n")
+            f"(`ROLE` marker). Sister ({sister}) repository: {urls[sister]}\n"
+            f">\n"
+            f"> **Developed in [`{urls['workspace_name']}`]({urls['workspace']})** — "
+            f"the single role-configurable codebase both agents are built from, "
+            f"carrying the full commit history and the league match archive. This "
+            f"repository is published from it by `scripts/sync_repos.py`.\n")
 
 
 def transform_readme(text: str, role: str, urls: dict[str, str]) -> str:
@@ -95,6 +105,8 @@ def main(argv: list[str] | None = None) -> int:
     cfg = tomllib.loads((WORKSPACE / "config" / "repos.toml").read_text("utf-8"))["sync"]
     urls = {r: f"https://github.com/{cfg['owner']}/{name}"
             for r, name in cfg["roles"].items()}
+    urls["workspace_name"] = cfg["workspace"]
+    urls["workspace"] = f"https://github.com/{cfg['owner']}/{cfg['workspace']}"
     head = _git(WORKSPACE, "log", "-1", "--format=%h %s").strip()
     for role, name in cfg["roles"].items():
         target = (WORKSPACE / cfg["repos_root"] / name).resolve()
