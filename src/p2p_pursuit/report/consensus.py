@@ -26,10 +26,23 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from ..domain.crypto import canonical_bytes, sha256_hex
+from ..domain.crypto import canonical_bytes, sha256_hex, spaced_bytes
 
-__all__ = ["CONSENSUS_CLAIM", "RESULT_VALUES", "ROW_KEYS", "consensus_document",
-           "consensus_envelope", "consensus_row", "consensus_sha", "peer_consensus_sha"]
+__all__ = ["CONSENSUS_CLAIM", "PROJECTIONS", "RESULT_VALUES", "ROW_KEYS",
+           "SIGNATURE_PROJECTION", "UID_PROJECTION", "consensus_document",
+           "consensus_envelope", "consensus_row", "consensus_sha",
+           "peer_consensus_sha", "projected_consensus",
+           "signature_consensus_document", "signature_consensus_sha"]
+
+#: The document family described at the top of this module: amireman's
+#: ``game_id``/``game_uid``/``sub_games``, compact separators. Our default.
+UID_PROJECTION = "uid"
+#: MaRs-777's §16 scope. Same envelope, same claim string, different bytes:
+#: ``game_id``/``aggregate``/``sub_games``, `json.dumps` **defaults**, and no
+#: ``game_uid`` at all. It is our :mod:`.mutual_signature` projection carried on
+#: the consensus tool rather than inside the filed result.
+SIGNATURE_PROJECTION = "signature"
+PROJECTIONS = (UID_PROJECTION, SIGNATURE_PROJECTION)
 
 #: Their ``result_claim`` for the end-of-series envelope, which is what
 #: distinguishes it from the per-sub-game audits sharing the same tool.
@@ -82,6 +95,69 @@ def consensus_document(*, game_id: str, game_uid: str,
 def consensus_sha(document: dict[str, Any]) -> str:
     """SHA-256 over the compact canonical bytes - their §11 serialization."""
     return sha256_hex(canonical_bytes(document))
+
+
+def signature_consensus_document(*, game_id: str, rows: list[dict[str, Any]],
+                                 my_group: str, their_group: str,
+                                 tie_award: int = 0) -> dict[str, Any]:
+    """MaRs-777's §16 scope, built from rows that already carry the signed keys.
+
+    Three keys, and the absent one is the point: there is no ``game_uid`` here.
+    Everything else is our mutual-signature projection unchanged - the same five
+    aggregate keys, the same five row keys, both keyed by group id - which is why
+    this is a serialization change and an aggregate flag rather than a new digest.
+
+    Rows are read straight off our sub-results, which have already been merged
+    with :func:`~.mutual_signature.signed_row_fields` by the time a series ends.
+    A key the row does not carry becomes an explicit ``None`` rather than
+    vanishing, for the reason that function gives: two peers disagreeing about
+    whether a field exists must not hash identically to two that agree.
+    """
+    from .mutual_signature import SUB_GAME_KEYS, signed_aggregate
+
+    ordered = sorted(rows, key=lambda r: r["index"])
+    return {
+        "game_id": game_id,
+        "aggregate": signed_aggregate(ordered, my_group=my_group,
+                                      their_group=their_group,
+                                      tie_award=tie_award),
+        "sub_games": [{key: row.get(key) for key in SUB_GAME_KEYS}
+                      for row in ordered],
+    }
+
+
+def signature_consensus_sha(document: dict[str, Any]) -> str:
+    """SHA-256 over the **spaced** bytes - `json.dumps` defaults, not compact.
+
+    The single most expensive line in this module to get wrong: the same
+    document under the other separators yields a perfectly plausible 64-hex
+    string that agrees with nobody.
+    """
+    return sha256_hex(spaced_bytes(document))
+
+
+def projected_consensus(projection: str, *, game_id: str, game_uid: str,
+                        rows: list[dict[str, Any]], my_group: str,
+                        their_group: str,
+                        tie_award: int = 0) -> tuple[dict[str, Any], str]:
+    """The document and digest for one negotiated family. Never guesses.
+
+    An unknown name raises rather than falling back to the default: a peer
+    configured for a projection we do not implement must fail where the config
+    is read, not settle a whole series against the wrong bytes and report it as
+    a disagreement.
+    """
+    if projection == UID_PROJECTION:
+        document = consensus_document(game_id=game_id, game_uid=game_uid,
+                                      rows=rows)
+        return document, consensus_sha(document)
+    if projection == SIGNATURE_PROJECTION:
+        document = signature_consensus_document(
+            game_id=game_id, rows=rows, my_group=my_group,
+            their_group=their_group, tie_award=tie_award)
+        return document, signature_consensus_sha(document)
+    raise ValueError(f"unknown consensus projection {projection!r}; "
+                     f"expected one of {PROJECTIONS}")
 
 
 def consensus_envelope(*, sender: str, sha: str | None) -> dict[str, Any]:

@@ -98,12 +98,27 @@ def signed_row_fields(row: dict[str, Any], *, my_group: str, their_group: str,
 
 
 def signed_aggregate(rows: list[dict[str, Any]], *, my_group: str,
-                     their_group: str) -> dict[str, Any]:
+                     their_group: str, tie_award: int = 0) -> dict[str, Any]:
     """Series totals over rows that already carry :func:`signed_row_fields`.
 
     A sub-game with no winner counts as a tie, which is also how a technical
     loss with no surviving winner reads - deliberately, since neither team may
     claim it.
+
+    ``tie_award`` is the Appendix-F consolation added to **both** sides when the
+    series totals are level, and it is opt-in for one reason: this aggregate is
+    the one hashed into :func:`mutual_signature`, which we have already
+    exchanged and matched with other teams. Awarding by default would move that
+    digest for every tied series we have ever agreed, on a rule only MaRs-777
+    have put in writing to us. So the default is 0 - byte-identical to what we
+    shipped - and the award is passed only on the projection that asks for it.
+
+    Where it lands is not obvious and is theirs by specification: the award
+    reaches ``total_score`` **alone**, and only after ``winner_group`` and
+    ``series_tie`` have been derived from the *raw* totals. Adding it to both
+    sides cannot change either value, so the ordering is unobservable here - but
+    an implementation that awarded into ``sub_games_won``, or into a row score,
+    would disagree with them and this says which one we are.
     """
     total = {my_group: 0, their_group: 0}
     won = {my_group: 0, their_group: 0}
@@ -117,10 +132,14 @@ def signed_aggregate(rows: list[dict[str, Any]], *, my_group: str,
         else:
             won[winner] = won.get(winner, 0) + 1
     series_tie = total[my_group] == total[their_group]
+    # Derived from the raw totals, before any award - see the docstring.
+    winner_group = None if series_tie else max(total, key=lambda g: total[g])
+    awarded = {group: points + tie_award for group, points in total.items()} \
+        if series_tie and tie_award else dict(total)
     return {
-        "total_score": total,
+        "total_score": awarded,
         "sub_games_won": won,
         "ties": ties,
-        "winner_group": None if series_tie else max(total, key=lambda g: total[g]),
+        "winner_group": winner_group,
         "series_tie": series_tie,
     }
