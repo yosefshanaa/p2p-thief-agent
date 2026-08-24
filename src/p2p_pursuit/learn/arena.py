@@ -18,7 +18,8 @@ from ..domain.rules import POLICE, THIEF
 from ..domain.scoring import CAPTURE, SURVIVAL
 from ..peer.local_match import play_sub_game
 from ..peer.turn_engine import TurnEngine
-from ..shared.config import PeerConfig, SharedConfig, apply_env_overrides, load_shared
+from ..shared.config import PeerConfig, SharedConfig, load_shared
+from ..shared.config_env import apply_env_overrides
 from ..strategy.params import Doctrine
 from .population import Member, ours
 

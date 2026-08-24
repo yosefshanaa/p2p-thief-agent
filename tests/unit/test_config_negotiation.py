@@ -90,7 +90,8 @@ def test_a_blank_or_junk_port_leaves_the_configured_one_alone(monkeypatch):
     """An empty PORT is common in shells and CI; it must not silently become 0."""
     from pathlib import Path
 
-    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+    from p2p_pursuit.shared.config import load_peer
+    from p2p_pursuit.shared.config_env import apply_env_overrides
 
     peer = load_peer(Path("config/police/game.toml"))
     for junk in ("", "   ", "not-a-port"):
@@ -108,7 +109,8 @@ def test_the_environment_can_force_draft_email_for_a_hosted_rehearsal(monkeypatc
     """
     from pathlib import Path
 
-    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+    from p2p_pursuit.shared.config import load_peer
+    from p2p_pursuit.shared.config_env import apply_env_overrides
 
     peer = load_peer(Path("config/police/game.toml"))
     assert peer.email_mode == "send", "the committed config stays league-ready"
@@ -131,7 +133,8 @@ def test_the_interop_contract_is_settable_per_opponent_without_a_rebuild(monkeyp
     """
     from pathlib import Path
 
-    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+    from p2p_pursuit.shared.config import load_peer
+    from p2p_pursuit.shared.config_env import apply_env_overrides
 
     peer = load_peer(Path("config/police/game.toml"))
     assert (peer.interop_dialect, peer.alternate_roles) == ("native", False)
@@ -151,7 +154,8 @@ def test_a_junk_dialect_is_ignored_rather_than_played(monkeypatch):
     """A typo must not silently put us on a wire contract nobody speaks."""
     from pathlib import Path
 
-    from p2p_pursuit.shared.config import apply_env_overrides, load_peer
+    from p2p_pursuit.shared.config import load_peer
+    from p2p_pursuit.shared.config_env import apply_env_overrides
 
     peer = load_peer(Path("config/police/game.toml"))
     monkeypatch.setenv("P2P_DIALECT", "referrence")

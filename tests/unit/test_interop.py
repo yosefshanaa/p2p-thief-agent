@@ -236,16 +236,18 @@ def test_probe_of_a_dead_endpoint_reports_the_error(monkeypatch):
 
 
 def test_smoke_command_exit_codes(monkeypatch, capsys):
-    from p2p_pursuit import cli
+    # `main` is the entry point, but the handler that builds the SDK lives in
+    # `commands` since the CLI was split for the 150-line rule - patch it there.
+    from p2p_pursuit import cli, commands
 
-    monkeypatch.setattr(cli.PursuitSDK, "smoke",
+    monkeypatch.setattr(commands.PursuitSDK, "smoke",
                         lambda self, url: {"reachable": True, "dialect": dialect.REFERENCE,
                                            "guidance": "g", "tools": [], "health": {},
                                            "error": None})
     assert cli.main(["smoke", "http://x/mcp"]) == 0
     assert json.loads(capsys.readouterr().out)["dialect"] == dialect.REFERENCE
 
-    monkeypatch.setattr(cli.PursuitSDK, "smoke",
+    monkeypatch.setattr(commands.PursuitSDK, "smoke",
                         lambda self, url: {"reachable": False, "dialect": dialect.UNKNOWN,
                                            "guidance": "g", "tools": [], "health": {},
                                            "error": "boom"})

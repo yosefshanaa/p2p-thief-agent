@@ -99,7 +99,7 @@ def test_connect_returns_false_instead_of_crashing(tmp_path, monkeypatch):
 
     rt.deadline = DeadlineTracker(timeout_sec=1, max_retries=1, backoff_sec=5,
                                   sleep=sleep, clock=lambda: clock["t"])
-    monkeypatch.setattr("p2p_pursuit.peer.runtime.wait_until_up", lambda link: True)
+    monkeypatch.setattr("p2p_pursuit.peer.runtime_connect.wait_until_up", lambda link: True)
 
     assert rt.connect(DeadLink()) is False
 

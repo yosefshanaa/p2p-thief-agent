@@ -12,7 +12,7 @@ from types import SimpleNamespace
 
 from p2p_pursuit.domain.rules import POLICE, THIEF
 from p2p_pursuit.peer.series_protocol import retarget_link, role_for, take_role
-from p2p_pursuit.shared.config import opponent_url_for
+from p2p_pursuit.shared.config_env import opponent_url_for
 
 TEMPLATE = "http://galbb.freeddns.org:6000/{role}/mcp"
 
@@ -98,21 +98,21 @@ def test_two_ports_cannot_be_built_by_substituting_a_role_name():
     vibecode runs one OS process per role (Appendix E rule 1) on two *ports* of
     one host. `:6122{role}` substitutes to `:6122cop`, which is not a port.
     """
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     broken = opponent_url_for("http://62.56.220.143:6122{role}/mcp", "police")
     assert "6122cop" in broken and broken not in VIBECODE.values()
 
 
 def test_named_doors_are_used_for_the_role_they_name():
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     for role, door in VIBECODE.items():
         assert opponent_url_for("", role, VIBECODE) == door
 
 
 def test_doors_win_over_a_template_and_over_a_plain_url():
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     assert opponent_url_for("http://other/{role}/mcp", "thief", VIBECODE) == VIBECODE["thief"]
     assert opponent_url_for("http://other/mcp", "thief", VIBECODE) == VIBECODE["thief"]
@@ -120,7 +120,7 @@ def test_doors_win_over_a_template_and_over_a_plain_url():
 
 def test_a_half_configured_pair_falls_back_rather_than_dialling_nothing():
     """Either door may be set alone; the other must still resolve."""
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     only_cop = {"police": VIBECODE["police"]}
     assert opponent_url_for("http://fallback/mcp", "police", only_cop) == VIBECODE["police"]
@@ -128,14 +128,15 @@ def test_a_half_configured_pair_falls_back_rather_than_dialling_nothing():
 
 
 def test_no_doors_leaves_every_existing_peer_exactly_as_it_was():
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     assert opponent_url_for("http://x/mcp", "police", {}) == "http://x/mcp"
     assert opponent_url_for("http://x/{role}/mcp", "police", None) == "http://x/cop/mcp"
 
 
 def test_the_environment_reads_both_doors(monkeypatch):
-    from p2p_pursuit.shared.config import OPPONENT_DOOR_VARS, PeerConfig, apply_env_overrides
+    from p2p_pursuit.shared.config import PeerConfig
+    from p2p_pursuit.shared.config_env import OPPONENT_DOOR_VARS, apply_env_overrides
 
     monkeypatch.setenv(OPPONENT_DOOR_VARS["police"], VIBECODE["police"])
     monkeypatch.setenv(OPPONENT_DOOR_VARS["thief"], VIBECODE["thief"])

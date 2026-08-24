@@ -10,8 +10,6 @@ from __future__ import annotations
 from typing import Any
 
 from ..domain import protocol
-from ..domain.belief import BeliefMap
-from ..domain.board import Cell
 from ..domain.crypto import seal
 from ..domain.hints import parse_hint
 from ..domain.rules import POLICE, THIEF, apply_decision, safe_decision
@@ -24,13 +22,12 @@ from .state_machine import (
     VERIFYING,
     WAITING_FOR_OPPONENT,
 )
-
-ENCLOSURE_SCENT_MIN = 0.7  # below this the trail cannot name a cell to claim
+from .turn_claims import TurnClaims
 
 __all__ = ["SubGameEnd", "TurnEngine"]
 
 
-class TurnEngine(EngineState):
+class TurnEngine(TurnClaims, EngineState):
     def _advance(self, *states: str) -> bool:
         """Move the phase machine unless this sub-game is already over.
 
@@ -122,66 +119,6 @@ class TurnEngine(EngineState):
             return
         self.next_mover = self.other
 
-    def _seal_event(self, record: dict, ending: str, winner: str, cause: str) -> dict:
-        """Seal a forced game event, log it and finish the sub-game."""
-        sealed, h = seal(record, self.commit_dialect)
-        public = self._record(sealed, h)
-        self._finish(ending, winner, cause)
-        return {"public": public, "hash": h}
-
-    def _enclosed_opponent(self) -> Cell | None:
-        """The thief's cell, if our barriers have left it no legal move (book 3.4).
-
-        A native peer confesses this itself, but a foreign implementation simply
-        holds and plays on: we squeezed the reference peer into a corner on turn
-        12 of a live match, sealed both its exits, and then lost the sub-game to
-        "survival" 23 turns later. The police must therefore claim the enclosure.
-
-        The claim is independently checkable rather than taken on trust: barrier
-        placements are public and truthful by rule, and the opponent's own signed
-        log reveals where it stood, so the audit can confirm both halves - which
-        is exactly why the cell has to be *right*. Naming it by the scent
-        argmax was unsound: on the played archive that argmax is the emitter's
-        cell 11% of the time (the field saturates and ties), so a top-left cell
-        that our own barriers happened to seal would have been claimed as an
-        enclosure while the thief ran free elsewhere - a false claim, in a
-        record the opponent audits. The tracker's fix is exact or absent.
-        """
-        cells = self.opp_tracker.possible(self.board)
-        if not cells:
-            # No fix yet (fewer than two served fields). The argmax is only
-            # sound while the field is still sparse, which is exactly then.
-            scent = self._last_opp_scent()
-            if not scent or max(max(row) for row in scent) < ENCLOSURE_SCENT_MIN:
-                return None
-            size = self.board.size
-            cells = [max(((r, c) for r in range(size) for c in range(size)),
-                         key=lambda p: scent[p[0]][p[1]])]
-        # With a lagged fix the thief may be on any of a few cells; claiming an
-        # enclosure means claiming it cannot move, so every candidate has to be
-        # enclosed before the claim is honest. In practice a cell is enclosed
-        # only when its neighbours are barred, which collapses the set anyway.
-        enclosed = [c for c in cells if self.board.is_open(c) and self.board.is_enclosed(c)]
-        return enclosed[0] if len(enclosed) == len(cells) == 1 else None
-
-    def _enclosure_claim(self, cell: Cell) -> dict:
-        return self._seal_event(
-            protocol.captured_event_record(role=self.role, sub_game=self.sub_game,
-                                           at_step=self.my_steps, cause=f"enclosed at {cell}"),
-            CAPTURE, POLICE, f"enclosed at {cell}")
-
-    def _captured_event(self, cause: str) -> dict:
-        return self._seal_event(
-            protocol.captured_event_record(role=self.role, sub_game=self.sub_game,
-                                           at_step=self.my_steps, cause=cause),
-            CAPTURE, POLICE, cause)
-
-    def _survival_claim(self) -> dict:
-        return self._seal_event(
-            protocol.survival_claim_record(role=self.role, sub_game=self.sub_game,
-                                           steps=self.my_steps),
-            SURVIVAL, THIEF, f"survived {self.my_steps} steps")
-
     # -- opponent's move ----------------------------------------------------
     def on_commit(self, msg: dict) -> dict:
         self._pending_commit = msg["hash"]
@@ -214,12 +151,6 @@ class TurnEngine(EngineState):
         self.next_mover = self.role
         return {"ok": True, "events": events}
 
-    def _barrier_capture(self, cell: Cell) -> dict:
-        return self._seal_event(
-            protocol.captured_event_record(role=self.role, sub_game=self.sub_game,
-                                           at_step=self.my_steps, cause="barrier"),
-            CAPTURE, POLICE, f"barrier onto {cell}")
-
     def _update_belief(self, pub: dict) -> None:
         self.belief.scent_update(pub["scent"], self.board)
         self.belief.diffuse(self.board)
@@ -230,21 +161,6 @@ class TurnEngine(EngineState):
             mass = sum(scent[r][c] for r, c in region) / max(sum(map(sum, scent)), 1e-9)
             self.trust.judge(mass, peak)
             self.belief.hint_update(region, self.trust.value, self.board)
-
-    # -- claims and events --------------------------------------------------
-    def _answer_claim(self, claim: dict) -> dict:
-        """Thief side: bound truthful answer (rule #21). The claim discloses the
-        claimant's exact cell - our belief collapses to a delta there."""
-        self.belief = BeliefMap.at(self.shared.grid_size, tuple(claim["cell"]))
-        answer = list(self.own_pos) == list(claim["cell"])
-        record = protocol.capture_answer_record(
-            role=self.role, sub_game=self.sub_game, at_step=self.my_steps,
-            claim_cell=tuple(claim["cell"]), answer=answer)
-        sealed, h = seal(record, self.commit_dialect)
-        public = self._record(sealed, h)
-        if answer:
-            self._finish(CAPTURE, POLICE, f"captured at {claim['cell']}")
-        return {"public": public, "hash": h}
 
     def on_event(self, envelope: dict) -> dict:
         pub = envelope["public"]
