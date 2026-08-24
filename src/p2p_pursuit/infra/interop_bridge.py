@@ -388,6 +388,29 @@ class ReferenceBridge:
         """They serve no health tool; reachability is the tool listing itself."""
         return {"ok": bool(self.link.list_tools(timeout=timeout))}
 
+    def step0(self, payload: dict, timeout: float | None = None) -> dict:
+        """Forward Step-0 to the real client.
+
+        The bridge *replaces* the link once the reference dialect is on
+        (`runtime.attach`), so anything the runtime calls on `rt.link` and the
+        bridge does not define is silently unreachable. `send_step0` guards with
+        `getattr(rt.link, "step0", None)` and returns None when it is missing -
+        no log line, no error, and no declaration merged on their side, which
+        their counted backend then refuses at the end of window 1. That is the
+        2026-08-24 friendly, and it cost a played window.
+        """
+        return self.link.step0(payload, timeout=timeout)
+
+    def receive_control(self, message: dict, timeout: float | None = None) -> Any:
+        """Outbound twin of `on_receive_control` - same seam, same cost.
+
+        Returns a **bare 64-hex string** for `result_agreement`, so it must not
+        be typed as a dict. Without this the call raised `AttributeError` into
+        `exchange_result_agreement`'s own `except Exception`, which recorded a
+        failed agreement rather than a missing method.
+        """
+        return self.link.receive_control(message, timeout=timeout)
+
     def handshake(self, payload: dict, timeout: float | None = None) -> dict:
         """Push our signed agreement, then take theirs for THIS window off the inbox."""
         self.link.negotiate(self._signed(), timeout=timeout)
@@ -501,8 +524,23 @@ class ReferenceBridge:
         self._win_claim_sent = win is not None
         self._last_turn = message
         self._last_turn_sub_game = self.service.engine.sub_game
-        self.link.receive_turn(message, timeout=timeout)
+        self.link.receive_turn(message, timeout=self._turn_timeout(timeout))
         return {"ok": True, "events": []}
+
+    def _turn_timeout(self, timeout: float | None) -> float:
+        """Our configured turn budget, never fastmcp's 30s default.
+
+        `runtime.py:385` pushes a turn as `deadline.call(link.event, ...)` with
+        no timeout, so `timeout` arrives None and `Client(url, timeout=None)`
+        falls back to **30 seconds** - a quarter of the 180 we configure. We
+        then hang up on a peer that is still thinking and abandon the sub-game,
+        which with P2P_WINDOW_REOFFERS=0 is unrecoverable. Diagnosed twice as
+        the opponent's bounded wait; it was ours both times.
+        """
+        if timeout is not None:
+            return timeout
+        peer = getattr(self.runtime, "peer", None)
+        return float(getattr(peer, "turn_timeout_seconds", 180) or 180)
 
     def _terminal_win_claim(self) -> dict | None:
         """The survival declaration belongs on the step that earns it.
@@ -624,7 +662,7 @@ class ReferenceBridge:
         # Best effort: the opponent may already have stopped listening, and a
         # failed courtesy message must never turn a won sub-game into an error.
         with contextlib.suppress(Exception):
-            self.link.receive_turn(final, timeout=timeout)
+            self.link.receive_turn(final, timeout=self._turn_timeout(timeout))
 
     def audit(self, package: dict, timeout: float | None = None) -> dict:
         """Reveal our nonces in their envelope.
