@@ -160,6 +160,15 @@ class PeerRuntime:
         # needs it at every window boundary, so a Step-0 that arrives late is a
         # Step-0 that arrived after the crash it was meant to prevent.
         if self.peer.result_agreement:
+            # Step-0 must name THIS game: their runtime refuses a declaration
+            # carrying ids it does not recognise, by design, since a Step-0 for
+            # another game would bind the wrong declaration. Both ids are pure
+            # functions of the agreed terms and the two slugs, so a configured
+            # opponent slug lets us derive the agreed pair before any handshake
+            # has happened. Without one this is a no-op and Step-0 goes out
+            # locally minted - which is the E-PROTO-STALE of 2026-08-24.
+            if runtime_reports.their_group_id_hint():
+                self._adopt_shared_ids({})
             runtime_reports.send_step0(self, _log)
         # Reachable is not the same as ready: their tunnel can answer a tool
         # listing and their peer still be mid-restart when our handshake lands.
@@ -262,7 +271,9 @@ class PeerRuntime:
         from ..infra.interop_codec import interop_terms
 
         my_gid = self.peer.group_id or "us"
-        their_gid = (theirs or {}).get("group_id") or ""
+        from .runtime_reports import their_group_id_hint
+
+        their_gid = (theirs or {}).get("group_id") or their_group_id_hint() or ""
         if not their_gid or their_gid == UNKNOWN_GROUP:
             _log(f"[{self.role}] opponent sent no group_id; keeping our own "
                  f"{self.game_id} / {self.game_uid}. Both are locally minted, so "

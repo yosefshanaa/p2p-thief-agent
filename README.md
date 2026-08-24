@@ -593,7 +593,7 @@ Times are read from the artifacts themselves (`started_at` / `ended_at` on the s
 declaration), never from file mtimes, and are shown in **UTC** — the team plays in
 Asia/Jerusalem, UTC+3 in August.
 
-### Counted league matches — 7 of 10 played
+### Counted league matches — 8 of 10 played
 
 | # | Opponent | Series points `ahk-yosi` – them | Winner | League bonus | Final points `ahk-yosi` – them | Started (UTC) | Ended (UTC) | Match archive |
 |---:|---|:---:|---|:---:|:---:|---|---|---|
@@ -604,11 +604,22 @@ Asia/Jerusalem, UTC+3 in August.
 | 5 | [`gal-roy1`](https://github.com/galbb12/orch-models-final-cop) *(private)* | 35 – 75 <br>(1 – 5) | `gal-roy1` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-17 17:34:07 | 2026-08-17 17:40:37 | [`gal-roy1-counted/`](matches/gal-roy1-counted) |
 | 6 | [`uoh-ay26`](https://github.com/aishadahesh/uoh-ay26-final-project-cop) | 35 – 75 <br>(1 – 5) | `uoh-ay26` | *none* <br>*no losing-side credit* | **35 – 85** | 2026-08-19 17:03:46 | 2026-08-19 17:22:59 | [`uoh-ay26-counted/`](matches/uoh-ay26-counted) |
 | 7 | [`najamjad`](https://github.com/najikay/najamjad-cop) *(private)* | 75 – 75 <br>(3 – 3) | *tie, no winner* | **+2** <br>*tie score, to **each** side* | **77 – 77** | 2026-08-21 18:23:31 | 2026-08-21 18:27:07 | [`najamjad-counted/`](matches/najamjad-counted) |
-| | **7 opponents** | **455 – 415** <br>(23 – 19) | **3 wins · 2 ties · 2 losses** | **+34** to us <br>**+24** to them | **489 – 439** | | | |
+| 8 | [`MaRs-777`](https://github.com/MaRs-777) *(Mohamed Awad · Rawey Sleiman)* | **90 – 30** <br>(**6 – 0**) | **`ahk-yosi`** | **+10** to us <br>*diversity reward* | **100 – 30** | 2026-08-24 19:42:52 | 2026-08-24 19:47:19 | [`MaRs-777-counted/`](matches/MaRs-777-counted) ² |
+| | **8 opponents** | **545 – 445** <br>(29 – 19) | **4 wins · 2 ties · 2 losses** | **+44** to us <br>**+24** to them | **589 – 469** | | | |
 
 *¹ That series predates the timing fix (`da8856a`), so its declaration carries `ended_at: null`;
 the time shown is `generated_at` from the sealed result — the moment the report was signed,
 seconds after the last move. Every series from `G012` on records a real end time, per sub-game.*
+
+*² Played and audited in full — six sub-games, six `Verified OK` audits, no abandonment.
+**Not settled between the peers:** the series consensus digests differed
+(`09d45977…` vs `14786d1787f5…`) and no contribution arrived from `MaRs-777`, because their
+counted backend refuses one without a merged Step-0 declaration and our Step-0 was rejected
+`E-PROTO-STALE` against the agreed `game_start` constant. The scores here are the
+**group-keyed** per-sub-game rows, which are the authoritative ones; the same artifact's
+`my_total` / `series_winner` headline reads 45 – 75 for "police", a role-keyed aggregate that
+is meaningless once roles alternate — police-role points summed across **both** teams. That
+headline is a defect in our reporter, not a disagreement about what was played.*
 
 **Where the bonus column comes from.** Both values are *binding* parameters of the rules book —
 appendix ו׳, tables 17 and 18, each marked `קבוע` (**fixed**: not negotiable, and deviating from

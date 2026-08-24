@@ -28,7 +28,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from p2p_pursuit.domain.crypto import digest, reference_commit, sha256_hex, spaced_bytes
+from p2p_pursuit.domain.crypto import reference_commit, sha256_hex, spaced_bytes
 from p2p_pursuit.domain.game_ids import reference_game_id, reference_game_uid
 from p2p_pursuit.domain.negotiation import scent_model_sha256
 from p2p_pursuit.domain.scent import (

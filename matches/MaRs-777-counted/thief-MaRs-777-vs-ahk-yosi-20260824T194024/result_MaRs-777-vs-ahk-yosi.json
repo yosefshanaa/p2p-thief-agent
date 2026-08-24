@@ -1,0 +1,347 @@
+{
+  "report_type": "game_result",
+  "game_uid": "5ed16f3b-4e6b-4e9d-65bf-8f5abab699f2",
+  "game_id": "MaRs-777-vs-ahk-yosi",
+  "generated_at": "2026-08-24T19:47:20+00:00",
+  "timezone": "Asia/Jerusalem",
+  "code_version": "1.00",
+  "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+  "groups": {
+    "mine": {
+      "group_id": "ahk-yosi",
+      "group_name": "ahk-yosi",
+      "members": [
+        "213314859",
+        "325811255"
+      ],
+      "repos": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      }
+    },
+    "opponent": {
+      "group_id": "opponent",
+      "group_name": "",
+      "members": [],
+      "repos": {}
+    }
+  },
+  "sub_games": [
+    {
+      "index": 1,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 1,
+      "roles": {
+        "ahk-yosi": "thief",
+        "opponent": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    },
+    {
+      "index": 2,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [1, 4] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 15,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 2,
+      "roles": {
+        "ahk-yosi": "police",
+        "opponent": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    },
+    {
+      "index": 3,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 3,
+      "roles": {
+        "ahk-yosi": "thief",
+        "opponent": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    },
+    {
+      "index": 4,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [1, 4] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 15,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 4,
+      "roles": {
+        "ahk-yosi": "police",
+        "opponent": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    },
+    {
+      "index": 5,
+      "ending": "survival",
+      "winner": "thief",
+      "cause": "survived 35 steps",
+      "cop_score": 5,
+      "thief_score": 10,
+      "moves_played": 35,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 5,
+      "roles": {
+        "ahk-yosi": "thief",
+        "opponent": "police"
+      },
+      "result": "survival",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 10,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    },
+    {
+      "index": 6,
+      "ending": "capture",
+      "winner": "police",
+      "cause": "claim confirmed at [4, 5] (unsealed answer)",
+      "cop_score": 20,
+      "thief_score": 5,
+      "moves_played": 11,
+      "github_commit": "093d55122d8e44ed20f9e0a69cd3f63d8eaed402",
+      "audit": "Verified OK",
+      "opponent_audit": "not reported (reference dialect)",
+      "sub_game_number": 6,
+      "roles": {
+        "ahk-yosi": "police",
+        "opponent": "thief"
+      },
+      "result": "capture",
+      "winner_group": "ahk-yosi",
+      "score": {
+        "ahk-yosi": 20,
+        "opponent": 5
+      },
+      "tokens_cumulative": 0
+    }
+  ],
+  "totals": {
+    "police": 75,
+    "thief": 45
+  },
+  "my_role": "thief",
+  "my_total": 45,
+  "opponent_total": 75,
+  "series_winner": "police",
+  "tokens_used": 0,
+  "mutual_agreement": true,
+  "aggregate": {
+    "total_score": {
+      "ahk-yosi": 90,
+      "opponent": 30
+    },
+    "sub_games_won": {
+      "ahk-yosi": 6,
+      "opponent": 0
+    },
+    "ties": 0,
+    "winner_group": "ahk-yosi",
+    "series_tie": false
+  },
+  "links": {
+    "declaration": "declaration_MaRs-777-vs-ahk-yosi.json",
+    "configs": [
+      "config_MaRs-777-vs-ahk-yosi_g01.json",
+      "config_MaRs-777-vs-ahk-yosi_g02.json",
+      "config_MaRs-777-vs-ahk-yosi_g03.json",
+      "config_MaRs-777-vs-ahk-yosi_g04.json",
+      "config_MaRs-777-vs-ahk-yosi_g05.json",
+      "config_MaRs-777-vs-ahk-yosi_g06.json"
+    ],
+    "logs": [
+      "log_MaRs-777-vs-ahk-yosi_g01.json",
+      "log_MaRs-777-vs-ahk-yosi_g02.json",
+      "log_MaRs-777-vs-ahk-yosi_g03.json",
+      "log_MaRs-777-vs-ahk-yosi_g04.json",
+      "log_MaRs-777-vs-ahk-yosi_g05.json",
+      "log_MaRs-777-vs-ahk-yosi_g06.json"
+    ],
+    "github": {
+      "ahk-yosi": {
+        "cop": "https://github.com/yosefshanaa/p2p-police-agent",
+        "thief": "https://github.com/yosefshanaa/p2p-thief-agent"
+      },
+      "opponent": {}
+    }
+  },
+  "games_played_including_this": {
+    "ahk-yosi": 8,
+    "opponent": 1
+  },
+  "diversity_reward_applied": {
+    "ahk-yosi": true,
+    "opponent": false
+  },
+  "mutual_signature": "09d459775e804d32e08471e7b580eda58d1d6077f1ccb6aeb90dbe9e459bb365",
+  "series_consensus": {
+    "document": {
+      "game_id": "MaRs-777-vs-ahk-yosi",
+      "aggregate": {
+        "total_score": {
+          "ahk-yosi": 90,
+          "opponent": 30
+        },
+        "sub_games_won": {
+          "ahk-yosi": 6,
+          "opponent": 0
+        },
+        "ties": 0,
+        "winner_group": "ahk-yosi",
+        "series_tie": false
+      },
+      "sub_games": [
+        {
+          "sub_game_number": 1,
+          "roles": {
+            "ahk-yosi": "thief",
+            "opponent": "police"
+          },
+          "result": "survival",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 10,
+            "opponent": 5
+          }
+        },
+        {
+          "sub_game_number": 2,
+          "roles": {
+            "ahk-yosi": "police",
+            "opponent": "thief"
+          },
+          "result": "capture",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 20,
+            "opponent": 5
+          }
+        },
+        {
+          "sub_game_number": 3,
+          "roles": {
+            "ahk-yosi": "thief",
+            "opponent": "police"
+          },
+          "result": "survival",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 10,
+            "opponent": 5
+          }
+        },
+        {
+          "sub_game_number": 4,
+          "roles": {
+            "ahk-yosi": "police",
+            "opponent": "thief"
+          },
+          "result": "capture",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 20,
+            "opponent": 5
+          }
+        },
+        {
+          "sub_game_number": 5,
+          "roles": {
+            "ahk-yosi": "thief",
+            "opponent": "police"
+          },
+          "result": "survival",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 10,
+            "opponent": 5
+          }
+        },
+        {
+          "sub_game_number": 6,
+          "roles": {
+            "ahk-yosi": "police",
+            "opponent": "thief"
+          },
+          "result": "capture",
+          "winner_group": "ahk-yosi",
+          "score": {
+            "ahk-yosi": 20,
+            "opponent": 5
+          }
+        }
+      ]
+    },
+    "consensus_sha": "09d459775e804d32e08471e7b580eda58d1d6077f1ccb6aeb90dbe9e459bb365",
+    "projection": "signature",
+    "peer_consensus_sha": "14786d1787f5e716fe0e3db99a5c112de324a0748e2c8813d4ec46ea9690080e",
+    "sha_match": false,
+    "confirmed": false,
+    "envelope_delivered": true
+  },
+  "result_agreement": {
+    "sent": false,
+    "our_sha": null,
+    "their_sha": null,
+    "sha_match": false,
+    "agreed": false,
+    "timestamp": "2026-08-24T19:47:19Z",
+    "proposer": "ahk-yosi"
+  },
+  "result_sha256": "8fb9dbd340caa4416ae6099ce36d8aac78b372e7408d8ab31a2f500c4e17bab3"
+}

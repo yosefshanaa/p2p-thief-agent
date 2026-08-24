@@ -563,7 +563,7 @@ def test_a_true_capture_answer_is_sent_immediately_like_a_win_claim():
     assert bridge._owed_claim_response is None, "nothing is left owed"
 
 
-def test_a_true_capture_answer_is_flushed_from_the_LIVE_inbound_path():
+def test_a_true_capture_answer_is_flushed_from_the_live_inbound_path():
     """The regression F002 was actually lost to, and the reason this test exists
     at the entry point instead of at the handler.
 
