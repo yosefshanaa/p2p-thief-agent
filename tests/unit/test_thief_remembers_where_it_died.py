@@ -59,7 +59,8 @@ def counted(monkeypatch):
     for key, value in COUNTED_PHYSICS.items():
         monkeypatch.setenv(key, value)
     from p2p_pursuit.learn.arena import default_shared
-    from p2p_pursuit.shared.config import PeerConfig, apply_env_overrides
+    from p2p_pursuit.shared.config import PeerConfig
+    from p2p_pursuit.shared.config_env import apply_env_overrides
     from p2p_pursuit.strategy.params import active
 
     peer = apply_env_overrides(PeerConfig(raw={}, group_name="lab", group_id="lab"))

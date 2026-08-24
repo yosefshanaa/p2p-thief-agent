@@ -34,7 +34,7 @@ def retarget_link(rt: Any, my_role: str, log_fn: Any) -> None:
     address and this is a no-op, which is why it can run unconditionally at
     every boundary.
     """
-    from ..shared.config import ROLE_PLACEHOLDER, opponent_url_for
+    from ..shared.config_env import ROLE_PLACEHOLDER, opponent_url_for
 
     template = getattr(rt.peer, "opponent_url", "") or ""
     doors = getattr(rt.peer, "opponent_doors", None) or {}

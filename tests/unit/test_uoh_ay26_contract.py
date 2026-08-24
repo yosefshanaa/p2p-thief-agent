@@ -64,9 +64,13 @@ def test_the_step_zero_record_is_sealed_cached_and_shaped_as_they_require():
     Cached rather than minted per call: a retried `submit_audit` that re-sealed
     it would reveal one claim under two commitments, which is equivocation.
     """
-    from p2p_pursuit.infra import interop_bridge
+    import inspect
 
-    source = Path(interop_bridge.__file__).read_text(encoding="utf-8")
+    from p2p_pursuit.infra.interop_bridge import ReferenceBridge
+
+    # Read the method, not a file: the bridge is assembled from mixins, so a
+    # filename is a guess about where the code lives and `getsource` is not.
+    source = inspect.getsource(ReferenceBridge._system_spec_record)
     assert '"type": "system_spec"' in source
     assert '"step": 0' in source
     assert "self._system_specs[sub_game] = sealed" in source, "must be cached"

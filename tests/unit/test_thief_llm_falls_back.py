@@ -19,7 +19,8 @@ from p2p_pursuit.domain.belief import BeliefMap
 from p2p_pursuit.domain.board import Board
 from p2p_pursuit.domain.brains_base import BrainView, load_brain
 from p2p_pursuit.domain.rules import POLICE, THIEF
-from p2p_pursuit.shared.config import PeerConfig, apply_env_overrides
+from p2p_pursuit.shared.config import PeerConfig
+from p2p_pursuit.shared.config_env import apply_env_overrides
 from p2p_pursuit.strategy.thief_brain import ThiefBrain
 from p2p_pursuit.strategy.thief_llm import LLMThiefBrain
 

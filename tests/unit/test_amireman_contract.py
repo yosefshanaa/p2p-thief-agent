@@ -14,7 +14,7 @@ import pytest
 from p2p_pursuit.domain.rules import Decision
 from p2p_pursuit.peer.turn_engine import TurnEngine
 from p2p_pursuit.report.consensus import CONSENSUS_CLAIM, consensus_envelope
-from p2p_pursuit.shared.config import apply_env_overrides
+from p2p_pursuit.shared.config_env import apply_env_overrides
 
 from ..conftest import ScriptedBrain, make_peer, make_shared
 

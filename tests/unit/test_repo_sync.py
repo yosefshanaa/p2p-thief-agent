@@ -102,7 +102,7 @@ def test_secrets_history_check_passes_on_clean_repo(workspace: Path) -> None:
 
 
 def test_repo_default_role_reads_marker(tmp_path: Path) -> None:
-    from p2p_pursuit.shared.config import repo_default_role
+    from p2p_pursuit.shared.role_marker import repo_default_role
 
     assert repo_default_role(tmp_path) is None
     (tmp_path / "ROLE").write_text("police\n", encoding="utf-8")

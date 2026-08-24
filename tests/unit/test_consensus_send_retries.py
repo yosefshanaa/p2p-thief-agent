@@ -11,7 +11,7 @@ from __future__ import annotations
 import time
 import types
 
-from p2p_pursuit.peer import runtime_reports
+from p2p_pursuit.peer import report_consensus
 
 NEVER = 10 ** 9
 
@@ -47,7 +47,7 @@ def _rt(*, wait_sec: int = 6, retry_sec: int = 1):
 
 def _push(rt, bridge):
     lines: list[str] = []
-    theirs, delivered = runtime_reports._push_consensus(
+    theirs, delivered = report_consensus._push_consensus(
         rt, bridge, {"sender": "police"}, lines.append)
     return theirs, delivered, lines
 

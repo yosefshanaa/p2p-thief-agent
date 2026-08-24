@@ -32,7 +32,8 @@ from p2p_pursuit.domain.game_ids import reference_game_id, reference_game_uid
 from p2p_pursuit.domain.scoring import CAPTURE, TECHNICAL_LOSS
 from p2p_pursuit.infra.interop_codec import interop_identity, interop_terms
 from p2p_pursuit.shared import sysinfo
-from p2p_pursuit.shared.config import apply_env_overrides, load_role, load_shared
+from p2p_pursuit.shared.config import load_role, load_shared
+from p2p_pursuit.shared.config_env import apply_env_overrides
 
 #: Published in their §1 and §5. Ours must reproduce both from our own code.
 THEIR_TERMS_SHA = "a284082dfb1572236f1b614d29295a99625539c7d33a096f7f8921bafbc3d08d"
@@ -220,7 +221,7 @@ def test_the_contract_leaves_the_game_id_label_unset() -> None:
 def test_their_doors_are_addressed_per_role() -> None:
     """Their cop and thief are two processes on two hostnames; ours must dial
     the one holding the other role and flip at every boundary."""
-    from p2p_pursuit.shared.config import opponent_url_for
+    from p2p_pursuit.shared.config_env import opponent_url_for
 
     env = _env_of("config/opponents/najamjad.env")
     doors = {"police": env["P2P_OPPONENT_COP_URL"], "thief": env["P2P_OPPONENT_THIEF_URL"]}
@@ -242,7 +243,7 @@ def _env_of(path: str) -> dict[str, str]:
 def test_the_env_file_parses_and_sets_nothing_unexpected() -> None:
     """Every key must be one the loader actually reads, or it is a silent no-op
     in a file whose whole purpose is to be believed."""
-    from p2p_pursuit.shared.config import (
+    from p2p_pursuit.shared.config_env import (
         BOOL_VARS,
         DIALECT_VAR,
         EMAIL_MODE_VAR,
