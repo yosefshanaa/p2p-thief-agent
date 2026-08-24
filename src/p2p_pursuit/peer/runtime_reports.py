@@ -486,8 +486,17 @@ def exchange_result_agreement(rt: Any, log_fn: Any) -> dict[str, Any]:
     # for a peer that holds one session; required for us, so always sent.
     secret = hmac_secret()
     key_id = (os.environ.get("P2P_HMAC_KEY_ID") or "").strip()
-    if secret and key_id:
-        request["auth"] = auth_block(secret, CTX_RESULT, payload, key_id=key_id)
+    if not secret or not key_id:
+        # Their fresh-session verifier *requires* the proof on the request, so an
+        # unsigned one is a certain E-AUTH-FAILURE - arriving after all six
+        # windows have been played, and reading as a remote rejection rather than
+        # as our own missing variable. Refuse it here exactly as `send_step0`
+        # refuses, and record the refusal as the fact it is.
+        log_fn(f"[{rt.role}] result agreement needs P2P_HMAC_SECRET and "
+               f"P2P_HMAC_KEY_ID; not sending an unauthenticated request "
+               f"(it would be refused)")
+        return block
+    request["auth"] = auth_block(secret, CTX_RESULT, payload, key_id=key_id)
     try:
         answer = rt.deadline.call(rt.link.receive_control, request)
         block["sent"] = True
