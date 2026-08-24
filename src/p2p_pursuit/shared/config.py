@@ -198,6 +198,16 @@ class PeerConfig:
     #: "short and bounded" - failing to receive it costs the confirmation, not
     #: the series, so this must never approach the per-turn deadline.
     consensus_wait_sec: int = 60
+    #: How often to re-send our own envelope inside that wait. One unacknowledged
+    #: shot into a peer that is not yet listening leaves both sides unsettled with
+    #: no mismatch to look at - MaRs-777 resend every 2s for their full window and
+    #: require a positive acknowledgement, and they are right to.
+    consensus_retry_sec: int = 5
+    #: Which serialization the consensus envelope carries - see
+    #: `report.consensus.PROJECTIONS`. Negotiated per opponent, because the two
+    #: families produce equally plausible 64-hex strings from the same series and
+    #: nothing on the wire says which one a peer meant.
+    consensus_projection: str = "uid"
     #: Which pheromone physics both sides run: "book_v1" (our reading of book
     #: ch. 4) or "registered_v3" (the inter-team registration - no rounding, no
     #: dust floor, decay+emission in one pinned expression, field served after
@@ -291,6 +301,8 @@ def load_peer(path: Path) -> PeerConfig:
         series_consensus=bool(interop.get("series_consensus", False)),
         game_id_label=str(interop.get("game_id_label", "")),
         consensus_wait_sec=int(interop.get("consensus_wait_sec", 60)),
+        consensus_retry_sec=int(interop.get("consensus_retry_sec", 5)),
+        consensus_projection=str(interop.get("consensus_projection", "uid")),
     )
 
 
@@ -365,6 +377,8 @@ EMAIL_RECIPIENT_VAR = "P2P_EMAIL_RECIPIENT"
 DIALECT_VAR = "P2P_DIALECT"
 #: The pheromone physics itself is negotiable - see `PeerConfig.scent_model`.
 SCENT_MODEL_VAR = "P2P_SCENT_MODEL"
+#: So is the consensus serialization - see `PeerConfig.consensus_projection`.
+CONSENSUS_PROJECTION_VAR = "P2P_CONSENSUS_PROJECTION"
 BOOL_VARS = {
     "P2P_ALTERNATE_ROLES": "alternate_roles",
     "P2P_HANDSHAKE_PER_SUB_GAME": "handshake_per_sub_game",
@@ -437,6 +451,13 @@ def apply_env_overrides(peer: PeerConfig) -> PeerConfig:
         if model not in MODELS:
             raise ValueError(f"{SCENT_MODEL_VAR}={model!r} is not one of {MODELS}")
         patch["scent_model"] = model
+    projection = (os.environ.get(CONSENSUS_PROJECTION_VAR) or "").strip().lower()
+    if projection:
+        from ..report.consensus import PROJECTIONS
+        if projection not in PROJECTIONS:
+            raise ValueError(f"{CONSENSUS_PROJECTION_VAR}={projection!r} is not "
+                             f"one of {PROJECTIONS}")
+        patch["consensus_projection"] = projection
     talk = (os.environ.get(TRASH_TALK_VAR) or "").strip().lower()
     if talk:
         patch["trash_talk_provider"] = talk
