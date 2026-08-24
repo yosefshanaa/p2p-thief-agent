@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import time
+from datetime import UTC, datetime
 from typing import Any
 
 from ..domain import declarations, game_ids, negotiation
@@ -14,6 +15,7 @@ from ..infra.email_sender import send_report
 from ..report import artifacts, consensus, mutual_signature, results
 from ..shared import sysinfo
 from ..shared.gatekeeper import Gatekeeper
+from ..shared.version import CODE_VERSION
 from . import audit_bridge, log_manager
 from .deadline import DeadlineExpiredError
 
@@ -109,6 +111,12 @@ def finish_sub_game(rt: Any, n: int, log_fn) -> dict[str, Any]:
     row.update(mutual_signature.signed_row_fields(
         row, my_group=rt.peer.group_id or "us",
         their_group=_their_group_id(rt), my_role=engine.role))
+    # The engine's counter is a running SERIES total, never reset at a boundary,
+    # so this is cumulative-at-close and the per-window cost is the difference
+    # from the previous row (`result_agreement.window_tokens`). Stored rather
+    # than differenced here: the raw number is what our log already files, and a
+    # difference computed twice from two places is a difference that can drift.
+    row["tokens_cumulative"] = engine.tokens_used
     log_fn(f"[{rt.role}] sub-game {n}: {ending} winner={winner} ({cause}) "
            f"audit={my_verdict['verdict']}")
     return row
@@ -291,6 +299,8 @@ def _attach_mutual_block(rt: Any, result: dict[str, Any], theirs: dict[str, Any]
     result["mutual_signature"] = mutual_signature.mutual_signature(result)
     if getattr(rt, "series_consensus", None) is not None:
         result["series_consensus"] = rt.series_consensus
+    if getattr(rt, "result_agreement", None) is not None:
+        result["result_agreement"] = rt.result_agreement
     # `build_result` sealed `result_sha256` over the body as it stood before
     # these fields existed. Recompute it, or our own integrity hash fails
     # against our own filed artifact - the same digest, over the same rule
@@ -331,3 +341,207 @@ def email_report(rt: Any, result: dict[str, Any], transport: Any) -> dict[str, A
         transport=transport, gatekeeper=gate, to_addr=rt.peer.email_recipient,
         subject=f"[p2p-pursuit] result {rt.game_id}", attachments=attachments,
         mode=rt.peer.email_mode)
+
+
+#: How long a `result_agreement` request may wait for our own six entries to
+#: assemble before we refuse it retryably (their §6). Bounded by design: a
+#: request that waits forever holds one of their threads and still answers
+#: nothing, and their own bound is the agreed watchdog.
+APPROVAL_READY_WAIT = 120.0
+APPROVAL_POLL = 0.5
+
+
+def _our_contribution(rt: Any) -> list[dict[str, Any]]:
+    """Our six entries: our declared commit and our own metered tokens.
+
+    Both halves are ours alone by their §4 - never inferred, never supplied on
+    the other side's behalf. Our commit is a single value across all six rows
+    because we run ONE process: the two repos are a submission split of one
+    workspace, not two agents. Their §7 accepts that (it checks the entry against
+    what the contributor declared, not that the two roles differ), and their
+    Step-0 wire still wants `github_commits` as an object, so the same hex goes
+    in both slots there.
+    """
+    from ..report.result_agreement import contribution_entries, window_tokens
+
+    rows = sorted(rt.sub_results, key=lambda r: r["index"])
+    per_window = window_tokens([r.get("tokens_cumulative", 0) for r in rows])
+    commit = sysinfo.git_commit()
+    return contribution_entries(
+        rows,
+        commits={r["index"]: r.get("github_commit") or commit for r in rows},
+        tokens=dict(zip([r["index"] for r in rows], per_window, strict=True)))
+
+
+def runtime_result_agreement(rt: Any, payload: dict[str, Any], *,
+                             their_gid: str, entries: list[dict[str, Any]]) -> str:
+    """Assemble `RESULT_APPROVAL_CORE` from both contributions; return its digest.
+
+    The timestamp is **the proposer's, adopted verbatim** and never regenerated
+    or reformatted - MaRs-777 enforce that on their side and fail closed on a
+    re-stamped echo, and two peers stamping their own clocks could never agree
+    on a document that carries one.
+
+    Scores and outcomes come from our own settled rows, never from the wire:
+    their §5 says both sides derive them jointly from the settled sub-game and
+    the locked scoring table. Only commits and tokens are contributed.
+    """
+    from ..report.result_agreement import NotReadyError, approval_core, result_sha256
+
+    expected = rt.num_games
+    deadline = time.monotonic() + APPROVAL_READY_WAIT
+    while len(rt.sub_results) < expected:
+        if time.monotonic() >= deadline:
+            raise NotReadyError(
+                f"{len(rt.sub_results)} of {expected} sub-games settled after "
+                f"{APPROVAL_READY_WAIT:g}s")
+        time.sleep(APPROVAL_POLL)
+    if not their_gid:
+        raise ValueError("contribution carries no group_id")
+    if len(entries) != expected:
+        raise ValueError(f"contribution has {len(entries)} entries, expected {expected}")
+    my_gid = rt.peer.group_id or "us"
+    theirs = (rt.service.their_handshake or {}).get("repos") or {}
+    return result_sha256(approval_core(
+        game_id=rt.game_id, game_uid=rt.game_uid,
+        declaration_ref=game_ids.declaration_name(rt.game_id),
+        timestamp=payload.get("timestamp") or "",
+        rows=rt.sub_results,
+        contributions={my_gid: _our_contribution(rt), their_gid: list(entries)},
+        repos={my_gid: dict(rt.peer.repos), their_gid: dict(theirs)},
+        group_a=my_gid, group_b=their_gid))
+
+
+def _we_propose(my_gid: str, their_gid: str) -> bool:
+    """Their §3: the byte-wise lower ``group_id`` proposes. Never negotiated.
+
+    Deterministic on both sides so neither has to be told, and so two peers can
+    never both wait for the other's request. ``MaRs-777`` < ``ahk-yosi`` by code
+    point, so against them we are the receiver and answer first.
+    """
+    return my_gid < their_gid
+
+
+def exchange_result_agreement(rt: Any, log_fn: Any) -> dict[str, Any]:
+    """The second direction: send our own request and compare the two digests.
+
+    Their §3 is one request each, and **both must complete** - "a side that only
+    sends has agreed nothing". We answer theirs on `receive_control`; this is the
+    half that makes our own agreement real.
+
+    The timestamp is the proposer's. When they propose we echo the value we
+    already adopted while answering; when we propose we mint one and they echo
+    it. Either way exactly one clock is read, which is what makes a document
+    carrying a timestamp reproducible at all.
+
+    Never raises: a failed agreement is recorded as a fact. Their §7 files the
+    same way - "no agreement; the result stays unreportable, and that is
+    recorded honestly" - and an exception here would discard six played windows.
+    """
+    from ..report.result_agreement import APPROVAL_KIND, contribution
+
+    my_gid = rt.peer.group_id or "us"
+    their_gid = _their_group_id(rt)
+    block: dict[str, Any] = {"sent": False, "our_sha": None, "their_sha": None,
+                             "sha_match": False, "agreed": False,
+                             "timestamp": None, "proposer": None}
+    bridge = rt.bridge
+    if bridge is None:
+        log_fn(f"[{rt.role}] result agreement needs the reference dialect; skipped")
+        return block
+    we_propose = _we_propose(my_gid, their_gid)
+    block["proposer"] = my_gid if we_propose else their_gid
+    stamp = getattr(bridge, "approval_timestamp", None)
+    if not stamp:
+        if not we_propose:
+            # Their request never arrived, so there is nothing to echo and
+            # nothing they could compare ours against. Minting our own here
+            # would guarantee two different cores.
+            log_fn(f"[{rt.role}] no result-agreement request arrived from "
+                   f"{their_gid} (they propose); nothing to answer or echo")
+            return block
+        stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    block["timestamp"] = stamp
+    try:
+        entries = _our_contribution(rt)
+        ours = runtime_result_agreement(
+            rt, {"timestamp": stamp}, their_gid=their_gid,
+            entries=_their_entries(rt, their_gid))
+    except Exception as exc:  # noqa: BLE001 - recorded, never fatal
+        log_fn(f"[{rt.role}] cannot assemble the approval core: {exc}")
+        return block
+    block["our_sha"] = ours
+    request = {"kind": APPROVAL_KIND, "payload": {
+        "game_id": rt.game_id, "game_uid": rt.game_uid,
+        "declaration_ref": game_ids.declaration_name(rt.game_id),
+        "timestamp": stamp,
+        "contribution": contribution(group_id=my_gid, entries=entries)}}
+    try:
+        answer = rt.deadline.call(rt.link.receive_control, request)
+        block["sent"] = True
+    except Exception as exc:  # noqa: BLE001
+        log_fn(f"[{rt.role}] result-agreement request failed: {exc}")
+        return block
+    theirs = answer if isinstance(answer, str) else (answer or {}).get("result_sha256")
+    block["their_sha"] = theirs
+    block["sha_match"] = bool(theirs) and theirs == ours
+    block["agreed"] = block["sent"] and block["sha_match"]
+    log_fn(f"[{rt.role}] result agreement ours={ours[:12]}… "
+           f"theirs={(theirs or 'none')[:12]}… agreed={block['agreed']}")
+    if theirs and not block["sha_match"]:
+        log_fn(f"[{rt.role}] DIGESTS DIFFER - no agreement. Neither side may "
+               f"file this as mutually agreed; the cause is in the core, not "
+               f"the transport.")
+    return block
+
+
+def _their_entries(rt: Any, their_gid: str) -> list[dict[str, Any]]:
+    """Their six entries as they contributed them, retained when we answered.
+
+    Both directions hash the SAME core, so ours must be built from the entries
+    they actually sent - not from anything we could derive. If their request has
+    not arrived we cannot build the core at all, and saying so is the honest
+    outcome: inventing their commits or their token counts would produce a
+    plausible digest that agrees with nobody.
+    """
+    entries = getattr(rt.bridge, "approval_their_entries", None)
+    if not entries:
+        raise ValueError(f"no contribution received from {their_gid}")
+    return list(entries)
+
+
+def send_step0(rt: Any, log_fn: Any) -> dict[str, Any] | None:
+    """Push our Step-0 declaration before the series, on `negotiate`'s other shape.
+
+    Sent BEFORE the first window rather than as counted-run-up paperwork, because
+    on MaRs-777's wire it is load-bearing for the series itself: their backend
+    publishes a per-sub-game contribution entry that requires a merged Step-0
+    declaration, and does so at every window boundary. Missing, their police
+    backend crashes at `contribution.publish(...)` after playing window 1, never
+    reaches `settled(1)`, and their gateway then holds our next greeting open
+    against an 1800 s bound while we time out against it forever. That is not a
+    hypothesis - it is what killed the 2026-08-24 friendly at window 2.
+
+    Never fatal. A peer that does not speak Step-0 refuses it on shape, and a
+    refusal there must not cost us a series we could otherwise play.
+    """
+    from ..report.result_agreement import step0_declaration
+
+    step0 = getattr(rt.link, "step0", None)
+    if not callable(step0):
+        return None
+    doors = dict(rt.peer.public_doors or {})
+    declaration = step0_declaration(
+        group_id=rt.peer.group_id, group_name=rt.peer.group_name,
+        members=list(rt.peer.members), repos=dict(rt.peer.repos),
+        mcp_endpoint=doors.get("cop") or doors.get("thief")
+        or f"http://0.0.0.0:{rt.peer.my_port}/mcp",
+        llm_model=rt.peer.llm_model, code_version=CODE_VERSION,
+        commit=sysinfo.git_commit(), spec=sysinfo.collect())
+    try:
+        answer = rt.deadline.call(step0, {"declaration": declaration, "auth": {}})
+        log_fn(f"[{rt.role}] Step-0 declaration accepted: {answer}")
+        return declaration
+    except Exception as exc:  # noqa: BLE001 - a peer without Step-0 is not an error
+        log_fn(f"[{rt.role}] Step-0 not accepted ({exc}); continuing without it")
+        return None

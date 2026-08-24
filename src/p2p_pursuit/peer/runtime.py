@@ -92,6 +92,7 @@ class PeerRuntime:
         #: does not specify one - absent from the result rather than a false
         #: "unconfirmed" against every peer that never agreed to send a digest.
         self.series_consensus: dict[str, Any] | None = None
+        self.result_agreement: dict[str, Any] | None = None
 
     # -- lifecycle ----------------------------------------------------------
     def make_bridge(self, link: Any) -> Any:
@@ -155,6 +156,11 @@ class PeerRuntime:
         if not wait_until_up(link):
             _log(f"[{self.role}] opponent never came up at {self.peer.opponent_url}")
             return False
+        # Before the handshake, not after: their backend merges it and then
+        # needs it at every window boundary, so a Step-0 that arrives late is a
+        # Step-0 that arrived after the crash it was meant to prevent.
+        if self.peer.result_agreement:
+            runtime_reports.send_step0(self, _log)
         # Reachable is not the same as ready: their tunnel can answer a tool
         # listing and their peer still be mid-restart when our handshake lands.
         try:
@@ -398,6 +404,13 @@ class PeerRuntime:
             self.watchdog.stop()
             if self.peer.series_consensus:
                 self.series_consensus = runtime_reports.exchange_series_consensus(self, _log)
+            # After the consensus exchange, because the two are different digests
+            # over different scopes and their §5 says so explicitly:
+            # `result_sha256` is NOT `series_consensus_sha256` and they are never
+            # aliased. This one is what makes their side able to file at all.
+            if self.peer.result_agreement:
+                self.result_agreement = runtime_reports.exchange_result_agreement(
+                    self, _log)
         finally:
             self.watchdog.stop()
             # After the last sub-game and the consensus exchange, so the filed

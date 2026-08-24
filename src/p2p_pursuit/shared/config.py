@@ -203,6 +203,11 @@ class PeerConfig:
     #: no mismatch to look at - MaRs-777 resend every 2s for their full window and
     #: require a positive acknowledgement, and they are right to.
     consensus_retry_sec: int = 5
+    #: Exchange MaRs-777's `result_agreement` on `receive_control` after the
+    #: series, and send a Step-0 declaration at the handshake. Off by default:
+    #: both are extensions no other peer we have played speaks, and a Step-0
+    #: greeting sent to a peer that does not expect one is refused on shape.
+    result_agreement: bool = False
     #: Which serialization the consensus envelope carries - see
     #: `report.consensus.PROJECTIONS`. Negotiated per opponent, because the two
     #: families produce equally plausible 64-hex strings from the same series and
@@ -303,6 +308,7 @@ def load_peer(path: Path) -> PeerConfig:
         consensus_wait_sec=int(interop.get("consensus_wait_sec", 60)),
         consensus_retry_sec=int(interop.get("consensus_retry_sec", 5)),
         consensus_projection=str(interop.get("consensus_projection", "uid")),
+        result_agreement=bool(interop.get("result_agreement", False)),
     )
 
 
@@ -385,6 +391,7 @@ BOOL_VARS = {
     "P2P_CLAIM_ENCLOSURE": "claim_enclosure",
     "P2P_ALWAYS_CLAIM": "always_claim",
     "P2P_SERIES_CONSENSUS": "series_consensus",
+    "P2P_RESULT_AGREEMENT": "result_agreement",
     "P2P_STATELESS_HTTP": "stateless_http",
     "P2P_SCENT_SERVE_BEFORE_DECAY": "scent_serve_before_decay",
 }
