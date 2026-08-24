@@ -28,6 +28,8 @@ README = (
 URLS = {
     "police": "https://example.com/p2p-police-agent",
     "thief": "https://example.com/p2p-thief-agent",
+    "workspace_name": "final_Project",
+    "workspace": "https://example.com/final_Project",
 }
 
 
@@ -66,6 +68,19 @@ def test_transform_readme_inserts_role_banner_idempotently() -> None:
     assert URLS["thief"] in once  # sister cross-link (mandatory README item #6)
     twice = sync_repos.transform_readme(once, "police", URLS)
     assert twice == once
+
+
+def test_banner_names_the_development_repo_it_was_published_from() -> None:
+    """A reader landing on a role repo has to be able to find the codebase it
+    came from: the split repos carry no history of their own worth reading,
+    only one `sync:` commit per workspace commit."""
+    banner = sync_repos.transform_readme(README, "thief", URLS)
+    assert URLS["workspace"] in banner
+    assert "final_Project" in banner
+    # and it survives a re-sync, since sync_one always re-transforms a pristine
+    # workspace README rather than the published one
+    assert sync_repos.transform_readme(README, "police", URLS).count(
+        URLS["workspace"]) == 1
 
 
 def test_sync_one_copies_tree_writes_role_and_prunes_stale(workspace: Path) -> None:

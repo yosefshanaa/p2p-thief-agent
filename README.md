@@ -1,6 +1,8 @@
 # p2p-pursuit — Distributed Cops-and-Robbers over a Peer-to-Peer Network
 
 > **Role of this repository: THIEF agent** — `uv run p2p-pursuit peer` defaults to `--role thief` here (`ROLE` marker). Sister (police) repository: https://github.com/yosefshanaa/p2p-police-agent
+>
+> **Developed in [`final_Project`](https://github.com/yosefshanaa/final_Project)** — the single role-configurable codebase both agents are built from, carrying the full commit history and the league match archive. This repository is published from it by `scripts/sync_repos.py`.
 
 Final project for Dr. Yoram Segal's **"Orchestration of AI Agents"** course, University of Haifa
 (rules book `police_thief_p2p.pdf` **v3.0.0**, bundled in the reference repo

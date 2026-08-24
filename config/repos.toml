@@ -3,6 +3,9 @@
 [sync]
 owner = "yosefshanaa"
 repos_root = ".."
+# The development repository the two role repos are published FROM. Named here
+# rather than in the script so the banner URL stays config-driven like the rest.
+workspace = "final_Project"
 
 [sync.roles]
 police = "p2p-police-agent"
