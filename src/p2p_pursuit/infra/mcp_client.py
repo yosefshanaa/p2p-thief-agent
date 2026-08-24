@@ -138,6 +138,22 @@ class McpLink:
     def submit_audit(self, payload: dict, timeout: float | None = None) -> dict:
         return self._call("submit_audit", {"payload": payload}, timeout)
 
+    def receive_control(self, message: dict, timeout: float | None = None) -> Any:
+        """Their fourth tool. Answers `{"ok": true}` for every legacy kind and a
+        **bare 64-hex string** for `result_agreement`, so the return is not a
+        dict and must not be typed as one."""
+        return self._call("receive_control", {"message": message}, timeout)
+
+    def step0(self, payload: dict, timeout: float | None = None) -> dict:
+        """Step-0 rides `negotiate` in its OTHER argument shape.
+
+        An ordinary greeting sends `message` alone; Step-0 sends `kind` and
+        `payload` together and no `message`. The two are dispatched on shape
+        before any validation, so mixing them is refused before a field is read -
+        `payload` without `kind` outright, and a greeting carrying either.
+        """
+        return self._call("negotiate", {"kind": "step0", "payload": payload}, timeout)
+
     def health(self, timeout: float | None = None) -> dict:
         return self._call("health_check", {}, timeout)
 

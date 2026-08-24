@@ -6,6 +6,7 @@ import os
 import platform
 import shutil
 import subprocess
+from pathlib import Path
 
 
 def _ram_gb() -> float | str:
@@ -53,5 +54,28 @@ def collect() -> dict:
         "python": platform.python_version(),
         "cpu_cores": os.cpu_count() or 0,
         "ram_gb": _ram_gb(),
+        "cpu_freq_ghz": _cpu_freq_ghz(),
         "gpu": _gpu(),
     }
+
+
+def _cpu_freq_ghz() -> float:
+    """Nominal core frequency in GHz, 0.0 when it cannot be read.
+
+    MaRs-777's Step-0 requires it, as canonical decimal *text* rather than a
+    JSON number - see `report.result_agreement.step0_declaration`. Read from
+    /proc rather than a dependency, and never raising: a declaration that cannot
+    be built is a match that cannot start, and an unknown frequency is a
+    cosmetic gap in an artifact.
+    """
+    try:
+        for line in Path("/proc/cpuinfo").read_text(encoding="utf-8").splitlines():
+            if line.lower().startswith("cpu mhz"):
+                return round(float(line.split(":", 1)[1].strip()) / 1000.0, 2)
+    except (OSError, ValueError, IndexError):
+        pass
+    try:
+        raw = Path("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq")
+        return round(int(raw.read_text().strip()) / 1_000_000.0, 2)
+    except (OSError, ValueError):
+        return 0.0

@@ -17,6 +17,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import queue
+import threading
 import time
 from datetime import UTC, datetime
 from typing import Any
@@ -25,6 +26,7 @@ from ..domain.audit import NOT_REPORTED_REFERENCE
 from ..domain.protocol import KIND_CAPTURE_ANSWER, KIND_CAPTURED_EVENT, record_sub_game
 from ..domain.rules import THIEF
 from ..domain.scoring import SURVIVAL
+from ..report.result_agreement import APPROVAL_KIND, NotReadyError
 from . import interop_codec as codec
 from .transport import LinkError
 
@@ -58,6 +60,24 @@ class ReferenceBridge:
         self.reveal_self_checks: dict[int, list[str]] = {}
         #: Their series digest, once an envelope passes the §10.3 gate.
         self.peer_consensus_sha: str | None = None
+        #: Their §6 idempotent replay cache: one request -> one digest, forever.
+        #: Keyed by the request's own content so a genuine second request (a
+        #: different timestamp or different entries) is answered afresh, while a
+        #: retransmission of the same one never triggers a second assembly.
+        self._approval_answers: dict[tuple, str] = {}
+        self._approval_lock = threading.Lock()
+        #: The proposer's timestamp, adopted verbatim the first time we answer a
+        #: request and echoed back on our own. Never regenerated: MaRs-777 fail
+        #: closed on a re-stamped echo, and two peers each stamping their own
+        #: clock could never agree on a document that carries one.
+        self.approval_timestamp: str | None = None
+        #: Our own digest for the agreed core, kept so the outbound direction can
+        #: compare against what they answer without reassembling.
+        self.approval_sha: str | None = None
+        #: Their six entries exactly as contributed. Retained because BOTH
+        #: directions hash the same core: our outbound request must be assembled
+        #: from what they sent, never from anything we could derive ourselves.
+        self.approval_their_entries: list[dict[str, Any]] | None = None
         #: Did the turn we just sent already carry the terminal win claim? If so
         #: the `event` that follows it in the same package has nothing left to
         #: deliver, and repeating the turn to say so is the bug this flag exists
@@ -198,9 +218,57 @@ class ReferenceBridge:
             cv.notify_all()
         return {"ok": True}
 
-    def on_receive_control(self, message: dict) -> dict:
-        """Advisory channel we do not act on; accepted so their peer is not stalled."""
+    def on_receive_control(self, message: dict) -> dict | str:
+        """Advisory channel, plus MaRs-777's one semantic kind.
+
+        Every legacy form - `enable`, `status`, `restart`, `quit`, and anything
+        unrecognised - keeps its exact `{"ok": true}` answer. Only
+        `result_agreement` diverges, and it diverges completely: their §2 wants a
+        **bare 64-character hex string** back, not an object and not `{"ok": true}`.
+        Returning our usual envelope there reads to them as a malformed answer.
+        """
+        if isinstance(message, dict) and message.get("kind") == APPROVAL_KIND:
+            return self._answer_result_agreement(message.get("payload") or {})
         return {"ok": True}
+
+    def _answer_result_agreement(self, payload: dict) -> str | dict:
+        """Merge their contribution with ours and return `result_sha256`.
+
+        Bounded readiness (their §6): a correct request can arrive while we are
+        still assembling our own six entries, because both peers finish sub-game
+        six at different moments. That is not an error - we wait, then answer the
+        *same* request. Idempotent by their §6 too: a repeat of a request we have
+        already answered returns the identical digest rather than reassembling.
+        """
+        if self.runtime is None:
+            return {"ok": False, "error": "no runtime owns this bridge"}
+        their = payload.get("contribution") or {}
+        their_gid = their.get("group_id") or ""
+        entries = their.get("entries") or []
+        key = (payload.get("timestamp") or "", their_gid,
+               tuple((e.get("sub_game"), e.get("github_commit"), e.get("tokens"))
+                     for e in entries))
+        with self._approval_lock:
+            if key in self._approval_answers:
+                return self._approval_answers[key]
+        from ..peer.runtime_reports import runtime_result_agreement
+
+        try:
+            sha = runtime_result_agreement(self.runtime, payload,
+                                           their_gid=their_gid, entries=entries)
+        except NotReadyError as exc:
+            # Explicitly retryable, and nothing mutated - their §6.
+            return {"ok": False, "error": "E-NOT-READY", "detail": str(exc)}
+        except Exception as exc:  # noqa: BLE001 - a refusal is a fact, not a crash
+            log.warning("result_agreement refused: %s", exc)
+            return {"ok": False, "error": "E-REPORT-DISAGREE", "detail": str(exc)}
+        with self._approval_lock:
+            self._approval_answers[key] = sha
+            if self.approval_timestamp is None:
+                self.approval_timestamp = payload.get("timestamp") or ""
+            self.approval_sha = sha
+            self.approval_their_entries = list(entries)
+        return sha
 
     def _declared_sub_game(self, payload: dict, engine: Any) -> int:
         """Which sub-game an inbound reveal is *for* - asked, not assumed.
