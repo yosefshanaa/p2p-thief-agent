@@ -290,3 +290,60 @@ def _decimal_text(value: Any) -> str:
         return "0"
     text = f"{number:.2f}".rstrip("0").rstrip(".")
     return text or "0"
+
+
+# -- MaRs-777's HMAC proof (their 18:38 wire) --------------------------------
+#: Context bytes prefixed to the canonical document before signing. Two strings,
+#: one primitive: a proof minted for one route cannot be replayed on the other,
+#: which is the whole reason the prefix exists. No separator and no length
+#: prefix - `context + canonical`, concatenated.
+CTX_STEP0, CTX_RESULT = b"step0", b"result"
+
+AUTH_PROFILE = "HMAC_SHA256"
+
+
+def hmac_proof(secret: bytes, context: bytes, document: dict[str, Any]) -> str:
+    """``HMAC-SHA256(key, context + canonical(document))``, lowercase hex.
+
+    The key is raw bytes the operator supplies out of band and which never reach
+    a config file, a log line or an artifact - see `hmac_secret`.
+    """
+    import hmac as _hmac
+    from hashlib import sha256
+
+    return _hmac.new(secret, context + canonical_bytes(document), sha256).hexdigest()
+
+
+def auth_block(secret: bytes, context: bytes, document: dict[str, Any], *,
+               key_id: str) -> dict[str, str]:
+    """The `auth` object. Only ``key_id`` ever crosses the wire, never the key."""
+    return {"profile": AUTH_PROFILE, "key_id": key_id,
+            "value": hmac_proof(secret, context, document)}
+
+
+def step0_core(*, game_id: str, game_uid: str, game_start: str,
+               slot: str, declaration: dict[str, Any],
+               token_budget_per_series: int) -> dict[str, Any]:
+    """The 19 members Step-0's proof covers - NOT the whole declaration.
+
+    Five at the top, nine in our subtree, five in its hardware. Two differences
+    from the same subtree as it crosses the wire, and both are theirs:
+
+    * ``cpu_freq_ghz`` is a JSON **number** here and canonical decimal **text**
+      on the wire. The same field, two representations, and signing the wire
+      form yields a proof that verifies against nothing.
+    * ``vram_gb`` is absent from the core even when the wire carries it.
+    """
+    hardware = dict(declaration.get("hardware") or {})
+    hardware.pop("vram_gb", None)
+    freq = hardware.get("cpu_freq_ghz")
+    hardware["cpu_freq_ghz"] = float(freq) if freq not in (None, "") else 0.0
+    subtree = {key: value for key, value in declaration.items() if key != "hardware"}
+    subtree["hardware"] = hardware
+    return {
+        "game_id": game_id,
+        "game_uid": game_uid,
+        "teams": {slot: subtree},
+        "times": {"game_start": game_start},
+        "token_budget_per_series": int(token_budget_per_series),
+    }

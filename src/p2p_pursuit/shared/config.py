@@ -535,3 +535,40 @@ def repo_default_role(root: Path = Path()) -> str | None:
         return None
     role = path.read_text(encoding="utf-8").strip()
     return role if role in ("police", "thief") else None
+
+
+#: MaRs-777's HMAC key id - public, and the only half that crosses the wire.
+HMAC_KEY_ID_VAR = "P2P_HMAC_KEY_ID"
+#: The shared secret itself. **Environment only, and only from `.env`.** Never a
+#: config file, never a log line, never an artifact: a secret committed once is
+#: a secret forever, and `config/opponents/*.env` is tracked.
+HMAC_SECRET_VAR = "P2P_HMAC_SECRET"
+
+
+def hmac_secret() -> bytes | None:
+    """The shared secret as its own **UTF-8 bytes**, or None when unconfigured.
+
+    **Never hex-decoded, whatever it looks like.** A 64-character hex secret is a
+    64-byte key here, not the 32 bytes it would decode to, and the two derivations
+    produce completely different HMACs from identical inputs. We shipped the
+    decoding version for about ten minutes on 2026-08-24 and it agreed with
+    nothing; MaRs-777 published two vectors computed the same wrong way and had to
+    void them. Their production is `AuthSecret(env[...].encode())` and ours is
+    this, and the only reason either side knows is that both published a vector.
+
+    Never logged or echoed - the caller gets bytes or nothing, and any message
+    about it names the variable rather than a value.
+    """
+    raw = (os.environ.get(HMAC_SECRET_VAR) or "").strip()
+    return raw.encode("utf-8") if raw else None
+
+
+def hmac_fingerprint(secret: bytes) -> str:
+    """``sha256(secret_text)[:16]`` - their published check value.
+
+    Safe to print: it is a one-way digest they publish themselves, and it is how
+    both sides confirm they hold the same key without either sending it.
+    """
+    from hashlib import sha256
+
+    return sha256(secret).hexdigest()[:16]
