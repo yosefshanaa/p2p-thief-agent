@@ -412,10 +412,22 @@ class ReferenceBridge:
         return self.link.receive_control(message, timeout=timeout)
 
     def handshake(self, payload: dict, timeout: float | None = None) -> dict:
-        """Push our signed agreement, then take theirs for THIS window off the inbox."""
-        self.link.negotiate(self._signed(), timeout=timeout)
+        """Push our signed agreement, then take theirs for THIS window off the inbox.
+
+        Their slug rides the **negotiate answer**, top level - `{"ok": true,
+        "group_id": "..."}` - which is the shape we asked MaRs-777 for and then
+        discarded, reading only the agreement they push separately. That one
+        carries no group_id, so we logged "opponent sent no group_id", kept
+        locally-minted ids and voided every digest between us while their fix
+        was deployed and correct the whole time.
+        """
+        answer = self.link.negotiate(self._signed(), timeout=timeout)
         theirs = self._agreement_for(self.service.engine.sub_game, timeout or 60)
-        return codec.handshake_from_agreement(theirs, mine=payload, terms=self.terms)
+        hs = codec.handshake_from_agreement(theirs, mine=payload, terms=self.terms)
+        gid = (answer or {}).get("group_id") if isinstance(answer, dict) else None
+        if gid and not hs.get("group_id"):
+            hs["group_id"] = gid
+        return hs
 
     def _agreement_for(self, n: int, timeout: float) -> dict:
         """Their agreement for window ``n``, discarding ones already settled.

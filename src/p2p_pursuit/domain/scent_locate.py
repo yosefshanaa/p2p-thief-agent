@@ -39,7 +39,7 @@ from __future__ import annotations
 
 from . import scent_subtractive
 from .board import Cell
-from .scent import BOOK_V1, REGISTERED_MODELS, REGISTERED_V3, SUBTRACTIVE_V1, ScentField
+from .scent import BOOK_V1, REGISTERED_MODELS, SUBTRACTIVE_V1, ScentField
 
 Field = list[list[float]]
 
