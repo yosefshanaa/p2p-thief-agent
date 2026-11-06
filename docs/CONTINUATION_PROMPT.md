@@ -1,7 +1,7 @@
 # CONTINUATION PROMPT — finish the P2P Cops-and-Thieves final project
 
 *Paste everything below this line into a fresh Claude Code session started in
-`/mnt/c/Orch/final_Project` to continue exactly where the project stands.*
+`/mnt/c/Orch/p2p-pursuit` to continue exactly where the project stands.*
 
 ---
 
@@ -13,7 +13,7 @@ reveal → mutual audit (tamper ⇒ technical loss 0/0). Team **`ahk-yosi`**: Yo
 
 ## State: the system is built, green, and has already played over the internet
 
-- Workspace `/mnt/c/Orch/final_Project` → https://github.com/yosefshanaa/final_Project (`master`).
+- Workspace `/mnt/c/Orch/p2p-pursuit` → https://github.com/yosefshanaa/p2p-pursuit (`master`).
 - **Submission repos (PUBLIC, CI green, group code `ahk-yosi`):**
   https://github.com/yosefshanaa/p2p-police-agent · https://github.com/yosefshanaa/p2p-thief-agent
   Publish with `uv run python scripts/sync_repos.py --push` — it mirrors **git-tracked files

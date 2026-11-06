@@ -2,7 +2,7 @@
 
 > **Role of this repository: THIEF agent** — `uv run p2p-pursuit peer` defaults to `--role thief` here (`ROLE` marker). Sister (police) repository: https://github.com/yosefshanaa/p2p-police-agent
 >
-> **Developed in [`final_Project`](https://github.com/yosefshanaa/final_Project)** — the single role-configurable codebase both agents are built from, carrying the full commit history and the league match archive. This repository is published from it by `scripts/sync_repos.py`.
+> **Developed in [`p2p-pursuit`](https://github.com/yosefshanaa/p2p-pursuit)** — the single role-configurable codebase both agents are built from, carrying the full commit history and the league match archive. This repository is published from it by `scripts/sync_repos.py`.
 
 Final project for Dr. Yoram Segal's **"Orchestration of AI Agents"** course, University of Haifa
 (rules book `police_thief_p2p.pdf` **v3.0.0**, bundled in the reference repo
@@ -355,7 +355,7 @@ manager used — never pip/venv directly), Linux/WSL2/macOS/Windows; Tk only for
 (headless works everywhere); no LLM, key or network needed for the default game.
 
 ```bash
-git clone https://github.com/yosefshanaa/final_Project && cd final_Project
+git clone https://github.com/yosefshanaa/p2p-pursuit && cd p2p-pursuit
 uv sync                     # core + dev from the lockfile
 uv sync --extra gmail       # + Google libs (only for real report sending)
 uv sync --extra llm         # + anthropic SDK (only for claude_api banter)
